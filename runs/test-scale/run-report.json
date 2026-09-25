@@ -1,0 +1,43 @@
+{
+  "run_id": "test-scale",
+  "config": {
+    "run_id": "test-scale",
+    "expected_count": 5,
+    "max_requests": 1840,
+    "max_spend_usd": 10.0,
+    "wall_clock_s": 2214,
+    "workers": 4,
+    "search_provider": "none",
+    "respect_robots": true,
+    "tier_budgets": {
+      "shell": 3,
+      "standard": 12,
+      "rich": 30
+    }
+  },
+  "inputs": 5,
+  "resolved": 5,
+  "elapsed_s": 36.7,
+  "dispositions": {
+    "official": 5
+  },
+  "budget": {
+    "requests_used": 52,
+    "requests_cap": 1840,
+    "requests_denied": 0,
+    "reserve_remaining": 1788,
+    "third_party_cost_usd": 0.0,
+    "spend_cap_usd": 10.0,
+    "elapsed_s": 36.7,
+    "wall_clock_cap_s": 2214,
+    "companies_per_tier": {
+      "shell": 2,
+      "rich": 3
+    },
+    "requests_per_tier": {
+      "shell": 5,
+      "standard": 0,
+      "rich": 47
+    }
+  }
+}

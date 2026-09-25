@@ -1,0 +1,43 @@
+{
+  "run_id": "smoke-01",
+  "config": {
+    "run_id": "smoke-01",
+    "expected_count": 20,
+    "max_requests": 1840,
+    "max_spend_usd": 10.0,
+    "wall_clock_s": 2214,
+    "workers": 8,
+    "search_provider": "none",
+    "respect_robots": true,
+    "tier_budgets": {
+      "shell": 3,
+      "standard": 12,
+      "rich": 30
+    }
+  },
+  "inputs": 20,
+  "resolved": 20,
+  "elapsed_s": 66.1,
+  "dispositions": {
+    "official": 20
+  },
+  "budget": {
+    "requests_used": 179,
+    "requests_cap": 1840,
+    "requests_denied": 0,
+    "reserve_remaining": 1661,
+    "third_party_cost_usd": 0.0,
+    "spend_cap_usd": 10.0,
+    "elapsed_s": 66.1,
+    "wall_clock_cap_s": 2214,
+    "companies_per_tier": {
+      "shell": 9,
+      "rich": 11
+    },
+    "requests_per_tier": {
+      "shell": 19,
+      "standard": 0,
+      "rich": 160
+    }
+  }
+}

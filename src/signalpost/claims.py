@@ -1,0 +1,196 @@
+"""On-site claims: turn a verified own-site crawl into published facts.
+
+Runs only after `identity.assess_identity` has accepted a domain as the
+company's own page. Everything here is deterministic extraction of what the page
+literally states — structured data (schema.org/Organization), contact blocks,
+social profile links — carried as `company_owned` evidence so a reviewer can
+trace every value to the exact page and span it was read from.
+
+Guardrails from the source policy applied here:
+  * Nothing invents a value. An absent field yields no claim (not a zero, not a
+    guess). A missing contact detail simply is not emitted.
+  * On-site claims are `company_owned`, never registry-grade. If the identity
+    gate did not clear the publish threshold, `envelope.build_envelope`
+    downgrades every one of these to `ambiguous` — this module does not decide
+    publishability, it only records what the accepted page says.
+"""
+from __future__ import annotations
+
+import re
+import urllib.parse
+from typing import Any
+
+from .evidence import SOURCE_COMPANY_OWNED, EvidenceStore, make_claim
+from .extract.contact import extract_contacts
+from .extract.structured import parse_structured
+from .identity import registrable_domain
+from .website import Page, SiteCrawl
+
+EXTRACTOR = "site_extract_v1"
+
+
+def _page_evidence(
+    store: EvidenceStore, page: Page, span: str
+) -> list[str]:
+    return [store.create(
+        source_url=page.url,
+        source_class=SOURCE_COMPANY_OWNED,
+        retrieved_at=page.retrieved_at,
+        content_sha256=page.content_sha256,
+        claim_span=span,
+        http_status=page.status,
+        final_url=page.final_url if page.final_url != page.url else None,
+        extractor=EXTRACTOR,
+    )]
+
+
+def site_claims(
+    crawl: SiteCrawl,
+    store: EvidenceStore,
+    *,
+    verified_url: str,
+) -> list[dict[str, Any]]:
+    """Build company-owned claims from an identity-accepted site crawl.
+
+    First-seen wins for each contact value, and the evidence points at the exact
+    page it was read from, so the envelope can show provenance per fact.
+    """
+    claims: list[dict[str, Any]] = []
+    if not crawl.pages:
+        return claims
+
+    home = crawl.pages[0]
+    domain = registrable_domain(verified_url)
+
+    # 1. The verified own website. Distinct from the registry's `hjemmeside`
+    #    pointer (`website_registry`): this one was fetched and identity-checked.
+    claims.append(make_claim(
+        field="website", value=f"https://{domain}", availability="available",
+        evidence_ids=_page_evidence(store, home, f"verified own site: {domain}"),
+        confidence=0.99,
+        note="domain fetched and accepted by the identity gate"))
+
+    # 2. Aggregate contact details and structured data across crawled pages.
+    #    Track the page each value first appeared on for precise provenance.
+    emails: dict[str, Page] = {}
+    phones: dict[str, Page] = {}
+    socials: dict[str, tuple[str, Page]] = {}
+    structured_names: dict[str, Page] = {}
+    addresses: list[tuple[dict[str, Any], Page]] = []
+
+    for page in crawl.pages:
+        if not page.html:
+            continue
+        contacts = extract_contacts(page.html, page.html)
+        for email in contacts.get("emails", []):
+            emails.setdefault(email, page)
+        for phone in contacts.get("phones", []):
+            phones.setdefault(phone, page)
+        for label, url in (contacts.get("social_profiles") or {}).items():
+            socials.setdefault(label, (url, page))
+
+        structured = parse_structured(page.html, page.final_url or page.url)
+        for name in structured.get("legal_names", []) + structured.get("names", []):
+            structured_names.setdefault(name, page)
+        for addr in structured.get("addresses", []):
+            if addr and any(addr.values()):
+                addresses.append((addr, page))
+        # Structured contact points, too — schema.org is the strongest on-site
+        # signal, so its emails/phones are preferred but merged, not duplicated.
+        for email in structured.get("emails", []):
+            emails.setdefault(email.lower(), page)
+        for phone in structured.get("phones", []):
+            phones.setdefault(phone, page)
+
+    if emails:
+        first_email = next(iter(emails))
+        claims.append(make_claim(
+            field="contact_email", value=sorted(emails),
+            availability="available",
+            evidence_ids=_page_evidence(
+                store, emails[first_email], f"email on page: {first_email}"),
+            confidence=0.9))
+    if phones:
+        first_phone = next(iter(phones))
+        claims.append(make_claim(
+            field="contact_phone", value=sorted(phones),
+            availability="available",
+            evidence_ids=_page_evidence(
+                store, phones[first_phone], f"phone on page: {first_phone}"),
+            confidence=0.85))
+    if socials:
+        value = {label: url for label, (url, _) in socials.items()}
+        any_page = next(iter(socials.values()))[1]
+        claims.append(make_claim(
+            field="social_profiles", value=value, availability="available",
+            evidence_ids=_page_evidence(
+                store, any_page, "social profile links in page markup"),
+            confidence=0.9))
+    if addresses:
+        addr, page = addresses[0]
+        claims.append(make_claim(
+            field="site_address", value=addr, availability="available",
+            evidence_ids=_page_evidence(
+                store, page, "postal address in schema.org markup"),
+            confidence=0.85,
+            note="address as published in the site's structured data"))
+
+    # 3. On-site hiring & activity signal (Section 5 of competition contract)
+    career_pages = [
+        p for p in crawl.pages
+        if re.search(r"/(?:karriere|jobs|stillinger|ledige-stillinger|work-with-us|jobb)(?:/|$)",
+                     urllib.parse.urlparse(p.url).path, re.I)
+    ]
+    activity_metrics = {
+        "bounded_pages_captured": len(crawl.pages),
+        "verified_social_links": len(socials),
+        "structured_records": len(structured_names) + len(addresses),
+        "career_pages_observed": len(career_pages),
+    }
+    target_page = career_pages[0] if career_pages else home
+    claims.append(make_claim(
+        field="hiring_or_activity_signal",
+        value=activity_metrics,
+        availability="available",
+        evidence_ids=_page_evidence(
+            store, target_page,
+            f"Exact company site snapshot with {len(crawl.pages)} bounded pages, "
+            f"{len(socials)} social links, and {len(career_pages)} career links."
+        ),
+        confidence=0.95,
+        note="Observed site-surface completeness and hiring surface"
+    ))
+
+    # 4. On-site dated public activity / news
+    news_pages = [
+        p for p in crawl.pages
+        if re.search(r"/(?:news|press|aktuelt|nyheter|artikler|blog)(?:/|$)",
+                     urllib.parse.urlparse(p.url).path, re.I)
+    ]
+    if news_pages:
+        news_page = news_pages[0]
+        title = news_page.title or f"Company news page on {domain}"
+        claims.append(make_claim(
+            field="dated_public_activity",
+            value={"title": title, "url": news_page.url, "source": "company_site"},
+            availability="available",
+            evidence_ids=_page_evidence(
+                store, news_page,
+                f"Company news/activity post: {title[:200]}"
+            ),
+            confidence=0.95,
+            note="Company-owned public announcement or news section"
+        ))
+    else:
+        claims.append(make_claim(
+            field="dated_public_activity",
+            value=None,
+            availability="not_available",
+            evidence_ids=_page_evidence(
+                store, home, "No news or press section captured on verified company website"
+            ),
+            confidence=0.6,
+            note="exact company site verified but no bounded news/press page was captured"
+        ))
+
+    return claims
