@@ -58,11 +58,12 @@ def get_default_known_domains() -> dict[str, str]:
 
 #: Words that appear in registered names but rarely in the domain.
 FILLER = {
-    "as", "asa", "ans", "da", "enk", "iks", "sa", "nuf", "ba", "bbl", "brl",
-    "ks", "kf", "sf", "og", "and", "the", "avd", "avdeling", "norge", "norway",
+    "as", "asa", "ans", "da", "enk", "iks", "sa", "nuf", "ab", "aps", "gmbh", "oy",
+    "ba", "bbl", "brl", "ks", "kf", "sf", "og", "and", "the", "avd", "avdeling", "norge", "norway",
     "holding", "invest", "gruppen", "gruppe", "group", "konsern", "eiendom",
     "eiendommer", "drift", "service", "as.", "co", "company", "int",
     "international", "scandinavia", "nordic", "no",
+    "syd", "nord", "vest", "ost", "aust", "spesialist", "spesialister",
 }
 
 #: Tried in order. .no first: a Norwegian entity's own site is overwhelmingly
@@ -74,7 +75,7 @@ MODERATE = "moderate"
 AGGRESSIVE = "aggressive"
 
 #: How many name variants each tier is willing to generate.
-TIER_VARIANTS = {STRICT: 3, MODERATE: 5, AGGRESSIVE: 9}
+TIER_VARIANTS = {STRICT: 5, MODERATE: 6, AGGRESSIVE: 9}
 #: How many surviving candidates each tier is willing to actually fetch.
 TIER_FETCHES = {STRICT: 2, MODERATE: 3, AGGRESSIVE: 5}
 
@@ -107,22 +108,43 @@ def candidate_labels(name: str, *, limit: int = 5) -> list[str]:
     push("".join(tokens))                       # sandneselektriske
     push("".join(meaningful))                   # filler stripped
     push("-".join(meaningful))                  # hyphenated
+    
+    stemmed = []
+    for t in meaningful:
+        t_stem = re.sub(r"(service|drift|transport|motor|konsern)$", "", t)
+        stemmed.append(t_stem if len(t_stem) >= 3 else t)
+    if stemmed != meaningful:
+        push("".join(stemmed))
+        push("-".join(stemmed))
+        
     if len(meaningful) >= 2:
         push("".join(meaningful[:2]))           # first two words
-    push(meaningful[0])                         # single leading token
+    if len(meaningful) >= 2 and len(meaningful[0]) >= 5:
+        push(meaningful[0])                     # distinctive leading token (e.g. accomodo from accomodo regnskap)
+    elif len(meaningful) == 1:
+        push(meaningful[0])                     # single token name
     if len(meaningful) >= 2:
         push("".join(t[0] for t in meaningful)) # initialism, e.g. abc.no
     return ordered[:limit]
 
 
-def candidate_hosts(name: str, *, tier: str = STRICT) -> list[str]:
+def candidate_hosts(name: str, *, tier: str = STRICT, legal_form: str = "") -> list[str]:
     """Full candidate hostnames for a name, in descending likelihood."""
     labels = candidate_labels(name, limit=TIER_VARIANTS.get(tier, 3))
     hosts: list[str] = []
+    
+    tlds = list(TLDS)
+    folded_lower = name.lower()
+    tokens_set = set(folded_lower.split())
+    if "ab" in tokens_set or legal_form == "NUF":
+        tlds.append(".se")
+    if "aps" in tokens_set:
+        tlds.append(".dk")
+        
     for label in labels:
-        for tld in TLDS:
-            if tier == STRICT and tld != ".no" and label != labels[0]:
-                # Outside .no, only the strongest label is worth a guess.
+        for tld in tlds:
+            if tier == STRICT and tld not in (".no", ".se", ".dk") and label != labels[0]:
+                # Outside local ccTLDs, only the strongest label is worth a guess.
                 continue
             host = label + tld
             if host not in hosts:
@@ -311,7 +333,7 @@ def discover(
     # 3. Name-derived guesses, DNS-filtered. Free, and the primary lever for
     # the ~89% of entities with no registry URL.
     if not result.candidates or tier != STRICT:
-        hosts = candidate_hosts(name, tier=tier)
+        hosts = candidate_hosts(name, tier=tier, legal_form=profile.get("legal_form", ""))
         result.dns_probed = len(hosts)
         alive = resolve_many(hosts)
         result.dns_resolved = len(alive)
@@ -320,6 +342,7 @@ def discover(
         if hosts and not alive:
             result.notes.append(
                 f"no name-derived candidate resolved ({len(hosts)} probed)")
+
 
     # 4. Search, only if a provider is configured and nothing better exists.
     if search and not result.candidates:

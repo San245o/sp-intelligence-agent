@@ -41,6 +41,7 @@ from .ranker import model_info, rank
 from .sources.brreg import (
     fetch_accounts,
     fetch_entity,
+    fetch_group_structure,
     fetch_roles,
     fetch_subunits,
 )
@@ -113,6 +114,11 @@ def research_company(
     if spend_tier != TIER_SHELL:
         claims += fetch_roles(fetcher, org, store)
         claims += fetch_subunits(fetcher, org, store)
+        if entity.get("erIKonsern"):
+            group_info, group_claims = fetch_group_structure(fetcher, org, store)
+            claims += group_claims
+            if group_info and group_info.get("parent_name"):
+                enriched["parent_name"] = group_info["parent_name"]
         claims += fetch_news_activity(
             fetcher, org, enriched.get("name") or input_name, store
         )

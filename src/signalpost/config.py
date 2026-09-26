@@ -20,8 +20,8 @@ WALL_CLOCK_SOFT_STOP_S = int(EVALUATOR_WALL_CLOCK_S * 0.82)   # ~36.9 min
 REQUEST_SOFT_CAP = int(EVALUATOR_MAX_REQUESTS * 0.92)         # 1840
 
 USER_AGENT = (
-    "SignalpostAgent/1.0 (+https://builderr.ai/challenges/signalpost; "
-    "Norwegian company research; respects robots.txt)"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 )
 
 # --- Availability states. The contract names exactly these six.

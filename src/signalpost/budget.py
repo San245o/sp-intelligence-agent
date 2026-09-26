@@ -35,9 +35,16 @@ def classify_tier(profile: dict[str, Any]) -> str:
     """Assign a spend tier from registry facts alone. No requests consumed."""
     employees = profile.get("employees") or 0
     has_site = bool(str(profile.get("website") or "").strip())
+    legal_form = str(profile.get("legal_form") or "").upper()
     if has_site or employees >= 5:
         return TIER_RICH
-    if employees >= 1:
+    if employees >= 1 or legal_form == "NUF":
+        return TIER_STANDARD
+    # Active commercial entities with filed accounts that are not passive shells
+    has_accounts = bool(profile.get("latest_submitted_accounts"))
+    name_lower = str(profile.get("name") or "").lower()
+    is_passive_shell = any(w in name_lower.split() for w in ("holding", "invest", "eiendom", "eiendommer", "borettslag", "sameie"))
+    if legal_form == "AS" and has_accounts and not is_passive_shell and not profile.get("bankrupt") and not profile.get("liquidating"):
         return TIER_STANDARD
     # Dormant/holding entities: still emit a terminal envelope, but do not
     # spend discovery budget hunting a footprint that almost never exists.

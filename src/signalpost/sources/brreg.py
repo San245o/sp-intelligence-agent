@@ -524,3 +524,66 @@ def fetch_accounts(
             confidence=1.0, reporting_period=label))
 
     return claims
+
+
+# --------------------------------------------------------------------------
+# konsernstruktur/{org}
+# --------------------------------------------------------------------------
+
+def fetch_group_structure(
+    fetcher: Fetcher, org: str, store: EvidenceStore
+) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    """Fetch official parent entity from Brønnøysund corporate group register."""
+    url = f"{BASE}/konsernstruktur/{org}"
+    response = fetcher.get(org, url, accept="application/json")
+    if not response.ok:
+        return None, []
+
+    try:
+        payload = response.json()
+    except Exception:
+        return None, []
+
+    parent_name = payload.get("parentNavn")
+    parent_org = payload.get("parentOrganisasjonsnummer")
+    if not parent_name and payload.get("children"):
+        for child in payload.get("children", []):
+            if child.get("organisasjonsnummer") == org:
+                parent_name = child.get("parentNavn")
+                parent_org = child.get("parentOrganisasjonsnummer")
+                break
+
+    group_info = {
+        "parent_name": parent_name,
+        "parent_org": parent_org,
+        "raw": payload,
+    }
+
+    eid = store.create(
+        source_url=url,
+        source_class=SOURCE_OFFICIAL_REGISTRY,
+        retrieved_at=response.retrieved_at,
+        http_status=response.status,
+        content_sha256=response.content_sha256,
+        claim_span=f"Corporate group parent: {parent_name} ({parent_org})",
+        extractor=EXTRACTOR,
+        licence=LICENCE,
+    )
+
+    claims = []
+    if parent_name:
+        claims.append(make_claim(
+            field="corporate_group_structure",
+            value={
+                "in_corporate_group": True,
+                "parent_name": parent_name,
+                "parent_org": parent_org,
+            },
+            availability="available",
+            evidence_ids=[eid],
+            confidence=1.0,
+            note="official Brønnøysund corporate group parent link",
+        ))
+
+    return group_info, claims
+

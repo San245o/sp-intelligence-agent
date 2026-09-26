@@ -169,7 +169,9 @@ def site_claims(
     ]
     if news_pages:
         news_page = news_pages[0]
-        title = news_page.title or f"Company news page on {domain}"
+        m = re.search(r"<title[^>]*>([^<]+)</title>", news_page.html, re.I)
+        raw_title = m.group(1).strip() if m else ""
+        title = raw_title or f"Company news page on {domain}"
         claims.append(make_claim(
             field="dated_public_activity",
             value={"title": title, "url": news_page.url, "source": "company_site"},

@@ -301,6 +301,9 @@ def assess_identity(
     elif ratio >= 0.75 and len(matched) >= 2 and locality_matched:
         reasons.append("most legal-name tokens present and corroborated by registered locality/postcode")
         score = 0.92
+    elif full_name_in_identity and (domain_matches_name or locality_matched):
+        reasons.append("complete legal name in identity region corroborated by domain or locality")
+        score = 0.95
     elif full_name_in_identity:
         reasons.append("complete legal name present but page has little content")
         score = 0.85
