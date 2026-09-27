@@ -33,6 +33,7 @@ LEGAL_FORMS = {
     "as", "asa", "ans", "da", "enk", "iks", "sa", "sam", "sti", "nuf", "ba",
     "bbl", "brl", "esek", "fli", "ks", "spa", "kf", "sf", "ab", "oy", "aps",
     "gmbh", "ltd", "limited", "inc", "plc", "llc", "bv", "nv",
+    "borettslag", "boligbyggelag", "boligsameie", "sameiet", "sameie",
 }
 STOPWORDS = {"og", "and", "the", "for", "med", "av", "i", "pa", "til"}
 FILLER_WORDS = {
@@ -55,6 +56,7 @@ DIRECTORY_HOSTS = {
     "falio.no", "creditsafe.com", "kompass.com", "careerjet.no", "finansavisen.no",
     "aftenbladet.no", "foretaksinfo.no", "norwep.com", "dn.no", "e24.no",
     "norgelei.no", "bizin.eu", "acompio.com", "telefonterror.co.no", "nor47business.com",
+    "styrerommet.no", "kragero-bbl.no", "bbl.no",
 }
 
 PARKED_MARKERS = (
