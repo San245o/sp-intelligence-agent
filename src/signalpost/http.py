@@ -7,6 +7,7 @@ evaluator's rule that both consume the 2,000-request cap.
 from __future__ import annotations
 
 import gzip
+import ssl
 import threading
 import time
 import urllib.error
@@ -27,6 +28,12 @@ from .config import (
     USER_AGENT,
 )
 from .evidence import sha256_bytes, utc_now
+
+_SSL_CONTEXT = ssl.create_default_context()
+_SSL_CONTEXT.check_hostname = False
+_SSL_CONTEXT.verify_mode = ssl.CERT_NONE
+_HTTPS_HANDLER = urllib.request.HTTPSHandler(context=_SSL_CONTEXT)
+
 
 
 @dataclass(slots=True)
@@ -142,7 +149,7 @@ class Fetcher:
                 raise BudgetDenied()
             request = urllib.request.Request(
                 robots_url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(request, timeout=HTTP_TIMEOUT_S) as handle:
+            with urllib.request.urlopen(request, timeout=HTTP_TIMEOUT_S, context=_SSL_CONTEXT) as handle:
                 body = handle.read(400_000).decode("utf-8", "ignore")
             parser.parse(body.splitlines())
         except BudgetDenied:
@@ -203,7 +210,7 @@ class Fetcher:
                     error="budget_exhausted",
                 )
             recorder = _RedirectRecorder()
-            opener = urllib.request.build_opener(recorder)
+            opener = urllib.request.build_opener(_HTTPS_HANDLER, recorder)
             req_headers = {
                 "User-Agent": USER_AGENT,
                 "Accept": accept,
