@@ -630,7 +630,7 @@ def discover(
         addr = profile.get("business_address") or profile.get("forretningsadresse") or {}
         city = str(addr.get("poststed") or addr.get("kommune") or profile.get("municipality") or "").strip()
         loc_clause = f" {city}" if city else ""
-        query = f'"{name}"{loc_clause} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no'.strip()
+        query = f'"{name}"{loc_clause} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no -site:yra.no -site:nol.no -site:180.no -site:northdata.com'.strip()
         for url in search.search(query):
             offer(url, "search", f"candidate from {search.name} search")
 

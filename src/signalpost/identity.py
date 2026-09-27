@@ -57,6 +57,10 @@ DIRECTORY_HOSTS = {
     "aftenbladet.no", "foretaksinfo.no", "norwep.com", "dn.no", "e24.no",
     "norgelei.no", "bizin.eu", "acompio.com", "telefonterror.co.no", "nor47business.com",
     "styrerommet.no", "kragero-bbl.no", "bbl.no",
+    "yra.no", "nol.no", "northdata.com", "dnb.com", "cylex.no", "1890.no",
+    "vatverifier.com", "tracxn.com", "180.no", "infobel.com", "rosa.no",
+    "nordicnet.no", "generate.no", "firmview.no", "sokfirma.no", "m.io.no",
+    "bestilletransport.no", "utdanning.no",
 }
 
 PARKED_MARKERS = (
