@@ -231,6 +231,27 @@ class SignalpostAgentTests(unittest.TestCase):
         self.assertNotIn("facebook", socials)
         self.assertEqual(socials.get("linkedin"), "https://linkedin.com/company/teqva-ror")
 
+    def test_registry_trade_name_alias_published(self):
+        profile = {
+            "organisation_number": "911442493",
+            "name": "BJØRN ENGEBRETSEN AS",
+            "legal_form": "AS",
+            "municipality": "OSLO",
+        }
+        signals = IdentitySignals(
+            hostname="gullsmedhuset.no",
+            title="Velkommen til Gullsmedhuset | Gullsmedhuset",
+            body_text="Velkommen til vår butikk. Gullsmedhuset Bjørn Engebretsen leverer unike smykker. Kontakt oss på engebretsen@gullsmedhuset.no.",
+        )
+        verdict = assess_identity(
+            profile, signals, source_url="https://gullsmedhuset.no", origin="registry"
+        )
+        self.assertTrue(verdict.publishable)
+        self.assertGreaterEqual(verdict.score, 0.90)
+        self.assertIn("bjorn", verdict.matched_tokens)
+        self.assertIn("engebretsen", verdict.matched_tokens)
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -38,6 +38,7 @@ STOPWORDS = {"og", "and", "the", "for", "med", "av", "i", "pa", "til"}
 FILLER_WORDS = {
     "norge", "norway", "nordic", "scandinavia", "holding", "invest", "eiendom",
     "drift", "service", "revisjon", "revisjonsfirmaet", "stiftelsen", "stiftelse",
+    "stifting", "stiftinga",
     "gruppen", "gruppe", "group", "konsern", "partnere", "partner",
 }
 NOISE = LEGAL_FORMS | STOPWORDS | FILLER_WORDS
@@ -53,6 +54,7 @@ DIRECTORY_HOSTS = {
     "1850.no", "byndle.no", "firmadatabasen.no", "listings.no", "vexter.no",
     "falio.no", "creditsafe.com", "kompass.com", "careerjet.no", "finansavisen.no",
     "aftenbladet.no", "foretaksinfo.no", "norwep.com", "dn.no", "e24.no",
+    "norgelei.no", "bizin.eu", "acompio.com", "telefonterror.co.no", "nor47business.com",
 }
 
 PARKED_MARKERS = (
@@ -193,7 +195,12 @@ class IdentityVerdict:
 
 
 def _proof_span(text: str, needle: str, width: int = 120) -> str | None:
-    index = text.find(needle)
+    match = re.search(re.escape(needle), text, re.I)
+    if match:
+        index = match.start()
+    else:
+        folded_text = fold(text)
+        index = folded_text.find(needle.lower())
     if index < 0:
         return None
     start = max(0, index - width // 2)
@@ -205,6 +212,7 @@ def assess_identity(
     signals: IdentitySignals,
     *,
     source_url: str = "",
+    origin: str = "",
 ) -> IdentityVerdict:
     """Decide whether `signals` prove the page belongs to `profile`'s entity."""
     org = normalise_org_number(profile.get("organisation_number"))
@@ -325,6 +333,8 @@ def assess_identity(
         or has_norwegian_words or locality_matched or bool(corroboration)
     )
 
+    is_authoritative_origin = origin in ("registry", "registry_email", "universe_snapshot")
+
     if full_name_in_identity and corroboration:
         reasons.append("complete legal name in identity region of the page")
         reasons.append("corroborated by " + " and ".join(corroboration))
@@ -338,6 +348,9 @@ def assess_identity(
             score = 0.70
     elif ratio >= 0.75 and len(matched) >= 2 and locality_matched:
         reasons.append("most legal-name tokens present and corroborated by registered locality/postcode")
+        score = 0.92
+    elif is_authoritative_origin and is_norwegian_domain and (ratio >= 0.5 or (len(matched_anywhere) == len(expected) and len(expected) >= 2)) and (locality_matched or substantive):
+        reasons.append("authoritative registry/seed domain corroborated by legal name tokens and Norwegian context")
         score = 0.92
     elif full_name_in_identity and substantive:
         if is_norwegian_domain and len(expected) >= 2:
@@ -355,22 +368,30 @@ def assess_identity(
     elif ratio >= 0.75 and len(matched) >= 2:
         reasons.append("most legal-name tokens present, exact identity incomplete")
         score = 0.85
-    elif len(expected) == 1 and matched and substantive and domain_matches_name:
+    elif len(expected) == 1 and matched and substantive and (domain_matches_name or (is_authoritative_origin and locality_matched)):
         if is_norwegian_domain and has_norwegian_context:
-            reasons.append("single-token legal name matches domain and page content")
-            score = 0.88
+            reasons.append("single-token legal name matches domain/registry and page content")
+            score = 0.92 if (is_authoritative_origin and locality_matched) else 0.88
         else:
             reasons.append("single-token name on foreign domain requires explicit corroboration")
             score = 0.60
     elif ratio >= 0.5 and len(matched) >= 2 and locality_matched:
-        reasons.append("partial legal-name overlap corroborated by registered locality")
-        score = 0.82
+        if is_authoritative_origin and is_norwegian_domain:
+            reasons.append("partial legal name on registry-declared .no domain corroborated by locality")
+            score = 0.92
+        else:
+            reasons.append("partial legal-name overlap corroborated by registered locality")
+            score = 0.82
     elif ratio >= 0.5 and len(matched) >= 2:
         reasons.append("partial legal-name overlap only")
         score = 0.60
     elif matched_anywhere and not matched:
-        reasons.append("name appears only in body text, not in identity regions")
-        score = 0.45
+        if is_authoritative_origin and is_norwegian_domain and len(matched_anywhere) >= 2:
+            reasons.append("complete legal name in page content of registry-declared .no domain")
+            score = 0.92
+        else:
+            reasons.append("name appears only in body text, not in identity regions")
+            score = 0.45
     else:
         reasons.append("no convincing exact-entity evidence on page")
         score = 0.25
@@ -390,6 +411,8 @@ def assess_identity(
     span = None
     if matched:
         span = _proof_span(identity_text, matched[0]) or _proof_span(all_text, matched[0])
+    elif matched_anywhere:
+        span = _proof_span(all_text, matched_anywhere[0])
     return IdentityVerdict(
-        score, status, score >= PUBLISH_THRESHOLD, reasons, matched, expected,
+        score, status, score >= PUBLISH_THRESHOLD, reasons, matched or matched_anywhere, expected,
         conflicting_org_numbers=conflicting, proof_span=span)

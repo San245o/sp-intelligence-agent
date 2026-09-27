@@ -48,17 +48,20 @@ def _extract_region(html: str, tag: str) -> str:
 
 
 def visible_text(html: str) -> str:
-    """Best-effort main text. Uses trafilatura when available, else a strip."""
+    """Best-effort main text. Uses trafilatura when substantive, plus tag-stripped text."""
+    stripped = re.sub(r"\s+", " ", _strip_tags(html)).strip()
     try:
         import trafilatura
         extracted = trafilatura.extract(
             html, include_comments=False, include_tables=True,
             favor_recall=True)
-        if extracted:
+        if extracted and len(extracted) >= len(stripped) * 0.7:
             return extracted
+        elif extracted:
+            return extracted + " " + stripped
     except Exception:
         pass
-    return re.sub(r"\s+", " ", _strip_tags(html)).strip()
+    return stripped
 
 
 def page_signals(

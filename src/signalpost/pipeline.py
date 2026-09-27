@@ -176,7 +176,8 @@ def research_company(
                 response.text,
                 hostname=registrable_domain(source_url),
                 structured_names=names)
-            verdict = assess_identity(enriched, signals, source_url=source_url)
+            verdict = assess_identity(
+                enriched, signals, source_url=source_url, origin=candidate.origin)
             if best is None or verdict.score > best.score:
                 best = verdict
                 best_response = response
