@@ -44,6 +44,9 @@ DIRECTORY_HOSTS = {
     "nettbedrift.no", "firmaregister.no", "opplysningen.no", "linkedin.com",
     "facebook.com", "instagram.com", "x.com", "twitter.com", "youtube.com",
     "wikipedia.org", "yelp.com", "tripadvisor.com", "finn.no", "eniro.no",
+    "1850.no", "byndle.no", "firmadatabasen.no", "listings.no", "vexter.no",
+    "falio.no", "creditsafe.com", "kompass.com", "careerjet.no", "finansavisen.no",
+    "aftenbladet.no", "foretaksinfo.no", "norwep.com", "dn.no", "e24.no",
 }
 
 PARKED_MARKERS = (
@@ -54,10 +57,11 @@ PARKED_MARKERS = (
     "welcome to nginx", "index of /",
 )
 
-# A page that markets a franchise network or portfolio is not the entity's page.
+# A page that markets a franchise network or portfolio of companies is not the entity's page.
 NETWORK_MARKERS = (
-    "franchisetaker", "franchise", "vare medlemmer", "our portfolio",
-    "portefolje", "konsernet bestar av", "part of the group",
+    "franchisetaker", "franchise", "vare medlemmer", "our portfolio companies",
+    "portfolio companies", "portefoljeselskap", "portefoljeselskaper",
+    "konsernet bestar av", "part of the group",
 )
 
 

@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -49,7 +50,24 @@ def _load_manifest(path: Path) -> list[dict]:
     return rows
 
 
+def _load_env_file() -> None:
+    env_path = ROOT / ".env"
+    if env_path.exists():
+        try:
+            with open(env_path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k, v = k.strip(), v.strip().strip("\"'")
+                        if k and v:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+
 def main() -> int:
+    _load_env_file()
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--manifest", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
@@ -58,8 +76,8 @@ def main() -> int:
     ap.add_argument("--max-requests", type=int, default=None, help="override request cap")
     ap.add_argument("--wall-clock-s", type=int, default=None, help="override wall-clock cap (seconds)")
     ap.add_argument("--max-spend", type=float, default=None, help="override max spend (USD)")
-    ap.add_argument("--search", default="none",
-                    help="search provider: none | brave (needs BRAVE_SEARCH_API_KEY)")
+    ap.add_argument("--search", default="auto",
+                    help="search provider: auto | serper | cse | tavily | brave | bing | exa | none")
     ap.add_argument("--aggressiveness", default="strict",
                     choices=["strict", "moderate", "aggressive"])
     ap.add_argument("--run-id", default=None)

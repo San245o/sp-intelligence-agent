@@ -173,9 +173,13 @@ class RankedCandidate:
 _ORIGIN_PRIOR = {
     "registry": 0.97,
     "wikidata": 0.95,
+    "registry_email": 0.94,
+    "universe_snapshot": 0.93,
     "search": 0.55,
     "dns_guess": 0.45,
 }
+
+AUTHORITATIVE_ORIGINS = ("registry", "wikidata", "registry_email", "universe_snapshot")
 
 
 def rank(
@@ -198,7 +202,7 @@ def rank(
 
     scored: list[RankedCandidate] = []
     for candidate in candidates:
-        authoritative = candidate.origin in ("registry", "wikidata")
+        authoritative = candidate.origin in AUTHORITATIVE_ORIGINS
         if loaded is not None and not authoritative:
             try:
                 feats = candidate_features(profile, candidate.url)
@@ -214,7 +218,7 @@ def rank(
 
     # Authoritative origins first, then by probability, then by original rank.
     scored.sort(key=lambda rc: (
-        0 if rc.candidate.origin in ("registry", "wikidata") else 1,
+        0 if rc.candidate.origin in AUTHORITATIVE_ORIGINS else 1,
         -rc.probability,
         rc.candidate.rank,
     ))

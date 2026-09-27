@@ -140,5 +140,49 @@ class SignalpostAgentTests(unittest.TestCase):
         self.assertEqual(len(diff), 0)
 
 
+    def test_search_gating_blocks_shells_and_allows_active(self):
+        from signalpost.discovery import should_attempt_search
+        from signalpost.config import TIER_SHELL, TIER_STANDARD, TIER_RICH
+        # Shell tier blocked
+        self.assertFalse(should_attempt_search({"name": "ACME AS"}, TIER_SHELL))
+        # Holding/invest blocked even if not shell tier
+        self.assertFalse(should_attempt_search({"name": "NORDIC HOLDING AS", "employees": 5}, TIER_RICH))
+        # Housing cooperative blocked
+        self.assertFalse(should_attempt_search({"name": "SOLBO BORETTSLAG", "legal_form": "BRL"}, TIER_RICH))
+        # Active operating business allowed
+        self.assertTrue(should_attempt_search({"name": "HALDEN BETONGTRANSPORT AS", "employees": 7, "legal_form": "AS"}, TIER_RICH))
+        # Active AS with filed accounts allowed
+    def test_serper_multi_key_fallback(self):
+        import os
+        from signalpost.discovery import SerperSearchProvider
+        from unittest.mock import MagicMock
+        try:
+            os.environ["SERPER_API_KEY"] = "dead_key, live_key"
+            fetcher = MagicMock()
+
+            resp_dead = MagicMock()
+            resp_dead.ok = False
+            resp_dead.status = 400
+
+            resp_live = MagicMock()
+            resp_live.ok = True
+            resp_live.status = 200
+            resp_live.json.return_value = {"organic": [{"link": "https://live.no"}]}
+
+            def fake_get(tag, url, **kwargs):
+                headers = kwargs.get("headers", {})
+                if headers.get("X-API-KEY") == "dead_key":
+                    return resp_dead
+                return resp_live
+
+            fetcher.get.side_effect = fake_get
+
+            provider = SerperSearchProvider(fetcher=fetcher)
+            urls = provider.search("test query")
+            self.assertEqual(urls, ["https://live.no"])
+        finally:
+            os.environ.pop("SERPER_API_KEY", None)
+
+
 if __name__ == "__main__":
     unittest.main()

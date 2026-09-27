@@ -172,6 +172,7 @@ def fetch_entity(
 
     add("phone", entity.get("telefon"), str(entity.get("telefon")))
     add("website_registry", entity.get("hjemmeside"), str(entity.get("hjemmeside")))
+    add("email", entity.get("epostadresse"), str(entity.get("epostadresse")))
 
     for index, key in enumerate(("naeringskode1", "naeringskode2", "naeringskode3"), 1):
         nace = _nace(entity.get(key))

@@ -26,3 +26,6 @@ wheels/
 htmlcov/
 *.tmp
 runs/
+.env
+.env.*
+!.env.example

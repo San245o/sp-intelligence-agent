@@ -175,6 +175,8 @@ class Fetcher:
         accept: str = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         allow_cache: bool = True,
         check_robots: bool = True,
+        headers: dict[str, str] | None = None,
+        data: bytes | None = None,
     ) -> Response:
         with self._cache_lock:
             cached = self._cache.get(url) if allow_cache else None
@@ -202,12 +204,15 @@ class Fetcher:
                 )
             recorder = _RedirectRecorder()
             opener = urllib.request.build_opener(recorder)
-            request = urllib.request.Request(url, headers={
+            req_headers = {
                 "User-Agent": USER_AGENT,
                 "Accept": accept,
                 "Accept-Language": "nb-NO,no;q=0.9,en;q=0.8",
                 "Accept-Encoding": "gzip, deflate",
-            })
+            }
+            if headers:
+                req_headers.update(headers)
+            request = urllib.request.Request(url, data=data, headers=req_headers)
             started = time.monotonic()
             self._gate.acquire(host)
             try:

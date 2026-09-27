@@ -33,6 +33,13 @@ def _clean_tokens(text: str) -> list[str]:
     return [t for t in re.findall(r"[a-z0-9æøå]+", str(text or "").casefold()) if t not in LEGAL_SUFFIXES]
 
 
+CORPORATE_INDICATORS = {
+    "as", "asa", "da", "ans", "aksje", "aksjer", "børs", "regnskap", "resultat",
+    "cfo", "ceo", "styreleder", "direktør", "oppbud", "konkurs", "omsetning",
+    "driftsresultat", "kvartal", "underskudd", "overskudd", "emisjon", "fusjon", "oppkjøp"
+}
+
+
 def exact_title_match(company_name: str, title: str) -> bool:
     """Verify that the exact legal name tokens appear in the headline without conflating."""
     company_tokens = _clean_tokens(company_name)
@@ -41,6 +48,18 @@ def exact_title_match(company_name: str, title: str) -> bool:
 
     if not company_tokens or not title_tokens or len(company_tokens) > len(title_tokens):
         return False
+
+    # Single-word dictionary names (e.g. Havnen, Lugg, AFP, Bryggen) frequently appear
+    # in unrelated general news. For single-token names, require either the legal suffix
+    # (e.g. "AS") or a clear corporate context token in the headline.
+    if len(company_tokens) == 1:
+        all_raw_headline_tokens = [
+            t for t in re.findall(r"[a-z0-9æøå]+", str(headline_clean or "").casefold())
+        ]
+        has_legal_suffix = any(s in all_raw_headline_tokens for s in LEGAL_SUFFIXES)
+        has_corp_indicator = any(ind in all_raw_headline_tokens for ind in CORPORATE_INDICATORS)
+        if not (has_legal_suffix or has_corp_indicator):
+            return False
 
     allowed_predecessors = {
         "av", "for", "fra", "hos", "i", "med", "om", "på", "til", "og", "kjøper", "velger", "ved"

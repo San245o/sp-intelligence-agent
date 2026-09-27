@@ -61,6 +61,10 @@ def _enrich_profile(profile: dict[str, Any], entity: dict[str, Any]) -> dict[str
     enriched["business_address"] = entity.get("forretningsadresse")
     if not enriched.get("website"):
         enriched["website"] = entity.get("hjemmeside")
+    if not enriched.get("email"):
+        enriched["email"] = entity.get("epostadresse")
+    if not enriched.get("phone"):
+        enriched["phone"] = entity.get("telefon")
     if not enriched.get("legal_form"):
         enriched["legal_form"] = (entity.get("organisasjonsform") or {}).get("kode")
     if enriched.get("employees") is None and entity.get("harRegistrertAntallAnsatte"):
