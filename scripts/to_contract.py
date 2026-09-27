@@ -137,6 +137,13 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
     else:
         _add_claim("industry", None, "not_available", 0.6, [])
 
+    # 4b. employee_count
+    emp_claims = claims_by_field.get("employees", []) or claims_by_field.get("employee_count", [])
+    if emp_claims and emp_claims[0].get("availability") == "available":
+        _add_claim("employee_count", emp_claims[0].get("value"), "available", emp_claims[0].get("confidence", 1.0), emp_claims[0].get("evidence_ids", []))
+    else:
+        _add_claim("employee_count", None, "not_available", 0.6, [])
+
     # 5. bankruptcy_or_liquidation_status
     status_claims = claims_by_field.get("operating_status", []) or claims_by_field.get("bankruptcy_or_liquidation_status", [])
     if status_claims and status_claims[0].get("availability") == "available":
@@ -230,6 +237,14 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
     else:
         avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
         _add_claim("dated_public_activity", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
+
+    # 14. social_profiles
+    soc_claims = claims_by_field.get("social_profiles", []) or claims_by_field.get("social_links", [])
+    if soc_claims and soc_claims[0].get("availability") == "available":
+        _add_claim("social_profiles", soc_claims[0].get("value"), "available", soc_claims[0].get("confidence", 0.95), soc_claims[0].get("evidence_ids", []))
+    else:
+        avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
+        _add_claim("social_profiles", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
 
     # Evidence references
     used_eids = {eid for c in contract_claims for eid in c.get("evidence_ids", [])}
