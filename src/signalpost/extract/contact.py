@@ -128,7 +128,14 @@ def extract_contacts(html: str, text: str) -> dict[str, Any]:
         low = url.lower()
         for host, label in _SOCIAL_HOSTS.items():
             if host in low and label not in socials:
-                socials[label] = url
+                path = url.split(host)[-1].strip("/")
+                clean_path = path.split("?")[0].strip("/")
+                slug = clean_path.split(".")[0].lower()
+                if len(clean_path) >= 2 and slug not in {
+                    "share", "sharer", "intent", "login", "signup", "home",
+                    "privacy", "terms", "about", "contact", "dialog", "plugins"
+                }:
+                    socials[label] = url
 
     org_numbers = sorted({n for n in find_org_numbers(haystack) if mod11_valid(n)})
 

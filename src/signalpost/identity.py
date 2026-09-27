@@ -35,7 +35,13 @@ LEGAL_FORMS = {
     "gmbh", "ltd", "limited", "inc", "plc", "llc", "bv", "nv",
 }
 STOPWORDS = {"og", "and", "the", "for", "med", "av", "i", "pa", "til"}
-NOISE = LEGAL_FORMS | STOPWORDS
+FILLER_WORDS = {
+    "norge", "norway", "nordic", "scandinavia", "holding", "invest", "eiendom",
+    "drift", "service", "revisjon", "revisjonsfirmaet", "stiftelsen", "stiftelse",
+    "gruppen", "gruppe", "group", "konsern", "partnere", "partner",
+}
+NOISE = LEGAL_FORMS | STOPWORDS | FILLER_WORDS
+NOISE_BASE = LEGAL_FORMS | STOPWORDS
 
 # Pages that describe many businesses rather than being one business's site.
 DIRECTORY_HOSTS = {
@@ -82,6 +88,12 @@ def name_tokens(name: Any) -> list[str]:
             continue
         if token not in seen:
             seen.append(token)
+    if not seen:
+        for token in re.findall(r"[a-z0-9]+", fold(name)):
+            if token in NOISE_BASE or len(token) < 2:
+                continue
+            if token not in seen:
+                seen.append(token)
     return seen
 
 
@@ -224,8 +236,13 @@ def assess_identity(
     org_found = org in page_orgs
     conflicting = sorted(page_orgs - {org})
 
-    matched = [t for t in expected if t in folded_identity]
-    matched_anywhere = [t for t in expected if t in folded_all]
+    def _token_match(t: str, text: str) -> bool:
+        if len(t) <= 3:
+            return bool(re.search(r"\b" + re.escape(t) + r"\b", text))
+        return t in text
+
+    matched = [t for t in expected if _token_match(t, folded_identity)]
+    matched_anywhere = [t for t in expected if _token_match(t, folded_all)]
     ratio = len(matched) / len(expected) if expected else 0.0
 
     if org_found:
@@ -295,19 +312,43 @@ def assess_identity(
     domain_matches_name = bool(
         domain_label and "".join(expected).startswith(domain_label[:6]))
 
+    is_norwegian_domain = bool(domain.endswith(".no"))
+    has_norwegian_path = bool(re.search(r"/(nb-no|nn-no|no-no|no)(?:/|$)", source_url.lower()))
+    has_norwegian_phone = bool(re.search(r"(\+47|0047)\s*\d", all_text))
+    has_norwegian_words = any(w in folded_all for w in (
+        "organisasjonsnummer", "org.nr", "kontakt oss", "vart selskap", "vare tjenester",
+        "alle rettigheter", "personvernerklaering", "postboks", "apningstider",
+        "informasjonskapsler", "informasjonskapselpolicy", "kundeservice", "vart kontor"
+    ))
+    has_norwegian_context = (
+        is_norwegian_domain or has_norwegian_path or has_norwegian_phone
+        or has_norwegian_words or locality_matched or bool(corroboration)
+    )
+
     if full_name_in_identity and corroboration:
         reasons.append("complete legal name in identity region of the page")
         reasons.append("corroborated by " + " and ".join(corroboration))
         score = 0.95
-    elif full_name_in_identity and substantive:
-        reasons.append("complete legal name in identity region of a substantive page")
-        score = 0.92
+    elif full_name_in_identity and (domain_matches_name or locality_matched):
+        if is_norwegian_domain or (has_norwegian_context and len(expected) >= 2) or (has_norwegian_path and len(expected) >= 1):
+            reasons.append("complete legal name in identity region corroborated by domain or locality")
+            score = 0.95
+        else:
+            reasons.append("name matched on foreign domain without Norwegian locality corroboration")
+            score = 0.70
     elif ratio >= 0.75 and len(matched) >= 2 and locality_matched:
         reasons.append("most legal-name tokens present and corroborated by registered locality/postcode")
         score = 0.92
-    elif full_name_in_identity and (domain_matches_name or locality_matched):
-        reasons.append("complete legal name in identity region corroborated by domain or locality")
-        score = 0.95
+    elif full_name_in_identity and substantive:
+        if is_norwegian_domain and len(expected) >= 2:
+            reasons.append("complete legal name in identity region of a substantive .no page")
+            score = 0.92
+        elif has_norwegian_context and ((len(expected) >= 2 and locality_matched) or has_norwegian_path):
+            reasons.append("complete legal name in identity region corroborated by Norwegian context")
+            score = 0.92
+        else:
+            reasons.append("single-token name or foreign domain requires explicit Norwegian locality corroboration")
+            score = 0.70
     elif full_name_in_identity:
         reasons.append("complete legal name present but page has little content")
         score = 0.85
@@ -315,8 +356,12 @@ def assess_identity(
         reasons.append("most legal-name tokens present, exact identity incomplete")
         score = 0.85
     elif len(expected) == 1 and matched and substantive and domain_matches_name:
-        reasons.append("single-token legal name matches domain and page content")
-        score = 0.88
+        if is_norwegian_domain and has_norwegian_context:
+            reasons.append("single-token legal name matches domain and page content")
+            score = 0.88
+        else:
+            reasons.append("single-token name on foreign domain requires explicit corroboration")
+            score = 0.60
     elif ratio >= 0.5 and len(matched) >= 2 and locality_matched:
         reasons.append("partial legal-name overlap corroborated by registered locality")
         score = 0.82

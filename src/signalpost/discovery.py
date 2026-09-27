@@ -628,8 +628,9 @@ def discover(
     has_authoritative = bool(result.registry_url or (seeds and org in seeds))
     if search and not has_authoritative and should_attempt_search(profile, tier):
         addr = profile.get("business_address") or profile.get("forretningsadresse") or {}
-        city = str(addr.get("poststed") or profile.get("municipality") or "").strip()
-        query = f'"{name}" {city} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no'.strip() if (name and city) else f'"{name}" Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no'
+        city = str(addr.get("poststed") or addr.get("kommune") or profile.get("municipality") or "").strip()
+        loc_clause = f" {city}" if city else ""
+        query = f'"{name}"{loc_clause} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no'.strip()
         for url in search.search(query):
             offer(url, "search", f"candidate from {search.name} search")
 

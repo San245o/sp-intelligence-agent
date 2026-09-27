@@ -183,6 +183,54 @@ class SignalpostAgentTests(unittest.TestCase):
         finally:
             os.environ.pop("SERPER_API_KEY", None)
 
+    def test_foreign_com_single_token_quarantined(self):
+        profile = {"organisation_number": "982112958", "name": "LANTECH AS", "legal_form": "AS", "municipality": "OSLO"}
+        signals = IdentitySignals(
+            hostname="lantech.com",
+            title="Lantech - Packaging Solutions",
+            body_text="Copyright 2024 Lantech Inc, Louisville, Kentucky. Stretch wrappers and pallet solutions worldwide."
+        )
+        verdict = assess_identity(profile, signals, source_url="https://lantech.com")
+        self.assertFalse(verdict.publishable)
+        self.assertLessEqual(verdict.score, 0.70)
+
+    def test_norwegian_path_and_corporate_filler_camfil(self):
+        profile = {"organisation_number": "915512992", "name": "CAMFIL NORGE AS", "legal_form": "AS", "municipality": "OSLO"}
+        signals = IdentitySignals(
+            hostname="camfil.com",
+            title="Camfil Norge | Ren luft for alle",
+            body_text="Camfil Norge leverer renluftsløsninger for bygg og industri. Personvern policy Informasjonskapselpolicy. Kontakt oss."
+        )
+        verdict = assess_identity(profile, signals, source_url="https://www.camfil.com/nb-no")
+        self.assertTrue(verdict.publishable)
+        self.assertGreaterEqual(verdict.score, 0.90)
+
+    def test_short_token_word_boundary_llg(self):
+        profile = {"organisation_number": "934196066", "name": "LL&G AS", "legal_form": "AS", "municipality": "LUNNER"}
+        signals = IdentitySignals(
+            hostname="norgelei.no",
+            title="Norge LEI - Offisiell LEI Registrering",
+            body_text="Offisiell registreringsagent i Norge for bedrifter som trenger LEI-kode."
+        )
+        verdict = assess_identity(profile, signals, source_url="https://norgelei.no")
+        self.assertFalse(verdict.publishable)
+        self.assertNotIn("ll", verdict.matched_tokens)
+
+    def test_social_profile_path_filtering(self):
+        from signalpost.extract.contact import extract_contacts
+        html = """
+        <footer>
+            <a href="https://x.com/">Twitter Root</a>
+            <a href="https://facebook.com/share.php">FB Share</a>
+            <a href="https://linkedin.com/company/teqva-ror">LinkedIn Company</a>
+        </footer>
+        """
+        res = extract_contacts(html, html)
+        socials = res.get("social_profiles", {})
+        self.assertNotIn("twitter", socials)
+        self.assertNotIn("facebook", socials)
+        self.assertEqual(socials.get("linkedin"), "https://linkedin.com/company/teqva-ror")
+
 
 if __name__ == "__main__":
     unittest.main()
