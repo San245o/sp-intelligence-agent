@@ -17,6 +17,7 @@ from .config import AVAILABILITY_STATES
 # Source classes, ordered by how much weight a claim may carry.
 SOURCE_OFFICIAL_REGISTRY = "official_registry"
 SOURCE_OFFICIAL_ACCOUNTS = "official_annual_accounts"
+SOURCE_OFFICIAL_JOB_BOARD = "official_job_board"
 SOURCE_COMPANY_OWNED = "company_owned"
 SOURCE_OPEN_DATA = "open_data"
 SOURCE_LICENSED = "licensed_feed"

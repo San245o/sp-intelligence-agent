@@ -55,14 +55,14 @@ TIER_BUDGETS = {
 }
 
 # Per-host politeness
-PER_HOST_DELAY_S = 0.7
+PER_HOST_DELAY_S = 0.2
 HOST_MAX_CONCURRENCY = 2
-HTTP_TIMEOUT_S = 12
+HTTP_TIMEOUT_S = 4
 HTTP_MAX_RETRIES = 1
 MAX_RESPONSE_BYTES = 3_500_000
 
-# Website crawl shape
-MAX_PAGES_PER_SITE = 10
+# Website crawl shape: shallow and fast (homepage + contact/about)
+MAX_PAGES_PER_SITE = 2
 PRIORITY_PATHS = (
     "/", "/om-oss", "/about", "/about-us", "/om", "/kontakt", "/contact",
     "/ledelse", "/leadership", "/team", "/ansatte", "/people",

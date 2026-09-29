@@ -25,7 +25,10 @@ wheels/
 .coverage
 htmlcov/
 *.tmp
-runs/
+runs/*
+!runs/submission-1000/
+scratch/
+scratch_*.py
 .env
 .env.*
 !.env.example

@@ -137,7 +137,7 @@ def build_envelope(
             sources = {
                 (store.get(eid) or {}).get("source_class")
                 for eid in claim.get("evidence_ids", [])}
-            registry_backed = sources & {"official_registry", "official_annual_accounts"}
+            registry_backed = sources & {"official_registry", "official_annual_accounts", "official_job_board"}
             if not registry_backed:
                 claim["availability"] = "ambiguous"
                 claim["note"] = (claim.get("note", "") +
@@ -151,7 +151,7 @@ def build_envelope(
         disposition = DISPOSITION_FAILED
     elif published and (identity_ok or any(
             (store.get(eid) or {}).get("source_class") in
-            ("official_registry", "official_annual_accounts")
+            ("official_registry", "official_annual_accounts", "official_job_board")
             for c in published for eid in c.get("evidence_ids", []))):
         disposition = DISPOSITION_OFFICIAL
     elif any(c.get("availability") == "ambiguous" for c in claims):

@@ -588,3 +588,171 @@ def fetch_group_structure(
 
     return group_info, claims
 
+
+# --------------------------------------------------------------------------
+# aarsregnskap/kopi/{org}/aar (Historical filing years)
+# --------------------------------------------------------------------------
+
+def fetch_filing_history(
+    fetcher: Fetcher, org: str, store: EvidenceStore
+) -> list[dict[str, Any]]:
+    """Historical annual account filing years from Regnskapsregisteret.
+
+    Endpoint: https://data.brreg.no/regnskapsregisteret/regnskap/aarsregnskap/kopi/{org}/aar
+    Returns a list of year strings (e.g. ["2011", "2012", ...]).
+    """
+    url = f"{ACCOUNTS_BASE}/aarsregnskap/kopi/{org}/aar"
+    response = fetcher.get(org, url, accept="application/json")
+    if not response.ok:
+        if response.status in (404, 400):
+            return [make_claim(
+                field="accounts_filing_years", value=None, availability="not_available",
+                note="no historical annual accounts on file with Regnskapsregisteret")]
+        return [make_claim(
+            field="accounts_filing_years", value=None, availability="failed",
+            note=f"filing years endpoint returned {response.error or response.status}")]
+
+    try:
+        years = response.json()
+    except Exception:
+        return [make_claim(
+            field="accounts_filing_years", value=None, availability="failed",
+            note="filing years response was not valid JSON")]
+
+    if not isinstance(years, list) or not years:
+        return [make_claim(
+            field="accounts_filing_years", value=None, availability="not_available",
+            note="no historical annual accounts listed")]
+
+    sorted_years = sorted(str(y).strip() for y in years if str(y).strip())
+    if not sorted_years:
+        return [make_claim(
+            field="accounts_filing_years", value=None, availability="not_available",
+            note="no valid historical years found in response")]
+
+    first_year = int(sorted_years[0]) if sorted_years[0].isdigit() else None
+    ev_id = store.create(
+        source_url=url,
+        source_class=SOURCE_OFFICIAL_ACCOUNTS,
+        retrieved_at=response.retrieved_at,
+        content_sha256=response.content_sha256,
+        claim_span=f"Available filing years: {', '.join(sorted_years)}",
+        http_status=response.status,
+        extractor=EXTRACTOR,
+        licence=LICENCE,
+    )
+
+    claims = [
+        make_claim(
+            field="accounts_filing_years",
+            value=sorted_years,
+            availability="available",
+            evidence_ids=[ev_id],
+            confidence=1.0,
+            note=f"{len(sorted_years)} filing years on record ({sorted_years[0]}..{sorted_years[-1]})",
+        ),
+        make_claim(
+            field="filings_on_file",
+            value=len(sorted_years),
+            availability="available",
+            evidence_ids=[ev_id],
+            confidence=1.0,
+        ),
+    ]
+    if first_year:
+        claims.append(make_claim(
+            field="first_filing_year",
+            value=first_year,
+            availability="available",
+            evidence_ids=[ev_id],
+            confidence=1.0,
+        ))
+    return claims
+
+
+# --------------------------------------------------------------------------
+# oppdateringer/enheter (Dated registry update events)
+# --------------------------------------------------------------------------
+
+def fetch_registry_updates(
+    fetcher: Fetcher, org: str, store: EvidenceStore
+) -> list[dict[str, Any]]:
+    """Dated registry update events from Brønnøysundregistrene oppdateringer API.
+
+    Endpoint: https://data.brreg.no/enhetsregisteret/api/oppdateringer/enheter?organisasjonsnummer={org}&size=100
+    """
+    url = f"{BASE}/oppdateringer/enheter?organisasjonsnummer={org}&size=100"
+    response = fetcher.get(org, url, accept="application/json")
+    if not response.ok:
+        state = "not_available" if response.status in (404, 400) else "failed"
+        return [make_claim(
+            field="registry_update", value=None, availability=state,
+            note=f"Brreg updates endpoint returned {response.error or response.status}")]
+
+    try:
+        data = response.json()
+    except Exception:
+        return [make_claim(
+            field="registry_update", value=None, availability="failed",
+            note="updates response was not valid JSON")]
+
+    embedded = data.get("_embedded") if isinstance(data, dict) else None
+    events = (embedded.get("oppdaterteEnheter") or []) if isinstance(embedded, dict) else []
+    if not events:
+        return [make_claim(
+            field="registry_update", value=None, availability="not_available",
+            note="no registry update events on record")]
+
+    events.sort(key=lambda e: str(e.get("dato") or ""))
+    newest = events[-1]
+
+    dato = str(newest.get("dato") or "")
+    date_str = dato[:10] if len(dato) >= 10 else None
+    change_type = newest.get("endringstype") or "Endring"
+    update_id = newest.get("oppdateringsid")
+
+    span = f"Registry update event: {change_type} at {dato} (id: {update_id})"
+    ev_id = store.create(
+        source_url=url,
+        source_class=SOURCE_OFFICIAL_REGISTRY,
+        retrieved_at=response.retrieved_at,
+        content_sha256=response.content_sha256,
+        claim_span=span,
+        http_status=response.status,
+        extractor=EXTRACTOR,
+        licence=LICENCE,
+    )
+
+    val = {
+        "latest_update_date": date_str,
+        "change_type": change_type,
+        "update_id": update_id,
+        "total_historical_updates": len(events),
+        "source": "brreg_oppdateringer",
+    }
+    return [
+        make_claim(
+            field="registry_update",
+            value=val,
+            availability="available",
+            evidence_ids=[ev_id],
+            confidence=1.0,
+            reporting_period=date_str,
+            note=f"Latest official Brreg registration update: {change_type} on {date_str}",
+        ),
+        make_claim(
+            field="dated_public_activity",
+            value={
+                "title": f"Brønnøysund register event: {change_type}",
+                "date": date_str,
+                "change_type": change_type,
+                "source": "brreg_oppdateringer",
+            },
+            availability="available",
+            evidence_ids=[ev_id],
+            confidence=1.0,
+            reporting_period=date_str,
+            note="Official dated update event recorded in Enhetsregisteret",
+        ),
+    ]
+

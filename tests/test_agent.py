@@ -251,7 +251,352 @@ class SignalpostAgentTests(unittest.TestCase):
         self.assertIn("bjorn", verdict.matched_tokens)
         self.assertIn("engebretsen", verdict.matched_tokens)
 
+    def test_nav_name_matching_and_gating(self):
+        from signalpost.sources.nav import names_match, fold, strip_legal_form
+        # Exact match
+        self.assertTrue(names_match("Trafikk Gjengen AS", "TRAFIKK GJENGEN AS"))
+        # Match with legal form stripping
+        self.assertTrue(names_match("Trafikk Gjengen AS", "Trafikk Gjengen"))
+        self.assertTrue(names_match("Trafikk Gjengen", "Trafikk Gjengen AS"))
+        # Norwegian diacritics folding
+        self.assertTrue(names_match("Blåbær Skog ASA", "BLAABAER SKOG"))
+        # Partial / different companies must NOT match
+        self.assertFalse(names_match("Trafikk Gjengen AS", "Gjengen AS"))
+        self.assertFalse(names_match("Trafikk Gjengen AS", "Annen Trafikk AS"))
+        self.assertFalse(names_match("Trafikk Gjengen AS", "Trafikk Gjengen Entreprenør AS"))
+        self.assertFalse(names_match("", "Trafikk Gjengen AS"))
+
+    def test_nav_job_fetching_and_rejection_of_unrelated_employers(self):
+        from unittest.mock import MagicMock
+        from signalpost.sources.nav import fetch_nav_jobs
+        from signalpost.evidence import EvidenceStore
+
+        fetcher = MagicMock()
+        mock_response = MagicMock()
+        mock_response.ok = True
+        mock_response.status = 200
+        mock_response.retrieved_at = "2026-09-28T09:00:00Z"
+        mock_response.content_sha256 = "abc123"
+        mock_response.json.return_value = {
+            "hits": {
+                "hits": [
+                    {
+                        "_source": {
+                            "uuid": "ad-1",
+                            "status": "ACTIVE",
+                            "title": "Tømrer søkes",
+                            "businessName": "Acme Bygg AS",
+                            "employer": {"name": "ACME BYGG AS"},
+                            "published": "2026-09-20T10:00:00",
+                            "expires": "2026-10-20T10:00:00",
+                            "locationList": [{"city": "Oslo"}],
+                        }
+                    },
+                    {
+                        "_source": {
+                            "uuid": "ad-2",
+                            "status": "ACTIVE",
+                            "title": "Sveiser",
+                            "businessName": "Unrelated Entreprenør AS",
+                            "employer": {"name": "Unrelated Entreprenør AS"},
+                            "published": "2026-09-21T10:00:00",
+                        }
+                    }
+                ]
+            }
+        }
+        fetcher.get.return_value = mock_response
+        store = EvidenceStore()
+
+        claims = fetch_nav_jobs(fetcher, "912345678", "Acme Bygg AS", store)
+        fields = {c["field"]: c for c in claims}
+
+        self.assertIn("job_posting", fields)
+        self.assertEqual(fields["job_posting"]["value"]["title"], "Tømrer søkes")
+        self.assertEqual(fields["active_job_count"]["value"], 1)
+        self.assertEqual(fields["hiring_or_activity_signal"]["value"]["active_job_ads"], 1)
+
+    def test_filing_history_and_registry_updates(self):
+        from unittest.mock import MagicMock
+        from signalpost.sources.brreg import fetch_filing_history, fetch_registry_updates
+        from signalpost.evidence import EvidenceStore
+
+        store = EvidenceStore()
+        fetcher = MagicMock()
+
+        # 1. Filing history
+        resp_history = MagicMock()
+        resp_history.ok = True
+        resp_history.status = 200
+        resp_history.retrieved_at = "2026-09-28T09:00:00Z"
+        resp_history.content_sha256 = "sha_hist"
+        resp_history.json.return_value = ["2023", "2021", "2022", "2024"]
+
+        fetcher.get.return_value = resp_history
+        claims = fetch_filing_history(fetcher, "912345678", store)
+        fields = {c["field"]: c for c in claims}
+
+        self.assertIn("accounts_filing_years", fields)
+        self.assertEqual(fields["accounts_filing_years"]["value"], ["2021", "2022", "2023", "2024"])
+        self.assertEqual(fields["first_filing_year"]["value"], 2021)
+        self.assertEqual(fields["filings_on_file"]["value"], 4)
+
+        # 2. Registry updates
+        resp_updates = MagicMock()
+        resp_updates.ok = True
+        resp_updates.status = 200
+        resp_updates.retrieved_at = "2026-09-28T09:00:00Z"
+        resp_updates.content_sha256 = "sha_upd"
+        resp_updates.json.return_value = {
+            "_embedded": {
+                "oppdaterteEnheter": [
+                    {"oppdateringsid": 100, "dato": "2025-01-10T12:00:00Z", "endringstype": "Ny"},
+                    {"oppdateringsid": 200, "dato": "2026-06-15T08:30:00Z", "endringstype": "Endring"},
+                ]
+            }
+        }
+        fetcher.get.return_value = resp_updates
+        claims_upd = fetch_registry_updates(fetcher, "912345678", store)
+        fields_upd = {c["field"]: c for c in claims_upd}
+
+        self.assertIn("registry_update", fields_upd)
+        self.assertEqual(fields_upd["registry_update"]["value"]["latest_update_date"], "2026-06-15")
+        self.assertEqual(fields_upd["registry_update"]["value"]["change_type"], "Endring")
+        self.assertIn("dated_public_activity", fields_upd)
+        self.assertEqual(fields_upd["dated_public_activity"]["value"]["date"], "2026-06-15")
+
+    def test_to_contract_includes_new_fields(self):
+        raw_env = {
+            "organisation_number": "912345678",
+            "input_name": "TEST BEDRIFT AS",
+            "claims": [
+                {"field": "legal_name", "value": "TEST BEDRIFT AS", "availability": "available", "confidence": 1.0, "evidence_ids": ["ev-1"]},
+                {"field": "accounts_filing_years", "value": ["2022", "2023", "2024"], "availability": "available", "confidence": 1.0, "evidence_ids": ["ev-2"]},
+                {"field": "active_job_count", "value": 2, "availability": "available", "confidence": 0.95, "evidence_ids": ["ev-3"]},
+                {"field": "job_posting", "value": {"title": "Utvikler", "url": "https://example.com/ad"}, "availability": "available", "confidence": 0.95, "evidence_ids": ["ev-3"]},
+                {"field": "registry_update", "value": {"latest_update_date": "2026-05-01", "change_type": "Endring"}, "availability": "available", "confidence": 1.0, "evidence_ids": ["ev-4"]},
+            ],
+            "evidence": [
+                {"id": "ev-1", "source_url": "https://data.brreg.no", "retrieved_at": "2026-09-28T09:00:00Z"},
+                {"id": "ev-2", "source_url": "https://data.brreg.no/aar", "retrieved_at": "2026-09-28T09:00:00Z"},
+                {"id": "ev-3", "source_url": "https://arbeidsplassen.nav.no", "retrieved_at": "2026-09-28T09:00:00Z"},
+                {"id": "ev-4", "source_url": "https://data.brreg.no/oppdateringer", "retrieved_at": "2026-09-28T09:00:00Z"},
+            ]
+        }
+        converted = convert_envelope(raw_env)
+        c_map = {c["field"]: c for c in converted["claims"]}
+
+        self.assertIn("accounts_filing_years", c_map)
+        self.assertEqual(c_map["accounts_filing_years"]["value"], ["2022", "2023", "2024"])
+
+        self.assertIn("active_job_count", c_map)
+        self.assertEqual(c_map["active_job_count"]["value"], 2)
+
+        self.assertIn("job_posting", c_map)
+        self.assertEqual(c_map["job_posting"]["value"]["title"], "Utvikler")
+
+        self.assertIn("dated_public_activity", c_map)
+        self.assertEqual(c_map["dated_public_activity"]["value"]["latest_update_date"], "2026-05-01")
+
+    def test_places_ratings_matching_and_gating(self):
+        from unittest.mock import MagicMock
+        from signalpost.sources.places import fetch_places_ratings, _names_match_place, _locations_match
+        from signalpost.evidence import EvidenceStore
+
+        # Name matching
+        self.assertTrue(_names_match_place("Grand Hotel AS", "Grand Hotel"))
+        self.assertTrue(_names_match_place("Equinor ASA", "Equinor"))
+        self.assertFalse(_names_match_place("Grand Hotel AS", "Totally Different Hotel"))
+
+        # Location matching
+        self.assertTrue(_locations_match("Karl Johans gate 31, 0159 Oslo", "Oslo", None))
+        self.assertFalse(_locations_match("Strandgata 10, 5000 Bergen", "Oslo", None))
+
+        # Mocked API response
+        fetcher = MagicMock()
+        mock_response = MagicMock()
+        mock_response.ok = True
+        mock_response.status = 200
+        mock_response.retrieved_at = "2026-09-28T09:00:00Z"
+        mock_response.content_sha256 = "places123"
+        mock_response.json.return_value = {
+            "places": [
+                {
+                    "title": "Acme Bygg",
+                    "address": "Storgata 5, 0155 Oslo",
+                    "rating": 4.5,
+                    "ratingCount": 42,
+                    "cid": "1234567890",
+                    "category": "Byggefirma",
+                }
+            ]
+        }
+        fetcher.get.return_value = mock_response
+        store = EvidenceStore()
+
+        claims = fetch_places_ratings(
+            fetcher, "999888777", "Acme Bygg AS", "Oslo", "Storgata 5", store, api_key="dummy_key"
+        )
+        self.assertGreaterEqual(len(claims), 2)
+        rev = next(c for c in claims if c["field"] == "ratings_and_reviews")
+        self.assertEqual(rev["value"]["rating"], 4.5)
+        self.assertEqual(rev["value"]["rating_count"], 42)
+        self.assertEqual(rev["value"]["place_id"], "1234567890")
+
+    def test_youtube_channel_and_cadence(self):
+        from unittest.mock import MagicMock
+        from signalpost.sources.youtube import fetch_youtube_activity, extract_channel_id_from_url_or_html
+        from signalpost.evidence import EvidenceStore
+
+        cid = extract_channel_id_from_url_or_html("https://www.youtube.com/channel/UCwyLglaZ7FUVAIZTBYvgC8w")
+        self.assertEqual(cid, "UCwyLglaZ7FUVAIZTBYvgC8w")
+
+        fetcher = MagicMock()
+        mock_response = MagicMock()
+        mock_response.ok = True
+        mock_response.status = 200
+        mock_response.retrieved_at = "2026-09-28T09:00:00Z"
+        mock_response.content_sha256 = "yt123"
+        mock_response.text = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author><name>Acme Channel</name></author>
+  <entry>
+    <title>Acme News 2026</title>
+    <published>2026-09-20T10:00:00+00:00</published>
+    <link rel="alternate" href="https://www.youtube.com/watch?v=xyz123"/>
+  </entry>
+</feed>"""
+        fetcher.get.return_value = mock_response
+        store = EvidenceStore()
+
+        claims = fetch_youtube_activity(
+            fetcher, "999888777", "Acme AS", "https://www.youtube.com/channel/UCwyLglaZ7FUVAIZTBYvgC8w", store
+        )
+        self.assertGreaterEqual(len(claims), 1)
+        buzz = next(c for c in claims if c["field"] == "buzz_or_engagement")
+        self.assertEqual(buzz["value"]["channel_title"], "Acme Channel")
+        self.assertEqual(buzz["value"]["recent_videos_count"], 1)
+        self.assertEqual(buzz["value"]["latest_video_title"], "Acme News 2026")
+
+    def test_nav_jobs_html_parsing_and_zero_handling(self):
+        from unittest.mock import MagicMock
+        from signalpost.sources.nav import fetch_nav_jobs, names_match
+        from signalpost.evidence import EvidenceStore
+
+        # Verify name matching
+        self.assertTrue(names_match("Acme Consulting AS", "Acme Consulting AS"))
+        self.assertTrue(names_match("Acme Consulting AS", "Acme Consulting"))
+        self.assertTrue(names_match("Acme Bygg AS", "Acme Bygg Avd Bergen"))
+        self.assertFalse(names_match("Acme Bygg AS", "Different Bygg AS"))
+
+        fetcher = MagicMock()
+        mock_response = MagicMock()
+        mock_response.ok = True
+        mock_response.status = 200
+        mock_response.is_html = True
+        mock_response.retrieved_at = "2026-09-28T09:00:00Z"
+        mock_response.content_sha256 = "navhtml123"
+        mock_response.text = """
+        <html><body>
+          <article>
+            <a href="/stillinger/stilling/11111111-2222-3333-4444-555555555555">Senior Cloud Architect</a>
+            <span>24. september 2026</span>
+            <span>Arbeidsgiver</span>
+            <span>Acme Consulting AS</span>
+            <span>Sted</span>
+            <span>Oslo</span>
+          </article>
+          <article>
+            <a href="/stillinger/stilling/99999999-8888-7777-6666-555555555555">Other Job</a>
+            <span>Arbeidsgiver</span>
+            <span>Unrelated AS</span>
+          </article>
+        </body></html>
+        """
+        fetcher.get.return_value = mock_response
+        store = EvidenceStore()
+
+        claims = fetch_nav_jobs(fetcher, "999888777", "Acme Consulting AS", store)
+        c_map = {c["field"]: c for c in claims}
+
+        self.assertIn("active_job_count", c_map)
+        self.assertEqual(c_map["active_job_count"]["value"], 1)
+        self.assertIn("job_posting", c_map)
+        self.assertEqual(c_map["job_posting"]["value"]["title"], "Senior Cloud Architect")
+        self.assertEqual(c_map["job_posting"]["value"]["location"], "Oslo")
+        self.assertEqual(c_map["job_posting"]["value"]["date_posted"], "2026-09-24")
+        self.assertIn("hiring_or_activity_signal", c_map)
+
+    def test_sentiment_model_chain_and_fallback(self):
+        from signalpost.sources.sentiment import SENTIMENT_MODELS, REPORT_MODELS, rule_based_classify
+        
+        # Verify user model configuration: 3.7 flash for sentiment, 3.5 flash lite for report, 3.1 flash lite as fallback
+        self.assertEqual(SENTIMENT_MODELS[0], "gemini-3.7-flash")
+        self.assertEqual(REPORT_MODELS[0], "gemini-3.5-flash-lite")
+        self.assertIn("gemini-3.1-flash-lite", SENTIMENT_MODELS)
+        self.assertIn("gemini-3.1-flash-lite", REPORT_MODELS)
+
+        # Verify deterministic rule fallback
+        sent, conf, rsn = rule_based_classify("Selskapet opplever kraftig inntektsvekst og overskudd")
+        self.assertEqual(sent, "positive")
+        self.assertGreaterEqual(conf, 0.8)
+
+        sent, conf, rsn = rule_based_classify("Selskapet varsler oppsigelser og stort underskudd")
+        self.assertEqual(sent, "negative")
+        self.assertGreaterEqual(conf, 0.8)
+
+        sent, conf, rsn = rule_based_classify("Årsmøte avholdt i Oslo")
+        self.assertEqual(sent, "neutral")
+
+    def test_research_agent_qa_and_citations(self):
+        from signalpost.research import answer_profile, screen_profiles
+        from signalpost.workspace import empty_workspace, record_screen
+
+        mock_envelope = {
+            "organisation_number": "928057798",
+            "input_name": "OTTEM GJENVINNING AS",
+            "claims": [
+                {"field": "legal_name", "value": "OTTEM GJENVINNING AS", "availability": "available", "evidence_ids": ["ev-1"]},
+                {"field": "organisation_form", "value": {"code": "AS"}, "availability": "available", "evidence_ids": ["ev-1"]},
+                {"field": "employees", "value": 12, "availability": "available", "evidence_ids": ["ev-1"]},
+                {"field": "registered_office_municipality", "value": "SUNNDAL", "availability": "available", "evidence_ids": ["ev-1"]},
+                {"field": "annual_turnover_nok", "value": {"amount": 32808480.0, "currency": "NOK"}, "availability": "available", "evidence_ids": ["ev-2"], "reporting_period": "2026-03-10"},
+                {"field": "operating_profit_nok", "value": {"amount": -2883011.0, "currency": "NOK"}, "availability": "available", "evidence_ids": ["ev-2"]},
+            ],
+            "evidence": [
+                {"id": "ev-1", "source_url": "https://data.brreg.no/1", "source_class": "official_registry", "retrieved_at": "2026-09-28T12:00:00Z", "content_sha256": "sha1"},
+                {"id": "ev-2", "source_url": "https://data.brreg.no/2", "source_class": "official_annual_accounts", "retrieved_at": "2026-09-28T12:00:00Z", "content_sha256": "sha2"},
+            ]
+        }
+
+        # Test single-company QA
+        res = answer_profile(mock_envelope, "What are the accounts and revenue?")
+        self.assertEqual(res["organisation_number"], "928057798")
+        self.assertTrue(len(res["facts"]) >= 5)
+        for f in res["facts"]:
+            self.assertTrue(f.get("source_url"))
+            self.assertTrue(f.get("retrieved_at"))
+            self.assertTrue(f.get("content_sha256"))
+
+        # Test screening query
+        screen_res = screen_profiles([mock_envelope], "companies with revenue above 10 million")
+        self.assertFalse(screen_res["abstained"])
+        self.assertEqual(len(screen_res["results"]), 1)
+        self.assertEqual(screen_res["results"][0]["organisation_number"], "928057798")
+
+        # Test unsupported screening query abstention
+        unsupported = screen_profiles([mock_envelope], "rank companies by review popularity and buzz")
+        self.assertTrue(unsupported["abstained"])
+
+        # Test workspace recording
+        ws = empty_workspace()
+        ws = record_screen(ws, screen_res, pin_organisations=["928057798"])
+        self.assertEqual(len(ws["history"]), 1)
+        self.assertIn("928057798", ws["pins"])
+
 
 if __name__ == "__main__":
     unittest.main()
+
+
 

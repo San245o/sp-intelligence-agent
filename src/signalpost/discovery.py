@@ -36,7 +36,7 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from .evidence import SOURCE_CANDIDATE_ONLY, EvidenceStore
-from .identity import fold, is_directory_host, registrable_domain
+from .identity import fold, is_directory_host, name_tokens, registrable_domain
 
 DEFAULT_UNIVERSE_WEBSITES_PATH = Path(__file__).resolve().parents[2] / "data" / "universe-websites.json"
 DEFAULT_WIKIDATA_WEBSITES_PATH = Path(__file__).resolve().parents[2] / "data" / "wikidata-websites.json"
@@ -577,6 +577,17 @@ def discover(
         host = registrable_domain(normalised)
         if host in seen or is_directory_host(normalised):
             return
+        if origin == "search":
+            host_slug = host.split(".")[0].lower()
+            name_toks = name_tokens(name)
+            # Require at least some token overlap or 3-char prefix match with company name
+            relevant = any(
+                tok in host_slug or host_slug in tok or
+                (len(tok) >= 3 and len(host_slug) >= 3 and (tok.startswith(host_slug[:3]) or host_slug.startswith(tok[:3])))
+                for tok in name_toks
+            )
+            if not relevant:
+                return
         seen.add(host)
         result.candidates.append(
             Candidate(normalised, origin, len(result.candidates) + 1, note))

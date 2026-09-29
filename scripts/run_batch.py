@@ -136,7 +136,7 @@ def main() -> int:
         futures = {pool.submit(_work, p): p for p in profiles}
         for idx, fut in enumerate(as_completed(futures), 1):
             results.append(fut.result())
-            if idx % 25 == 0 or idx == total:
+            if idx % 5 == 0 or idx == total:
                 elapsed = time.time() - started
                 print(
                     f"[{run_id}] {idx}/{total} ({idx/total*100:.1f}%) "
@@ -151,6 +151,51 @@ def main() -> int:
     # Preserve manifest order in the output for deterministic diffs.
     order = {str(p.get("organisation_number")): i for i, p in enumerate(profiles)}
     results.sort(key=lambda e: order.get(str(e.get("organisation_number")), 1 << 30))
+
+    # --- Batch Qualified Sentiment (Single GenAI API call across whole run) ---
+    try:
+        from signalpost.sources.sentiment import (
+            classify_news_sentiment,
+            build_sentiment_claims,
+        )
+        from signalpost.evidence import EvidenceStore
+
+        news_items = []
+        for env in results:
+            org = str(env.get("organisation_number", ""))
+            company_name = str(env.get("input_name", ""))
+            for c in env.get("claims", []):
+                if c.get("field") == "news_mention" and c.get("availability") == "available":
+                    val = c.get("value") or {}
+                    title = val.get("title", "")
+                    if title:
+                        news_items.append({
+                            "id": f"{org}_{len(news_items)}",
+                            "org": org,
+                            "company_name": company_name,
+                            "title": title,
+                        })
+
+        sentiment_map = classify_news_sentiment(news_items) if news_items else {}
+
+        for env in results:
+            org = str(env.get("organisation_number", ""))
+            company_name = str(env.get("input_name", ""))
+            has_sent = any(c.get("field") == "qualified_sentiment" for c in env.get("claims", []))
+            if not has_sent:
+                news_claims = [
+                    c for c in env.get("claims", [])
+                    if c.get("field") == "news_mention" and c.get("availability") == "available"
+                ]
+                store = EvidenceStore()
+                for ev in env.get("evidence", []):
+                    if isinstance(ev, dict) and ev.get("id"):
+                        store.add(ev)
+                sent_claims = build_sentiment_claims(company_name, org, news_claims, sentiment_map, store)
+                env.setdefault("claims", []).extend(sent_claims)
+                env["evidence"] = store.all()
+    except Exception as exc:
+        print(f"Warning: sentiment batch enrichment encountered an error: {exc}", flush=True)
 
     with envelopes_path.open("w", encoding="utf-8") as fh:
         for env in results:

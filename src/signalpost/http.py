@@ -7,6 +7,7 @@ evaluator's rule that both consume the 2,000-request cap.
 from __future__ import annotations
 
 import gzip
+import socket
 import ssl
 import threading
 import time
@@ -17,6 +18,9 @@ import zlib
 from dataclasses import dataclass, field, replace
 from typing import Any
 from urllib.robotparser import RobotFileParser
+
+# Cap global socket connect and read timeouts so dead IPs never stall worker threads
+socket.setdefaulttimeout(4.0)
 
 from .budget import RunBudget
 from .config import (
@@ -84,20 +88,30 @@ class _HostGate:
         self._sems: dict[str, threading.Semaphore] = {}
         self._last: dict[str, float] = {}
 
+    def _delay_for(self, host: str) -> float:
+        if "brreg.no" in host:
+            return 0.05
+        if "nav.no" in host:
+            return 1.2
+        return 0.2
+
     def _sem(self, host: str) -> threading.Semaphore:
         with self._lock:
             if host not in self._sems:
-                self._sems[host] = threading.Semaphore(HOST_MAX_CONCURRENCY)
+                conc = 1 if "nav.no" in host else (6 if "brreg.no" in host else HOST_MAX_CONCURRENCY)
+                self._sems[host] = threading.Semaphore(conc)
             return self._sems[host]
 
     def acquire(self, host: str) -> None:
         self._sem(host).acquire()
+        delay = self._delay_for(host)
         with self._lock:
-            wait = PER_HOST_DELAY_S - (time.monotonic() - self._last.get(host, 0.0))
+            now = time.monotonic()
+            target = max(now, self._last.get(host, 0.0) + delay)
+            self._last[host] = target
+            wait = target - now
         if wait > 0:
             time.sleep(wait)
-        with self._lock:
-            self._last[host] = time.monotonic()
 
     def release(self, host: str) -> None:
         self._sem(host).release()
@@ -149,7 +163,7 @@ class Fetcher:
                 raise BudgetDenied()
             request = urllib.request.Request(
                 robots_url, headers={"User-Agent": USER_AGENT})
-            with urllib.request.urlopen(request, timeout=HTTP_TIMEOUT_S, context=_SSL_CONTEXT) as handle:
+            with urllib.request.urlopen(request, timeout=3.0, context=_SSL_CONTEXT) as handle:
                 body = handle.read(400_000).decode("utf-8", "ignore")
             parser.parse(body.splitlines())
         except BudgetDenied:
@@ -217,6 +231,8 @@ class Fetcher:
                 "Accept-Language": "nb-NO,no;q=0.9,en;q=0.8",
                 "Accept-Encoding": "gzip, deflate",
             }
+            if "nav.no" in host:
+                req_headers["Referer"] = "https://arbeidsplassen.nav.no/stillinger"
             if headers:
                 req_headers.update(headers)
             request = urllib.request.Request(url, data=data, headers=req_headers)
@@ -256,11 +272,14 @@ class Fetcher:
                 self._gate.release(host)
 
             last = response
-            # 4xx is a definitive answer; only retry transport/5xx faults.
-            if response.ok or (response.status and 400 <= response.status < 500):
+            is_registry = "brreg.no" in host
+            if response.ok or (response.status and 400 <= response.status < 500 and response.status != 429):
                 break
-            if attempt < attempts - 1:
-                time.sleep(0.4 * (attempt + 1))
+            if response.status is None and not is_registry:
+                break
+            if attempt < attempts - 1 or (response.status == 429 and attempt < attempts):
+                backoff = 3.5 if response.status == 429 else (0.4 * (attempt + 1))
+                time.sleep(backoff)
 
         assert last is not None
         if last.ok and allow_cache:

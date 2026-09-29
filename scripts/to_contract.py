@@ -223,16 +223,22 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
         _add_claim("official_website", None, "not_available", 0.6, [])
 
     # 12. hiring_or_activity_signal
-    act_claims = claims_by_field.get("hiring_or_activity_signal", [])
-    if act_claims and act_claims[0].get("availability") == "available":
+    act_claims = [c for c in claims_by_field.get("hiring_or_activity_signal", []) if c.get("availability") == "available"]
+    job_count_claims = [c for c in claims_by_field.get("active_job_count", []) if c.get("availability") == "available"]
+    if act_claims:
         _add_claim("hiring_or_activity_signal", act_claims[0].get("value"), "available", act_claims[0].get("confidence", 0.95), act_claims[0].get("evidence_ids", []))
+    elif job_count_claims:
+        _add_claim("hiring_or_activity_signal", {"active_job_ads": job_count_claims[0].get("value"), "source": "nav"}, "available", 0.95, job_count_claims[0].get("evidence_ids", []))
     else:
         avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
         _add_claim("hiring_or_activity_signal", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
 
     # 13. dated_public_activity
-    news_claims = claims_by_field.get("dated_public_activity", []) or claims_by_field.get("news_mention", [])
-    if news_claims and news_claims[0].get("availability") == "available":
+    news_claims = [
+        c for c in (claims_by_field.get("dated_public_activity", []) or claims_by_field.get("news_mention", []) or claims_by_field.get("registry_update", []))
+        if c.get("availability") == "available"
+    ]
+    if news_claims:
         _add_claim("dated_public_activity", news_claims[0].get("value"), "available", news_claims[0].get("confidence", 0.95), news_claims[0].get("evidence_ids", []))
     else:
         avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
@@ -245,6 +251,57 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
     else:
         avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
         _add_claim("social_profiles", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
+
+    # 15. accounts_filing_years
+    year_claims = claims_by_field.get("accounts_filing_years", [])
+    if year_claims and year_claims[0].get("availability") == "available":
+        _add_claim("accounts_filing_years", year_claims[0].get("value"), "available", year_claims[0].get("confidence", 1.0), year_claims[0].get("evidence_ids", []))
+    else:
+        _add_claim("accounts_filing_years", None, "not_available", 0.6, [])
+
+    # 16. active_job_count
+    emp_claims = [c for c in claims_by_field.get("employees", []) or claims_by_field.get("employee_count", []) if c.get("availability") == "available"]
+    emp_val = emp_claims[0].get("value") if emp_claims else None
+    if job_count_claims:
+        _add_claim("active_job_count", job_count_claims[0].get("value"), "available", job_count_claims[0].get("confidence", 0.95), job_count_claims[0].get("evidence_ids", []))
+    else:
+        is_non_emp = (env.get("diagnostics", {}).get("spend_tier") == "shell") or (emp_val is not None and emp_val == 0)
+        avail = "not_applicable" if is_non_emp else "not_available"
+        _add_claim("active_job_count", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
+
+    # 17. job_posting
+    for jc in claims_by_field.get("job_posting", []):
+        if jc.get("availability") == "available":
+            _add_claim("job_posting", jc.get("value"), "available", jc.get("confidence", 0.95), jc.get("evidence_ids", []))
+
+    # 18. ratings_and_reviews
+    review_claims = [c for c in claims_by_field.get("ratings_and_reviews", []) if c.get("availability") == "available"]
+    if review_claims:
+        _add_claim("ratings_and_reviews", review_claims[0].get("value"), "available", review_claims[0].get("confidence", 0.95), review_claims[0].get("evidence_ids", []))
+    else:
+        is_non_physical = (env.get("diagnostics", {}).get("spend_tier") == "shell")
+        avail = "not_applicable" if is_non_physical else "not_available"
+        _add_claim("ratings_and_reviews", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
+
+    # 19. buzz_or_engagement
+    buzz_claims = [c for c in claims_by_field.get("buzz_or_engagement", []) if c.get("availability") == "available"]
+    if buzz_claims:
+        _add_claim("buzz_or_engagement", buzz_claims[0].get("value"), "available", buzz_claims[0].get("confidence", 0.95), buzz_claims[0].get("evidence_ids", []))
+    else:
+        avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
+        _add_claim("buzz_or_engagement", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
+
+    # 20. qualified_sentiment
+    sent_claims = [c for c in claims_by_field.get("qualified_sentiment", []) if c.get("availability") == "available"]
+    if sent_claims:
+        _add_claim("qualified_sentiment", sent_claims[0].get("value"), "available", sent_claims[0].get("confidence", 0.92), sent_claims[0].get("evidence_ids", []))
+    else:
+        _add_claim("qualified_sentiment", None, "not_available", 0.6, [])
+
+    # 21. news_mention
+    for nc in claims_by_field.get("news_mention", []):
+        if nc.get("availability") == "available":
+            _add_claim("news_mention", nc.get("value"), "available", nc.get("confidence", 0.92), nc.get("evidence_ids", []))
 
     # Evidence references
     used_eids = {eid for c in contract_claims for eid in c.get("evidence_ids", [])}

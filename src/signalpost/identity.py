@@ -61,6 +61,13 @@ DIRECTORY_HOSTS = {
     "vatverifier.com", "tracxn.com", "180.no", "infobel.com", "rosa.no",
     "nordicnet.no", "generate.no", "firmview.no", "sokfirma.no", "m.io.no",
     "bestilletransport.no", "utdanning.no",
+    # News media & municipal portals
+    "banett.no", "budstikka.no", "varingen.no", "vg.no", "db.no", "nrk.no",
+    "adressa.no", "ba.no", "bt.no", "rb.no", "fvn.no", "nordlys.no", "ta.no",
+    "varden.no", "sb.no", "tb.no", "dt.no", "h-avis.no", "an.no", "itromso.no",
+    "tk.no", "amta.no", "oblad.no", "moss-avis.no", "fredriksstad-blad.no",
+    "smp.no", "nettavisen.no", "klassekampen.no", "dagsavisen.no", "morgenbladet.no",
+    "forskning.no", "tu.no", "digi.no", "kode24.no", "shifter.no",
 }
 
 PARKED_MARKERS = (
@@ -147,7 +154,11 @@ def registrable_domain(url: str) -> str:
 
 def is_directory_host(url: str) -> bool:
     host = registrable_domain(url)
-    return any(host == d or host.endswith("." + d) for d in DIRECTORY_HOSTS)
+    if any(host == d or host.endswith("." + d) for d in DIRECTORY_HOSTS):
+        return True
+    if any(host.endswith(sfx) for sfx in (".kommune.no", ".fylke.no", ".gov.no", ".mil.no")):
+        return True
+    return False
 
 
 @dataclass(slots=True)

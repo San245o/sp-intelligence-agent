@@ -158,17 +158,15 @@ def crawl_site(
     if home.ok:
         record(home, "home")
 
-    # 2. Build an ordered queue of additional URLs.
+    # 2. Build an ordered queue of additional URLs: harvested real links first!
     queue: list[tuple[str, str]] = []
-    for url in _sitemap_urls(fetcher, org, origin):
-        queue.append((url, "sitemap"))
-    for path in PRIORITY_PATHS:
-        if path == "/":
-            continue
-        queue.append((origin + path, "priority"))
     if home.ok and home.is_html:
         for url in _harvest_links(home.final_url or origin, home.text):
             queue.append((url, "link"))
+    # Fallback to key paths only if no links were harvested from the home page
+    if not queue:
+        for path in ("/kontakt", "/om-oss", "/contact", "/about"):
+            queue.append((origin + path, "priority"))
 
     # 3. Walk the queue until the page cap or the budget stops us.
     for url, kind in queue:

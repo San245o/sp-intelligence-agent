@@ -100,20 +100,37 @@ def build_jbox_company(env: dict[str, Any]) -> dict[str, Any]:
             city = loc_addr.get("postal_town") or loc_addr.get("kommune") or municipality
             locations.append({"name": loc_name, "city": city, "orgnr": val.get("organisation_number") or org})
             
-    # 6. Signals
+    # 6. Signals & External Intelligence
     hiring_avail = claims.get("hiring_or_activity_signal", {}).get("availability") == "available"
     hiring_text = claims.get("hiring_or_activity_signal", {}).get("value") if hiring_avail else None
     
     news_avail = claims.get("dated_public_activity", {}).get("availability") == "available"
     news_text = claims.get("dated_public_activity", {}).get("value") if news_avail else None
 
-    # Coverage score (1 to 5 areas)
+    # Google Places ratings & reviews
+    places_avail = claims.get("ratings_and_reviews", {}).get("availability") == "available"
+    places_data = claims.get("ratings_and_reviews", {}).get("value") if places_avail else None
+
+    # YouTube buzz & engagement
+    buzz_avail = claims.get("buzz_or_engagement", {}).get("availability") == "available"
+    buzz_data = claims.get("buzz_or_engagement", {}).get("value") if buzz_avail else None
+
+    # NAV Job vacancies
+    jobs_avail = claims.get("active_job_count", {}).get("availability") == "available"
+    job_count = claims.get("active_job_count", {}).get("value") if jobs_avail else None
+
+    # Qualified Norwegian News Sentiment
+    sent_avail = claims.get("qualified_sentiment", {}).get("availability") == "available"
+    sentiment_data = claims.get("qualified_sentiment", {}).get("value") if sent_avail else None
+
+    # Coverage score (1 to 6 areas)
     areas = [
         True, # Identity always verified
         has_financials,
         bool(people),
         web_avail,
-        bool(locations) or bool(socials) or bool(news_text)
+        bool(locations) or bool(socials) or bool(news_text),
+        bool(places_data) or bool(buzz_data) or bool(sentiment_data) or bool(job_count),
     ]
     coverage_score = sum(1 for a in areas if a)
 
@@ -128,6 +145,12 @@ def build_jbox_company(env: dict[str, Any]) -> dict[str, Any]:
         "leadership": ("Nøkkelpersoner registrert i Foretaksregisteret: " + ", ".join(f"{p['role']}: {p['name']}" for p in people[:4])) if people else "Ingen styre- eller ledelsesroller registrert i Brønnøysund.",
         "digital_footprint": f"Verifisert nettside: {website_url if website_url else 'Ingen verifisert nettside funnet'}. "
                              + (f"Aktive sosiale profiler: {', '.join(f'{k.title()}' for k in socials.keys())}." if socials else "Ingen verifiserte sosiale profiler."),
+        "external_intelligence": (
+            (f"Google Places: {places_data.get('rating')}★ ({places_data.get('reviews_count')} anmeldelser). " if places_data else "")
+            + (f"NAV stillingsannonser: {job_count} aktive. " if job_count else "")
+            + (f"Sentiment: {sentiment_data.get('label')} basert på {sentiment_data.get('evaluated_items_count')} oppslag. " if sentiment_data else "")
+            + (f"YouTube: aktiv kanal med ferske opplastinger. " if buzz_data else "")
+        ).strip() or "Ingen eksterne aktivitetssignaler observert.",
     }
 
     return {
@@ -148,14 +171,31 @@ def build_jbox_company(env: dict[str, Any]) -> dict[str, Any]:
         "people": people,
         "locations": locations,
         "hiring": hiring_text,
+        "active_jobs": job_count,
+        "places": places_data,
+        "buzz": buzz_data,
+        "sentiment": sentiment_data,
         "news": news_text,
         "coverage_score": coverage_score,
         "qna": qna,
     }
 
 def main():
-    in_path = Path("runs/test-500-random/envelopes.jsonl")
-    out_path = Path("data/jbox_companies.json")
+    import argparse
+    parser = argparse.ArgumentParser(description="Export Signalpost envelopes to JBOX JSON format")
+    parser.add_argument("--input", default="runs/eval-fresh-100/envelopes.jsonl", help="Input envelopes.jsonl")
+    parser.add_argument("--output", default="data/jbox_companies.json", help="Output JSON path")
+    args = parser.parse_args()
+
+    in_path = Path(args.input)
+    if not in_path.exists():
+        # Fallback to test-500-random if fresh-100 is not present
+        if Path("runs/test-500-random/envelopes.jsonl").exists():
+            in_path = Path("runs/test-500-random/envelopes.jsonl")
+        else:
+            raise SystemExit(f"Input file not found: {in_path}")
+
+    out_path = Path(args.output)
     
     companies = []
     with in_path.open(encoding="utf-8") as f:
@@ -171,10 +211,10 @@ def main():
     with out_path.open("w", encoding="utf-8") as f:
         json.dump(companies, f, ensure_ascii=False, indent=2)
         
-    print(f"Exported {len(companies)} companies to {out_path} ({out_path.stat().st_size / 1024:.1f} KB)")
+    print(f"Exported {len(companies)} companies from {in_path} to {out_path} ({out_path.stat().st_size / 1024:.1f} KB)")
     
     # Also export top 100 for a ultra-fast instant demo bundle
-    demo_path = Path("data/jbox_top100.json")
+    demo_path = out_path.parent / "jbox_top100.json"
     with demo_path.open("w", encoding="utf-8") as f:
         json.dump(companies[:100], f, ensure_ascii=False, indent=2)
     print(f"Exported top 100 showcase companies to {demo_path} ({demo_path.stat().st_size / 1024:.1f} KB)")

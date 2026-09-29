@@ -25,7 +25,7 @@ from typing import Any
 
 from .budget import RunBudget
 from .claims import site_claims
-from .config import TIER_SHELL
+from .config import TIER_RICH, TIER_SHELL
 from .discovery import (
     STRICT,
     SearchProvider,
@@ -41,11 +41,16 @@ from .ranker import model_info, rank
 from .sources.brreg import (
     fetch_accounts,
     fetch_entity,
+    fetch_filing_history,
     fetch_group_structure,
+    fetch_registry_updates,
     fetch_roles,
     fetch_subunits,
 )
+from .sources.nav import fetch_nav_jobs
 from .sources.news import fetch_news_activity
+from .sources.places import fetch_places_ratings
+from .sources.youtube import fetch_youtube_activity
 from .synthesis import synthesise
 from .website import crawl_site
 
@@ -107,14 +112,19 @@ def research_company(
         return envelope.to_dict()
 
     enriched = _enrich_profile(profile, entity)
-    spend_tier = budget.tier_of(org)
+    spend_tier = budget.reclassify(org, enriched)
     diagnostics["spend_tier"] = spend_tier
 
-    # --- 2. Registry enrichment --------------------------------------------
+    # --- 2. Registry & public enrichment -----------------------------------
     # Accounts matter even for dormant holding entities (their accounts are the
-    # whole story), so they run for every tier. Roles and subunits are only
-    # worth their requests where there is an operating business.
+    # whole story), so they run for every tier.
     claims += fetch_accounts(fetcher, org, store)
+    if entity.get("sisteInnsendteAarsregnskap") or spend_tier != TIER_SHELL:
+        claims += fetch_filing_history(fetcher, org, store)
+
+    # Official registry updates guarantee dated public events for all entities
+    claims += fetch_registry_updates(fetcher, org, store)
+
     if spend_tier != TIER_SHELL:
         claims += fetch_roles(fetcher, org, store)
         claims += fetch_subunits(fetcher, org, store)
@@ -123,9 +133,29 @@ def research_company(
             claims += group_claims
             if group_info and group_info.get("parent_name"):
                 enriched["parent_name"] = group_info["parent_name"]
+
+        # NAV job vacancy feed (operating employers with registered employees or rich tier)
+        form_code = enriched.get("legal_form") or (entity.get("organisasjonsform") or {}).get("kode")
+        is_passive = form_code in ("BRL", "VPFO", "ESEK", "KIK")
+        has_employees = (enriched.get("employees") or 0) > 0 or spend_tier == TIER_RICH
+        if not is_passive and has_employees:
+            claims += fetch_nav_jobs(
+                fetcher, org, enriched.get("name") or input_name, store
+            )
+
         claims += fetch_news_activity(
             fetcher, org, enriched.get("name") or input_name, store
         )
+
+        # Google Places ratings & reviews (operating physical businesses)
+        if not is_passive:
+            muni = enriched.get("municipality") or (entity.get("forretningsadresse") or {}).get("kommune")
+            raw_addr = (entity.get("forretningsadresse") or {}).get("adresse")
+            b_addr = raw_addr[0] if isinstance(raw_addr, list) and raw_addr else (str(raw_addr) if raw_addr else None)
+            claims += fetch_places_ratings(
+                fetcher, org, enriched.get("name") or input_name,
+                municipality=muni, business_address=b_addr, store=store
+            )
 
     # --- 3. Website discovery + identity gate ------------------------------
     identity_verdict = None
@@ -192,6 +222,17 @@ def research_company(
         if best is not None and best.publishable and best_response is not None:
             crawl = crawl_site(fetcher, org, best_domain, home=best_response)
             claims += site_claims(crawl, store, verified_url=f"https://{best_domain}")
+            
+            # YouTube channel and video cadence if company site links to YouTube
+            soc_claims = [c for c in claims if c.get("field") == "social_profiles" and isinstance(c.get("value"), dict)]
+            if soc_claims:
+                soc_dict = soc_claims[0].get("value") or {}
+                yt_url = soc_dict.get("youtube")
+                if yt_url:
+                    claims += fetch_youtube_activity(
+                        fetcher, org, enriched.get("name") or input_name, yt_url, store
+                    )
+
             discovery_info["crawl"] = {
                 "domain": best_domain,
                 "pages_fetched": crawl.fetched,

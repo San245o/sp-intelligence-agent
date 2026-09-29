@@ -126,6 +126,25 @@ class RunBudget:
         grant = self._grants.get(org)
         return grant.tier if grant else TIER_STANDARD
 
+    def reclassify(self, org: str, profile: dict[str, Any]) -> str:
+        """Promote tier once registry facts (employees, accounts, website) are known."""
+        new_tier = classify_tier(profile)
+        with self._lock:
+            grant = self._grants.get(org)
+            if grant is None:
+                grant = CompanyGrant(org, new_tier, self._tier_budgets.get(new_tier, TIER_BUDGETS[TIER_STANDARD]))
+                self._grants[org] = grant
+                return new_tier
+            if grant.tier != new_tier:
+                old_grant = grant.granted
+                new_grant = self._tier_budgets.get(new_tier, old_grant)
+                diff = new_grant - old_grant
+                if diff > 0 and self._reserve >= diff:
+                    self._reserve -= diff
+                    grant.granted = new_grant
+                grant.tier = new_tier
+            return grant.tier
+
     # ---------- spending ----------
 
     def try_spend(self, org: str, count: int = 1) -> bool:
