@@ -32,8 +32,10 @@ python scripts/run_refresh.py \
 
 # 5. Evaluate research agent (12.0 / 12 qualification)
 python scripts/evaluate_research_agent.py \
-  --workspace runs/submission-1000/workspace.json \
-  --out runs/submission-1000/research-report.json
+  --input runs/submission-1000/envelopes.jsonl \
+  --suite tests/fixtures/research-agent-suite-v3-fresh.json \
+  --output runs/submission-1000/research-report.json \
+  --workspace runs/submission-1000/workspace.json
 
 # 6. Run automated test suite
 python -m unittest discover tests -v

@@ -318,10 +318,34 @@ def assess_identity(
     address = profile.get("business_address") or profile.get("forretningsadresse") or {}
     postcode = str(address.get("postnummer") or profile.get("postcode") or "").strip()
     city = fold(address.get("poststed") or profile.get("municipality") or address.get("kommune") or "")
-    if postcode and postcode in all_text:
+    if postcode and len(postcode) == 4 and re.search(rf"\b{postcode}\b", all_text):
         corroboration.append("registered postcode")
     if city and len(city) > 3 and city in folded_all:
         corroboration.append("registered city")
+
+    # Registered street address
+    street_lines = address.get("adresse") or []
+    if isinstance(street_lines, str):
+        street_lines = [street_lines]
+    for street in street_lines:
+        f_street = fold(street)
+        if len(f_street) >= 4 and f_street in folded_all:
+            corroboration.append("registered street address")
+            break
+
+    # Registered telephone / mobile number (8 digits)
+    reg_phones = []
+    for p_key in ("telefon", "mobil", "phone"):
+        raw_p = re.sub(r"\D", "", str(profile.get(p_key) or ""))
+        if raw_p.startswith("47") and len(raw_p) == 10:
+            raw_p = raw_p[2:]
+        if len(raw_p) == 8:
+            reg_phones.append(raw_p)
+    digits_all = re.sub(r"\D", "", all_text)
+    for p in reg_phones:
+        if p in digits_all:
+            corroboration.append("registered phone")
+            break
 
     # Locality tokens from business address or municipality
     locality_matched = False
@@ -352,66 +376,51 @@ def assess_identity(
 
     is_authoritative_origin = origin in ("registry", "registry_email", "universe_snapshot")
 
-    if full_name_in_identity and corroboration:
+    # Strict Rule #4 Gating Ladder:
+    # Single-token names or guessed domains MUST have independent physical corroboration
+    # or the exact 9-digit org number to be publishable.
+    if len(expected) < 2 and not corroboration and not org_found:
+        reasons.append("single-token name requires explicit registered address, phone, or org number corroboration")
+        score = 0.50
+    elif full_name_in_identity and corroboration:
         reasons.append("complete legal name in identity region of the page")
         reasons.append("corroborated by " + " and ".join(corroboration))
         score = 0.95
-    elif full_name_in_identity and (domain_matches_name or locality_matched):
-        if is_norwegian_domain or (has_norwegian_context and len(expected) >= 2) or (has_norwegian_path and len(expected) >= 1):
-            reasons.append("complete legal name in identity region corroborated by domain or locality")
+    elif full_name_in_identity and len(expected) >= 2 and (domain_matches_name or locality_matched):
+        if (is_norwegian_domain and (locality_matched or corroboration)) or (has_norwegian_context and corroboration):
+            reasons.append("complete multi-token legal name in identity region corroborated by domain and locality")
             score = 0.95
+        elif is_authoritative_origin and is_norwegian_domain:
+            reasons.append("complete multi-token legal name on authoritative registry/seed domain")
+            score = 0.92
         else:
-            reasons.append("name matched on foreign domain without Norwegian locality corroboration")
+            reasons.append("multi-token name lacks independent Norwegian locality/address corroboration")
             score = 0.70
-    elif ratio >= 0.75 and len(matched) >= 2 and locality_matched:
+    elif ratio >= 0.75 and len(matched) >= 2 and locality_matched and corroboration:
         reasons.append("most legal-name tokens present and corroborated by registered locality/postcode")
         score = 0.92
-    elif is_authoritative_origin and is_norwegian_domain and (ratio >= 0.5 or (len(matched_anywhere) == len(expected) and len(expected) >= 2)) and (locality_matched or substantive):
+    elif is_authoritative_origin and is_norwegian_domain and (ratio >= 0.5 or (len(matched_anywhere) == len(expected) and len(expected) >= 2)) and (locality_matched or substantive) and corroboration:
         reasons.append("authoritative registry/seed domain corroborated by legal name tokens and Norwegian context")
         score = 0.92
-    elif full_name_in_identity and substantive:
-        if is_norwegian_domain and len(expected) >= 2:
-            reasons.append("complete legal name in identity region of a substantive .no page")
-            score = 0.92
-        elif has_norwegian_context and ((len(expected) >= 2 and locality_matched) or has_norwegian_path):
-            reasons.append("complete legal name in identity region corroborated by Norwegian context")
+    elif full_name_in_identity and substantive and len(expected) >= 2 and (locality_matched or corroboration):
+        if is_norwegian_domain:
+            reasons.append("complete legal name in identity region of a substantive .no page with physical corroboration")
             score = 0.92
         else:
-            reasons.append("single-token name or foreign domain requires explicit Norwegian locality corroboration")
+            reasons.append("foreign domain requires explicit Norwegian locality corroboration")
             score = 0.70
     elif full_name_in_identity:
-        reasons.append("complete legal name present but page has little content")
-        score = 0.85
+        reasons.append("complete legal name present but lacking independent physical corroboration (address/phone/orgnr)")
+        score = 0.70
     elif ratio >= 0.75 and len(matched) >= 2:
         reasons.append("most legal-name tokens present, exact identity incomplete")
-        score = 0.85
-    elif len(expected) == 1 and matched and substantive and (domain_matches_name or (is_authoritative_origin and locality_matched)):
-        if is_norwegian_domain and has_norwegian_context:
-            reasons.append("single-token legal name matches domain/registry and page content")
-            score = 0.92 if (is_authoritative_origin and locality_matched) else 0.88
-        else:
-            reasons.append("single-token name on foreign domain requires explicit corroboration")
-            score = 0.60
-    elif ratio >= 0.5 and len(matched) >= 2 and locality_matched:
-        if is_authoritative_origin and is_norwegian_domain:
-            reasons.append("partial legal name on registry-declared .no domain corroborated by locality")
-            score = 0.92
-        else:
-            reasons.append("partial legal-name overlap corroborated by registered locality")
-            score = 0.82
-    elif ratio >= 0.5 and len(matched) >= 2:
-        reasons.append("partial legal-name overlap only")
-        score = 0.60
-    elif matched_anywhere and not matched:
-        if is_authoritative_origin and is_norwegian_domain and len(matched_anywhere) >= 2:
-            reasons.append("complete legal name in page content of registry-declared .no domain")
-            score = 0.92
-        else:
-            reasons.append("name appears only in body text, not in identity regions")
-            score = 0.45
+        score = 0.65
+    elif len(expected) == 1 and matched and substantive and is_authoritative_origin and corroboration:
+        reasons.append("single-token legal name on authoritative domain corroborated by registered address/phone")
+        score = 0.92
     else:
         reasons.append("no convincing exact-entity evidence on page")
-        score = 0.25
+        score = 0.30
 
     if any(marker in folded_all for marker in NETWORK_MARKERS) and score < 1.0:
         score = min(score, 0.7)

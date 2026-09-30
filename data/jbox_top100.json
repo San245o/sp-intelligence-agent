@@ -11,6 +11,8 @@
     "industry_code": "41.000",
     "industry_desc": "Oppføring av bygninger",
     "employees": 45,
+    "phone": "+47 51 77 91 91",
+    "email": "post@byggelaget.no",
     "website": "https://byggelaget.no",
     "socials": {
       "facebook": "https://www.facebook.com/Byggelaget"
@@ -100,6 +102,8 @@
     "industry_code": "86.950",
     "industry_desc": "Fysioterapi- og ergoterapitjenester",
     "employees": null,
+    "phone": "+47 911 21 348",
+    "email": "aashild.rk@online1.no",
     "website": "https://skifysioterapisenter.no",
     "socials": {},
     "financials": {
@@ -183,6 +187,8 @@
     "industry_code": "47.632",
     "industry_desc": "Detaljhandel med fritidsbåter og tilhørende utstyr",
     "employees": 5,
+    "phone": "+47 33 46 14 90",
+    "email": "18d2f96d279149989b95faf0a4b41882@sentry-next.wixpress.com",
     "website": "https://neptun.as",
     "socials": {
       "youtube": "https://www.youtube.com/channel/UCSy5eV-_7eHgQ-MfcrCCoCQ",
@@ -264,73 +270,6 @@
     }
   },
   {
-    "id": "919231289",
-    "orgnr": "919231289",
-    "name": "FLADBY EIENDOM AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "ASKIM",
-    "address": "Gramveien 52, 1832 ASKIM",
-    "industry_code": "47.120",
-    "industry_desc": "Detaljhandel med bredt vareutvalg ellers",
-    "employees": null,
-    "website": "https://fladby.no",
-    "socials": {},
-    "financials": {
-      "revenue_nok": 410708.0,
-      "revenue_display": "410.7k NOK",
-      "result_nok": -56166.0,
-      "result_display": "-56.2k NOK",
-      "assets_nok": 6341217.0,
-      "assets_display": "6.34M NOK",
-      "equity_nok": -1266038.0,
-      "equity_display": "-1.27M NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Styrets leder",
-        "name": "Tommy Fladby"
-      }
-    ],
-    "locations": [
-      {
-        "name": "FLADBY EIENDOM AS",
-        "city": "ASKIM",
-        "orgnr": "919348224"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 1,
-      "verified_social_links": 0,
-      "structured_records": 0,
-      "career_pages_observed": 0
-    },
-    "active_jobs": 0,
-    "places": {
-      "source": "google_places",
-      "place_id": "3678651311662213974",
-      "title": "Fladby Eiendom AS",
-      "rating": null,
-      "rating_count": 0,
-      "address": "Gramveien 52, 1832 Askim",
-      "category": "Eiendomsutleier"
-    },
-    "buzz": null,
-    "sentiment": null,
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "FLADBY EIENDOM AS er et norsk AS registrert i ASKIM (Org.nr: 919231289). Selskapet opererer innen 'Detaljhandel med bredt vareutvalg ellers' (NACE 47.120) og har status som aktiv. Ingen ansatte registrert i Aa-registeret.",
-      "financials": "For regnskapsåret 2025 rapporterte FLADBY EIENDOM AS en omsetning på 410.7k NOK, et driftsresultat på -56.2k NOK, samlede eiendeler på 6.34M NOK og egenkapital på -1.27M NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Styrets leder: Tommy Fladby",
-      "digital_footprint": "Verifisert nettside: https://fladby.no. Ingen verifiserte sosiale profiler.",
-      "external_intelligence": "Google Places: None★ (None anmeldelser)."
-    }
-  },
-  {
     "id": "957708587",
     "orgnr": "957708587",
     "name": "BJERKE SPEKEMAT & DELIKATESSE AS",
@@ -342,6 +281,8 @@
     "industry_code": "46.321",
     "industry_desc": "Engroshandel med kjøtt og kjøttvarer",
     "employees": 32,
+    "phone": "+47 33 13 53 50",
+    "email": "post@bjerke-spekemat.no",
     "website": "https://bjerkemat.no",
     "socials": {
       "facebook": "https://www.facebook.com/BJERKEMAT/?fref=ts",
@@ -425,6 +366,8 @@
     "industry_code": "55.200",
     "industry_desc": "Drift av vandrerhjem og ferieleiligheter",
     "employees": 5,
+    "phone": "+47 74 82 78 80",
+    "email": "ntt@dnt.no",
     "website": "https://dnt.no",
     "socials": {
       "instagram": "https://www.instagram.com/turistforeningen_nt/",
@@ -592,6 +535,8 @@
     "industry_code": "86.210",
     "industry_desc": "Allmennlegetjenester",
     "employees": 5,
+    "phone": "+47 22 09 20 00",
+    "email": null,
     "website": "https://kjelsaslegesenter.no",
     "socials": {},
     "financials": {
@@ -683,81 +628,6 @@
     }
   },
   {
-    "id": "883385772",
-    "orgnr": "883385772",
-    "name": "DRIFTSSELSKAPET AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "OSLO",
-    "address": "c/o Amesto AccountHouse AS, Smeltedigelen 1, 0195 OSLO",
-    "industry_code": "81.100",
-    "industry_desc": "Kombinerte tjenester tilknyttet eiendomsdrift",
-    "employees": null,
-    "website": "https://driftsselskapet.no",
-    "socials": {
-      "facebook": "https://www.facebook.com/driftslederen/"
-    },
-    "financials": {
-      "revenue_nok": 0.0,
-      "revenue_display": "0 NOK",
-      "result_nok": -41312.0,
-      "result_display": "-41.3k NOK",
-      "assets_nok": 257639.0,
-      "assets_display": "257.6k NOK",
-      "equity_nok": 245933.0,
-      "equity_display": "245.9k NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Styrets leder",
-        "name": "Jens Marius Østby Andresen"
-      }
-    ],
-    "locations": [
-      {
-        "name": "DRIFTSSELSKAPET AS",
-        "city": "OSLO",
-        "orgnr": "987474920"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 1,
-      "verified_social_links": 1,
-      "structured_records": 0,
-      "career_pages_observed": 0
-    },
-    "active_jobs": null,
-    "places": null,
-    "buzz": null,
-    "sentiment": {
-      "label": "neutral",
-      "evaluated_items_count": 1,
-      "items": [
-        {
-          "title": "(+) Driftsselskapet ved Ilsetra Hotel har meldt oppbud - Hotellmagasinet",
-          "publisher": "Hotellmagasinet",
-          "published_at": "2026-04-13T07:00:00Z",
-          "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPUzJPVkVidzVRSVZRNld4aU5mbWZMMU0zNVVqZGtzalk4eEgxa21JeDFMLTN0emhzejBMeC1uVVFtMXg0c2N1UGl4b3FrQWVuTE5mdTc3a2xPRGJ2T2hrMEV6dlZxWE1wdjZZOEhxbmxuQWV0X21EVDBnSk9XalVMVEZWQTNEbDRWenp3cE1fcWRkalJCVHgtcDIwVVgteXlmN2tkVWR3UEZmVHRyN2t6dXpCejg2U29UbWw4b3pxT0JtSWVhRmpxTA?oc=5",
-          "sentiment": "neutral",
-          "confidence": 0.8,
-          "reason": "default"
-        }
-      ]
-    },
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "DRIFTSSELSKAPET AS er et norsk AS registrert i OSLO (Org.nr: 883385772). Selskapet opererer innen 'Kombinerte tjenester tilknyttet eiendomsdrift' (NACE 81.100) og har status som aktiv. Ingen ansatte registrert i Aa-registeret.",
-      "financials": "For regnskapsåret 2025 rapporterte DRIFTSSELSKAPET AS en omsetning på 0 NOK, et driftsresultat på -41.3k NOK, samlede eiendeler på 257.6k NOK og egenkapital på 245.9k NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Styrets leder: Jens Marius Østby Andresen",
-      "digital_footprint": "Verifisert nettside: https://driftsselskapet.no. Aktive sosiale profiler: Facebook.",
-      "external_intelligence": "Sentiment: neutral basert på 1 oppslag."
-    }
-  },
-  {
     "id": "934967429",
     "orgnr": "934967429",
     "name": "AUKLANDSHAMN LANDHANDEL AS",
@@ -769,6 +639,8 @@
     "industry_code": "47.110",
     "industry_desc": "Detaljhandel med bredt vareutvalg med hovedvekt på nærings- og nytelsesmidler",
     "employees": 5,
+    "phone": "+47 460 82 228",
+    "email": "marryelhauge@gmail.com",
     "website": "https://auklandshamnlandhandel.no",
     "socials": {},
     "financials": {
@@ -840,6 +712,8 @@
     "industry_code": "41.000",
     "industry_desc": "Oppføring av bygninger",
     "employees": 7,
+    "phone": "+47 452 42 424",
+    "email": "morten@roserbolig.no",
     "website": "https://roserbolig.no",
     "socials": {
       "facebook": "https://www.facebook.com/roserboligas/",
@@ -910,6 +784,8 @@
     "industry_code": "93.110",
     "industry_desc": "Drift av idrettsanlegg",
     "employees": null,
+    "phone": "+47 22 09 91 98",
+    "email": "peer@oslo-skisenter.no",
     "website": "https://osloskisenter.no",
     "socials": {
       "facebook": "https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fosloskisenter%2F%3Flocale%3Dnb_NO&amp;tabs=timeline&amp;width=500&amp;height=600&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=false&amp;appId=1476566232526558"
@@ -991,6 +867,8 @@
     "industry_code": "71.110",
     "industry_desc": "Arkitektvirksomhet",
     "employees": 42,
+    "phone": "+47 73 52 91 30",
+    "email": "pka@pka.no",
     "website": "https://pka.no",
     "socials": {
       "facebook": "https://www.facebook.com/PKAArkitekter",
@@ -1090,6 +968,8 @@
     "industry_code": "26.510",
     "industry_desc": "Produksjon av måle-, kontroll- og navigasjonsinstrumenter",
     "employees": 14,
+    "phone": "+47 56 11 30 66",
+    "email": "info@saivas.com",
     "website": "https://saiv.no",
     "socials": {
       "facebook": "https://www.facebook.com/saivsensors/",
@@ -1194,6 +1074,8 @@
     "industry_code": "43.221",
     "industry_desc": "Rørleggerarbeid",
     "employees": 47,
+    "phone": "+47 52 83 09 28",
+    "email": "haugesund@teqva.no",
     "website": "https://teqvahaugesund.no",
     "socials": {
       "facebook": "https://www.facebook.com/TeqvaHaugesund",
@@ -1280,6 +1162,8 @@
     "industry_code": "23.610",
     "industry_desc": "Produksjon av betongprodukter for bygge- og anleggsvirksomhet",
     "employees": 8,
+    "phone": "+47 980 81 518",
+    "email": "post@cementprodukt.no",
     "website": "https://cementprodukt.no",
     "socials": {
       "facebook": "https://www.facebook.com/CementproduktAS"
@@ -1357,6 +1241,8 @@
     "industry_code": "69.202",
     "industry_desc": "Regnskapsføring og bokføring",
     "employees": null,
+    "phone": "+47 913 00 377",
+    "email": "firmapost@delta.as",
     "website": "https://deltaregnskap.no",
     "socials": {},
     "financials": {
@@ -1432,6 +1318,8 @@
     "industry_code": "47.810",
     "industry_desc": "Detaljhandel med motorvogner",
     "employees": 11,
+    "phone": "+47 416 05 580",
+    "email": "asbjorn.blikken@oppdalbil.no",
     "website": "https://oppdalbil.no",
     "socials": {
       "facebook": "https://www.facebook.com/profile.php?id=100083541605580"
@@ -1517,6 +1405,8 @@
     "industry_code": "46.490",
     "industry_desc": "Engroshandel med andre husholdningsvarer",
     "employees": null,
+    "phone": "+47 33 06 33 60",
+    "email": "christian@sportagile.no",
     "website": "https://sportagile.no",
     "socials": {
       "instagram": "https://www.instagram.com/sportagile/"
@@ -1598,6 +1488,8 @@
     "industry_code": "46.640",
     "industry_desc": "Engroshandel med maskiner og utstyr ellers",
     "employees": 9,
+    "phone": "+47 55 92 28 80",
+    "email": "mail@alexgrieg.no",
     "website": "https://alexgrieg.no",
     "socials": {},
     "financials": {
@@ -1673,6 +1565,8 @@
     "industry_code": "69.202",
     "industry_desc": "Regnskapsføring og bokføring",
     "employees": 7,
+    "phone": "+47 51 71 50 50",
+    "email": "ingunn.fjetland@accomodo.no",
     "website": "https://accomodo.no",
     "socials": {
       "facebook": "https://www.facebook.com/Accomodo/"
@@ -1750,6 +1644,8 @@
     "industry_code": "71.129",
     "industry_desc": "Annen teknisk konsulentvirksomhet",
     "employees": 18,
+    "phone": "+47 488 42 101",
+    "email": "adm@knowit.no",
     "website": "https://knowit.no",
     "socials": {
       "facebook": "https://www.facebook.com/weareknowit",
@@ -1829,6 +1725,8 @@
     "industry_code": "72.100",
     "industry_desc": "Forskning og eksperimentell utvikling innenfor naturvitenskap og teknikk",
     "employees": 5,
+    "phone": "+47 992 61 456",
+    "email": "vegar.gruner@innowell.no",
     "website": "https://innowell.no",
     "socials": {
       "youtube": "https://www.youtube.com/embed/P6F_Hdqk9hw?disablekb=1"
@@ -1918,6 +1816,8 @@
     "industry_code": "03.212",
     "industry_desc": "Produksjon av yngel og settefisk i sjø og brakkvann",
     "employees": 7,
+    "phone": "+47 74 28 45 50",
+    "email": "hegekolberg@yahoo.no",
     "website": "https://namdalsettefisk.no",
     "socials": {},
     "financials": {
@@ -2001,6 +1901,8 @@
     "industry_code": "70.200",
     "industry_desc": "Bedriftsrådgivning og annen administrativ rådgivning",
     "employees": null,
+    "phone": "+47 924 10 485",
+    "email": "til@matae.no",
     "website": "https://matae.no",
     "socials": {
       "linkedin": "https://www.linkedin.com/company/matae-as/",
@@ -2077,6 +1979,8 @@
     "industry_code": "41.000",
     "industry_desc": "Oppføring av bygninger",
     "employees": 16,
+    "phone": null,
+    "email": null,
     "website": "https://kvammabygg.no",
     "socials": {},
     "financials": {
@@ -2152,6 +2056,8 @@
     "industry_code": "71.129",
     "industry_desc": "Annen teknisk konsulentvirksomhet",
     "employees": null,
+    "phone": "+47 464 61 000",
+    "email": "even.hatlo.andersen@nli.no",
     "website": "https://nli.no",
     "socials": {
       "linkedin": "https://www.linkedin.com/company/nli-as/"
@@ -2243,6 +2149,8 @@
     "industry_code": "47.810",
     "industry_desc": "Detaljhandel med motorvogner",
     "employees": null,
+    "phone": "+47 400 55 277",
+    "email": "rizzidreamcars@gmail.com",
     "website": "https://a1auto.no",
     "socials": {
       "instagram": "https://www.instagram.com/a1autoas",
@@ -2317,6 +2225,8 @@
     "industry_code": "56.110",
     "industry_desc": "Drift av restauranter",
     "employees": 70,
+    "phone": "+47 401 45 635",
+    "email": "alana.zivanovic@oslo.kongressenter.no",
     "website": "https://oslokongressenter.no",
     "socials": {
       "facebook": "https://www.facebook.com/OsloKongressenter/",
@@ -2437,6 +2347,8 @@
     "industry_code": "43.120",
     "industry_desc": "Grunnarbeid",
     "employees": 5,
+    "phone": "+47 476 64 230",
+    "email": "kenneth@aassmaskin.no",
     "website": "https://aassmaskin.no",
     "socials": {
       "facebook": "https://www.facebook.com/aassmaskin"
@@ -2510,6 +2422,8 @@
     "industry_code": "47.810",
     "industry_desc": "Detaljhandel med motorvogner",
     "employees": null,
+    "phone": "+47 901 33 046",
+    "email": "gullikstadautoas@gmail.com",
     "website": "https://gullikstadauto.no",
     "socials": {},
     "financials": {
@@ -2585,6 +2499,8 @@
     "industry_code": "23.700",
     "industry_desc": "Hogging og bearbeiding av monument- og bygningsstein",
     "employees": 9,
+    "phone": "+47 438 13 366",
+    "email": "eirik@solidtec.no",
     "website": "https://solidtec.no",
     "socials": {
       "facebook": "https://www.facebook.com/solidtec.no",
@@ -2672,6 +2588,8 @@
     "industry_code": "13.940",
     "industry_desc": "Produksjon av tauverk, rep, hyssing og nett",
     "employees": 27,
+    "phone": "+47 70 18 94 94",
+    "email": "otsas@otsas.no",
     "website": "https://otsas.no",
     "socials": {
       "linkedin": "http://www.linkedin.com/company/otsnorway",
@@ -2749,6 +2667,8 @@
     "industry_code": "79.122",
     "industry_desc": "Reisearrangørvirksomhet ellers",
     "employees": null,
+    "phone": "+47 441 20 135",
+    "email": "annestine@contrastadventure.no",
     "website": "https://contrastadventure.no",
     "socials": {
       "facebook": "https://www.facebook.com/contrastadventure",
@@ -2828,124 +2748,6 @@
     }
   },
   {
-    "id": "992036230",
-    "orgnr": "992036230",
-    "name": "INDUCT AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "OSLO",
-    "address": "Cort Adelers gate 17, 0254 OSLO",
-    "industry_code": "62.100",
-    "industry_desc": "Dataprogrammeringstjenester",
-    "employees": null,
-    "website": "https://web.induct.net",
-    "socials": {
-      "twitter": "https://www.wix.com/velo/reference/$w/styling-elements-with-css",
-      "linkedin": "https://www.linkedin.com/company/induct/",
-      "facebook": "https://www.facebook.com/inductplatform/?locale=nb_NO"
-    },
-    "financials": {
-      "revenue_nok": 6622811.0,
-      "revenue_display": "6.62M NOK",
-      "result_nok": -4570993.0,
-      "result_display": "-4.57M NOK",
-      "assets_nok": 57893742.0,
-      "assets_display": "57.89M NOK",
-      "equity_nok": 45685494.0,
-      "equity_display": "45.69M NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Daglig leder",
-        "name": "Synnøve Jacobsen"
-      },
-      {
-        "role": "Styrets leder",
-        "name": "Otto Ole Jørgen Karud"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Jan Ragnar Herud"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Rolf Johan Edvin Zetterström"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Grete Kvernland-Berg"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Hilde Yong Hong Gavel Bakke"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Eli Cathrine Rohr Disch"
-      }
-    ],
-    "locations": [
-      {
-        "name": "INDUCT AS",
-        "city": "OSLO",
-        "orgnr": "992046139"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 2,
-      "verified_social_links": 3,
-      "structured_records": 3,
-      "career_pages_observed": 0
-    },
-    "active_jobs": 0,
-    "places": {
-      "source": "google_places",
-      "place_id": "17856970157631766118",
-      "title": "Induct AS",
-      "rating": 5.0,
-      "rating_count": 2,
-      "address": "Cort Adelers gate 17, 0254 Oslo",
-      "category": "Programvareselskap"
-    },
-    "buzz": null,
-    "sentiment": {
-      "label": "neutral",
-      "evaluated_items_count": 2,
-      "items": [
-        {
-          "title": "Induct utnevner Karl Erik Brøten til ny CFO - okonomi24.com",
-          "publisher": "okonomi24.com",
-          "published_at": "2026-08-07T07:00:00Z",
-          "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPWUV1NDF4MjRPNm95aGRCZDh6RHFEcnlLa2FHNl9yYW9uMXhRV3hUTmRtdExRYjZiYmdKM0lRUk9UclR1akhfS3Y1Y2pLR2VJRF91ODFBX3Y1RFFYQk1VQUdVYXJmV0pnVmxjNmxkUkFRLXdPMWdFUGpNRUpFQW0tZ0swbUlHQ2g0MVNaRFpEUmtVVGs?oc=5",
-          "sentiment": "neutral",
-          "confidence": 0.8,
-          "reason": "default"
-        },
-        {
-          "title": "INDUCT: STYRELEDER KARL-ANDERS GRØNLAND HAR GÅTT BORT - finansavisen.no",
-          "publisher": "finansavisen.no",
-          "published_at": "2026-03-12T07:00:00Z",
-          "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOd2otMFp5WURTYXh2U3VEb0pSR1JMcW1uajFpOFRZOVVZWDNGNWFhSlBYeFlad1NNX0J2NEs1WFhmcG9xci1BSHRVYy1QWUoxSExOZUUzcWc3RThyRGtfalVzeWE1blN4aWdaLVUtMWd4Yk93d21qbWlqd20tRFhSWHYyUXFyajY4YThPVjM1TjhBQ2dsanplVkplMlI3RmYtWl9qcVlZQQ?oc=5",
-          "sentiment": "neutral",
-          "confidence": 0.8,
-          "reason": "default"
-        }
-      ]
-    },
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "INDUCT AS er et norsk AS registrert i OSLO (Org.nr: 992036230). Selskapet opererer innen 'Dataprogrammeringstjenester' (NACE 62.100) og har status som aktiv. Ingen ansatte registrert i Aa-registeret.",
-      "financials": "For regnskapsåret 2025 rapporterte INDUCT AS en omsetning på 6.62M NOK, et driftsresultat på -4.57M NOK, samlede eiendeler på 57.89M NOK og egenkapital på 45.69M NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Synnøve Jacobsen, Styrets leder: Otto Ole Jørgen Karud, Styremedlem: Jan Ragnar Herud, Styremedlem: Rolf Johan Edvin Zetterström",
-      "digital_footprint": "Verifisert nettside: https://web.induct.net. Aktive sosiale profiler: Twitter, Linkedin, Facebook.",
-      "external_intelligence": "Google Places: 5.0★ (None anmeldelser). Sentiment: neutral basert på 2 oppslag."
-    }
-  },
-  {
     "id": "995153637",
     "orgnr": "995153637",
     "name": "VAXXINOVA NORWAY AS",
@@ -2957,6 +2759,8 @@
     "industry_code": "72.100",
     "industry_desc": "Forskning og eksperimentell utvikling innenfor naturvitenskap og teknikk",
     "employees": 23,
+    "phone": "+47 467 12 125",
+    "email": "faktura@vaxxinova.no",
     "website": "https://vaxxinova.no",
     "socials": {},
     "financials": {
@@ -3036,6 +2840,8 @@
     "industry_code": "43.240",
     "industry_desc": "Annet installasjonsarbeid",
     "employees": 15,
+    "phone": "+47 476 31 425",
+    "email": "frode@portinnlandet.no",
     "website": "https://portinnlandet.no",
     "socials": {
       "twitter": "https://www.efaflex.com/company/sustainability/#energy-saver",
@@ -3116,6 +2922,8 @@
     "industry_code": "81.220",
     "industry_desc": "Utvendig rengjøring av bygninger og industriell rengjøring",
     "employees": 8,
+    "phone": "+47 453 52 419",
+    "email": "post@sufa.no",
     "website": "https://sufa.no",
     "socials": {
       "twitter": "https://www.wix.com/velo/reference/$w/styling-elements-with-css"
@@ -3199,6 +3007,8 @@
     "industry_code": "61.100",
     "industry_desc": "Kabelbasert, satellittbasert og trådløs telekommunikasjon",
     "employees": null,
+    "phone": "+47 37 88 58 88",
+    "email": "andreas.frivold@afiber.no",
     "website": "https://afiber.no",
     "socials": {},
     "financials": {
@@ -3290,6 +3100,8 @@
     "industry_code": "47.520",
     "industry_desc": "Detaljhandel med jernvarer, byggevarer, fargevarer og glass",
     "employees": 12,
+    "phone": "+47 909 14 814",
+    "email": "post@weoas.no",
     "website": "https://weoas.no",
     "socials": {
       "facebook": "https://www.facebook.com/profile.php?id=100089956934984"
@@ -3371,6 +3183,8 @@
     "industry_code": "81.230",
     "industry_desc": "Annen rengjøringsvirksomhet og snømåking",
     "employees": 6,
+    "phone": "+47 33 18 60 90",
+    "email": "post@snoservice.no",
     "website": "https://snoservice.no",
     "socials": {
       "facebook": "https://www.facebook.com/snoserviceas",
@@ -3449,6 +3263,8 @@
     "industry_code": "87.300",
     "industry_desc": "Omsorgstjenester i botilbud for eldre eller personer med fysisk funksjonsnedsettelse",
     "employees": 16,
+    "phone": "+47 476 11 020",
+    "email": "hello@dream-theme.com",
     "website": "https://boihop.no",
     "socials": {
       "facebook": "https://www.facebook.com/profile.php?id=61577711738805",
@@ -3519,6 +3335,8 @@
     "industry_code": "46.640",
     "industry_desc": "Engroshandel med maskiner og utstyr ellers",
     "employees": 24,
+    "phone": "+47 22 64 58 00",
+    "email": "post@bergdahl.no",
     "website": "https://bergdahl.no",
     "socials": {
       "facebook": "https://www.facebook.com/bergdahlas",
@@ -3593,81 +3411,6 @@
     }
   },
   {
-    "id": "913407385",
-    "orgnr": "913407385",
-    "name": "CCL NORWAY AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "ÅLESUND",
-    "address": "Tverrvegen 38A, 6020 ÅLESUND",
-    "industry_code": "41.000",
-    "industry_desc": "Oppføring av bygninger",
-    "employees": 10,
-    "website": "https://cclnorway.no",
-    "socials": {},
-    "financials": {
-      "revenue_nok": 27716515.0,
-      "revenue_display": "27.72M NOK",
-      "result_nok": -12268537.0,
-      "result_display": "-12.27M NOK",
-      "assets_nok": 5938561.0,
-      "assets_display": "5.94M NOK",
-      "equity_nok": -12413868.0,
-      "equity_display": "-12.41M NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Daglig leder",
-        "name": "Kristian Trygstad"
-      },
-      {
-        "role": "Styrets leder",
-        "name": "Anders Josefsen"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Kristian Trygstad"
-      }
-    ],
-    "locations": [
-      {
-        "name": "CCL NORWAY AS",
-        "city": "ÅLESUND",
-        "orgnr": "913445732"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 2,
-      "verified_social_links": 0,
-      "structured_records": 0,
-      "career_pages_observed": 0
-    },
-    "active_jobs": 0,
-    "places": {
-      "source": "google_places",
-      "place_id": "6293542527432075710",
-      "title": "CCL Norway AS",
-      "rating": 4.5,
-      "rating_count": 2,
-      "address": "Tverrvegen 38A, 6020 Ålesund",
-      "category": "Bygg- og anleggsfirma"
-    },
-    "buzz": null,
-    "sentiment": null,
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "CCL NORWAY AS er et norsk AS registrert i ÅLESUND (Org.nr: 913407385). Selskapet opererer innen 'Oppføring av bygninger' (NACE 41.000) og har status som aktiv. Registrert med 10 ansatte.",
-      "financials": "For regnskapsåret 2025 rapporterte CCL NORWAY AS en omsetning på 27.72M NOK, et driftsresultat på -12.27M NOK, samlede eiendeler på 5.94M NOK og egenkapital på -12.41M NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Kristian Trygstad, Styrets leder: Anders Josefsen, Styremedlem: Kristian Trygstad",
-      "digital_footprint": "Verifisert nettside: https://cclnorway.no. Ingen verifiserte sosiale profiler.",
-      "external_intelligence": "Google Places: 4.5★ (None anmeldelser)."
-    }
-  },
-  {
     "id": "897305852",
     "orgnr": "897305852",
     "name": "STEINVIK BYGG AS",
@@ -3679,6 +3422,8 @@
     "industry_code": "41.000",
     "industry_desc": "Oppføring av bygninger",
     "employees": 23,
+    "phone": "+47 406 25 898",
+    "email": "post@steinvikbygg.no",
     "website": "https://steinvikbygg.no",
     "socials": {
       "instagram": "https://www.instagram.com/steinvikbygg/"
@@ -3766,6 +3511,8 @@
     "industry_code": "85.531",
     "industry_desc": "Undervisning ved godkjente trafikkskoler",
     "employees": 14,
+    "phone": "+47 422 21 336",
+    "email": null,
     "website": "https://mt.no",
     "socials": {},
     "financials": {
@@ -3842,6 +3589,8 @@
     "industry_code": "86.993",
     "industry_desc": "Andre helsetjenester ellers",
     "employees": 50,
+    "phone": "+47 974 09 910",
+    "email": "kundesenter.norge@falck.com",
     "website": "https://falck.no",
     "socials": {
       "linkedin": "https://www.linkedin.com/company/falck/",
@@ -3925,6 +3674,8 @@
     "industry_code": "71.123",
     "industry_desc": "Utarbeidelse av kart og oppmåling",
     "employees": null,
+    "phone": "+47 457 79 183",
+    "email": "oyvind@geobodo.no",
     "website": "https://geobodo.no",
     "socials": {},
     "financials": {
@@ -4000,6 +3751,8 @@
     "industry_code": "85.597",
     "industry_desc": "Annen undervisning ellers",
     "employees": 10,
+    "phone": "+47 22 62 21 00",
+    "email": "nmks@alfakompetanse.no",
     "website": "https://alfakompetanse.no",
     "socials": {},
     "financials": {
@@ -4075,6 +3828,8 @@
     "industry_code": "46.710",
     "industry_desc": "Engroshandel med motorvogner",
     "employees": 5,
+    "phone": "+47 901 79 164",
+    "email": "post@autoroom.no",
     "website": "https://autoroom.no",
     "socials": {
       "facebook": "https://www.facebook.com/autoroom.no/"
@@ -4148,6 +3903,8 @@
     "industry_code": "43.910",
     "industry_desc": "Murerarbeid",
     "employees": 9,
+    "phone": "+47 932 19 821",
+    "email": "post@murmesterhansen.as",
     "website": "https://murmesterhansen.as",
     "socials": {
       "facebook": "https://www.facebook.com/murmesterketilhansen/"
@@ -4229,6 +3986,8 @@
     "industry_code": "55.100",
     "industry_desc": "Drift av hoteller",
     "employees": 50,
+    "phone": "+47 985 34 085",
+    "email": "morgedalhotel@unikehoteller.no",
     "website": "https://morgedal.no",
     "socials": {},
     "financials": {
@@ -4300,6 +4059,8 @@
     "industry_code": "11.050",
     "industry_desc": "Produksjon av øl",
     "employees": 6,
+    "phone": "+47 410 03 263",
+    "email": "tg@dng-norge.no",
     "website": "https://lofotpils.no",
     "socials": {
       "facebook": "https://www.facebook.com/lofotpils",
@@ -4388,6 +4149,8 @@
     "industry_code": "85.100",
     "industry_desc": "Førskoleundervisning og drift av barnehager",
     "employees": 16,
+    "phone": "+47 400 44 669",
+    "email": "kontor@birraleekindergarten.no",
     "website": "https://birralee.no",
     "socials": {
       "facebook": "https://www.facebook.com/Birralee/",
@@ -4491,6 +4254,8 @@
     "industry_code": "31.000",
     "industry_desc": "Produksjon av møbler",
     "employees": 10,
+    "phone": "+47 56 14 68 65",
+    "email": "post@torsvikinnredning.no",
     "website": "https://torsvikinnredning.no",
     "socials": {},
     "financials": {
@@ -4570,6 +4335,8 @@
     "industry_code": "81.300",
     "industry_desc": "Beplantning av hager og parkanlegg",
     "employees": 231,
+    "phone": "+47 423 26 529",
+    "email": "post@landskap.no",
     "website": "https://landskap.no",
     "socials": {
       "facebook": "https://www.facebook.com/landskap.as",
@@ -4649,6 +4416,8 @@
     "industry_code": "82.300",
     "industry_desc": "Kongress-, messe- og utstillingsvirksomhet",
     "employees": 17,
+    "phone": "+47 483 56 090",
+    "email": "bernt@holi.no",
     "website": "https://holi.no",
     "socials": {
       "twitter": "https://image.mux.com/lRjns4XD1TkJ01KsfTkEQ4LvNYN00n0271aksnbAcPGwwY/thumbnail.png?width=640&amp;fit_mode=preserve&amp;time=1",
@@ -4734,6 +4503,8 @@
     "industry_code": "30.110",
     "industry_desc": "Bygging av sivile skip og flytende materiell",
     "employees": 27,
+    "phone": "+47 57 71 60 00",
+    "email": "norway@maritimemontering.com",
     "website": "https://maritimemontering.com",
     "socials": {
       "facebook": "https://www.facebook.com/MaritimeMontering",
@@ -4813,6 +4584,8 @@
     "industry_code": "55.300",
     "industry_desc": "Drift av campingplasser",
     "employees": 15,
+    "phone": "+47 33 19 58 27",
+    "email": "jostret@online.no",
     "website": "https://stretere.no",
     "socials": {},
     "financials": {
@@ -4892,6 +4665,8 @@
     "industry_code": "46.640",
     "industry_desc": "Engroshandel med maskiner og utstyr ellers",
     "employees": 11,
+    "phone": "+47 77 62 43 70",
+    "email": "firmapost@tekniskservice.no",
     "website": "https://tekniskservice.no",
     "socials": {
       "facebook": "https://www.facebook.com/TekniskService"
@@ -4958,77 +4733,6 @@
     }
   },
   {
-    "id": "986980210",
-    "orgnr": "986980210",
-    "name": "GRAVETEKNIKK AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "NORDRE FROGN",
-    "address": "Brevikveien 30, 1455 NORDRE FROGN",
-    "industry_code": "43.120",
-    "industry_desc": "Grunnarbeid",
-    "employees": 7,
-    "website": "https://gravetek.no",
-    "socials": {},
-    "financials": {
-      "revenue_nok": 12602230.0,
-      "revenue_display": "12.60M NOK",
-      "result_nok": -88265.0,
-      "result_display": "-88.3k NOK",
-      "assets_nok": 6147798.0,
-      "assets_display": "6.15M NOK",
-      "equity_nok": 2485095.0,
-      "equity_display": "2.49M NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Daglig leder",
-        "name": "Evald Jensen"
-      },
-      {
-        "role": "Varamedlem",
-        "name": "Jane Zahl Steffå"
-      }
-    ],
-    "locations": [
-      {
-        "name": "GRAVETEKNIKK AS",
-        "city": "NORDRE FROGN",
-        "orgnr": "987012889"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 2,
-      "verified_social_links": 0,
-      "structured_records": 5,
-      "career_pages_observed": 0
-    },
-    "active_jobs": 0,
-    "places": {
-      "source": "google_places",
-      "place_id": "15787178876937779163",
-      "title": "Graveteknikk AS",
-      "rating": 4.6,
-      "rating_count": 77,
-      "address": "Brevikveien 30, 1455 Nordre Frogn",
-      "category": "Graveentreprenør"
-    },
-    "buzz": null,
-    "sentiment": null,
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "GRAVETEKNIKK AS er et norsk AS registrert i NORDRE FROGN (Org.nr: 986980210). Selskapet opererer innen 'Grunnarbeid' (NACE 43.120) og har status som aktiv. Registrert med 7 ansatte.",
-      "financials": "For regnskapsåret 2025 rapporterte GRAVETEKNIKK AS en omsetning på 12.60M NOK, et driftsresultat på -88.3k NOK, samlede eiendeler på 6.15M NOK og egenkapital på 2.49M NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Evald Jensen, Varamedlem: Jane Zahl Steffå",
-      "digital_footprint": "Verifisert nettside: https://gravetek.no. Ingen verifiserte sosiale profiler.",
-      "external_intelligence": "Google Places: 4.6★ (None anmeldelser)."
-    }
-  },
-  {
     "id": "914942276",
     "orgnr": "914942276",
     "name": "TØNSBERG BIBELSKOLE AS",
@@ -5040,6 +4744,8 @@
     "industry_code": "85.320",
     "industry_desc": "Videregående opplæring innenfor yrkesfaglige utdanningsprogram",
     "employees": 5,
+    "phone": "+47 33 31 45 14",
+    "email": "post@tonsbergbibelskole.no",
     "website": "https://tonsbergbibelskole.no",
     "socials": {
       "facebook": "https://www.facebook.com/tonsbergbibelskole",
@@ -5130,6 +4836,8 @@
     "industry_code": "73.110",
     "industry_desc": "Reklamebyråvirksomhet",
     "employees": 33,
+    "phone": "+47 409 33 433",
+    "email": "hei@markedssjefene.no",
     "website": "https://markedssjefene.no",
     "socials": {
       "instagram": "https://www.instagram.com/markedssjefene",
@@ -5217,6 +4925,8 @@
     "industry_code": "43.210",
     "industry_desc": "Elektrisk installasjonsarbeid",
     "employees": 25,
+    "phone": "+47 22 51 14 50",
+    "email": "bruker@domene.no",
     "website": "https://sauter.no",
     "socials": {
       "facebook": "http://www.facebook.com/2008/fbml",
@@ -5309,6 +5019,8 @@
     "industry_code": "85.100",
     "industry_desc": "Førskoleundervisning og drift av barnehager",
     "employees": 15,
+    "phone": "+47 904 05 625",
+    "email": "dagligleder@torphoymyr.no",
     "website": "https://torp.hoymyr.barnehage.no",
     "socials": {
       "facebook": "https://www.facebook.com/share/1BqdFbZKd5/?mibextid=wwXIfr"
@@ -5406,6 +5118,8 @@
     "industry_code": "18.120",
     "industry_desc": "Trykking ellers",
     "employees": 10,
+    "phone": "+47 69 36 68 00",
+    "email": "post@thepitch.no",
     "website": "https://thepitch.no",
     "socials": {
       "facebook": "https://www.facebook.com/thepitch.no",
@@ -5498,6 +5212,8 @@
     "industry_code": "74.120",
     "industry_desc": "Grafisk design og visuell kommunikasjonsdesign",
     "employees": 9,
+    "phone": "+47 413 20 320",
+    "email": "aage@osberget.no",
     "website": "https://osberget.no",
     "socials": {
       "facebook": "http://www.facebook.com/fantastiskeosberget",
@@ -5599,6 +5315,8 @@
     "industry_code": "46.640",
     "industry_desc": "Engroshandel med maskiner og utstyr ellers",
     "employees": null,
+    "phone": "+47 22 32 23 00",
+    "email": "knut.aanesen@agraf.no",
     "website": "https://agraf.no",
     "socials": {
       "twitter": "http://br7512.wix.com/agraf"
@@ -5676,6 +5394,8 @@
     "industry_code": "86.210",
     "industry_desc": "Allmennlegetjenester",
     "employees": null,
+    "phone": "+47 441 96 546",
+    "email": "post@tmlegetjenester.no",
     "website": "https://tmlegetjenester.no",
     "socials": {
       "facebook": "https://www.facebook.com/tmklinikkenfredrikstad?locale=nb_NO",
@@ -5750,6 +5470,8 @@
     "industry_code": "85.593",
     "industry_desc": "Undervisning ved voksenopplæringssentre, aktiviteter i studieforbund og undervisning i form av frivillige organisasjoners kurs",
     "employees": 79,
+    "phone": "+47 905 97 998",
+    "email": "cathrine.westmork@tirna.no",
     "website": "https://tirna.no",
     "socials": {
       "facebook": "https://www.facebook.com/tirnakompetanse",
@@ -5876,6 +5598,8 @@
     "industry_code": "16.110",
     "industry_desc": "Saging og høvling av tre",
     "employees": 6,
+    "phone": "+47 74 81 35 50",
+    "email": "post@stordalssaga.no",
     "website": "https://stordalssaga.no",
     "socials": {
       "facebook": "https://www.facebook.com/StordalssagaAS"
@@ -5949,6 +5673,8 @@
     "industry_code": "73.110",
     "industry_desc": "Reklamebyråvirksomhet",
     "employees": 8,
+    "phone": "+47 36 14 38 38",
+    "email": "kontakt@nettrakett.no",
     "website": "https://nettrakett.no",
     "socials": {},
     "financials": {
@@ -6034,6 +5760,8 @@
     "industry_code": "43.910",
     "industry_desc": "Murerarbeid",
     "employees": null,
+    "phone": "+47 411 91 213",
+    "email": "post@murmester-svela.no",
     "website": "https://murmester-svela.no",
     "socials": {
       "facebook": "https://www.facebook.com/murmestersvela/"
@@ -6107,6 +5835,8 @@
     "industry_code": "31.000",
     "industry_desc": "Produksjon av møbler",
     "employees": null,
+    "phone": "+47 61 39 09 00",
+    "email": "hmd@hebb.no",
     "website": "https://hmd.no",
     "socials": {
       "twitter": "https://twitter.com/surftown",
@@ -6200,6 +5930,8 @@
     "industry_code": "37.000",
     "industry_desc": "Oppsamling og behandling av avløpsvann",
     "employees": 11,
+    "phone": "+47 410 49 126",
+    "email": "post@daiv.no",
     "website": "https://daiv.no",
     "socials": {
       "facebook": "https://facebook.com/groups/1743231743111337"
@@ -6361,6 +6093,8 @@
     "industry_code": "75.000",
     "industry_desc": "Veterinærtjenester",
     "employees": null,
+    "phone": "+47 69 23 45 90",
+    "email": "hannekure@live.no",
     "website": "https://hannekure.no",
     "socials": {
       "twitter": "https://platform.twitter.com/widgets.js",
@@ -6439,6 +6173,8 @@
     "industry_code": "47.810",
     "industry_desc": "Detaljhandel med motorvogner",
     "employees": null,
+    "phone": "+47 400 00 000",
+    "email": "hasnat@nordenauto.no",
     "website": "https://nordenauto.no",
     "socials": {},
     "financials": {
@@ -6510,6 +6246,8 @@
     "industry_code": "01.240",
     "industry_desc": "Dyrking av kjernefrukter og steinfrukter",
     "employees": 10,
+    "phone": "+47 411 91 213",
+    "email": "post@epleriet.no",
     "website": "https://epleriet.no",
     "socials": {
       "youtube": "https://www.youtube.com/embed/wNj0pU7O4WQ?feature=oembed",
@@ -6584,6 +6322,8 @@
     "industry_code": "55.100",
     "industry_desc": "Drift av hoteller",
     "employees": 26,
+    "phone": "+47 401 56 347",
+    "email": "booking@vertikalen.no",
     "website": "https://vertikalen.no",
     "socials": {
       "facebook": "https://www.facebook.com/p/Vertikalen-61555135883042"
@@ -6661,6 +6401,8 @@
     "industry_code": "46.210",
     "industry_desc": "Engroshandel med korn, råtobakk, såvarer og fôrvarer",
     "employees": 48,
+    "phone": "+47 61 21 18 20",
+    "email": "post@ottadalen.norgesfor.no",
     "website": "https://norgesfor.no",
     "socials": {
       "facebook": "https://www.facebook.com/ottadalenmolle/"
@@ -6772,6 +6514,8 @@
     "industry_code": "86.950",
     "industry_desc": "Fysioterapi- og ergoterapitjenester",
     "employees": null,
+    "phone": "+47 472 95 904",
+    "email": "post@sfbu.no",
     "website": "https://sfbu.no",
     "socials": {},
     "financials": {
@@ -6843,6 +6587,8 @@
     "industry_code": "28.990",
     "industry_desc": "Produksjon av andre spesialmaskiner ikke nevnt annet sted",
     "employees": 5,
+    "phone": "+47 944 25 743",
+    "email": null,
     "website": "https://velorobotics.no",
     "socials": {
       "facebook": "https://www.facebook.com/61550696974042",
@@ -6931,6 +6677,8 @@
     "industry_code": "43.210",
     "industry_desc": "Elektrisk installasjonsarbeid",
     "employees": 10,
+    "phone": "+47 33 30 33 20",
+    "email": "steinar@tjome-el.no",
     "website": "https://tjome-el.no",
     "socials": {
       "facebook": "https://www.facebook.com/profile.php?id=100057482588368"
@@ -7016,6 +6764,8 @@
     "industry_code": "43.221",
     "industry_desc": "Rørleggerarbeid",
     "employees": 21,
+    "phone": "+47 483 15 806",
+    "email": "nb@lyse.net",
     "website": "https://reyrr.no",
     "socials": {},
     "financials": {
@@ -7091,6 +6841,8 @@
     "industry_code": "56.110",
     "industry_desc": "Drift av restauranter",
     "employees": 7,
+    "phone": "+47 455 82 604",
+    "email": "info@eat-now.no",
     "website": "https://stiginn.no",
     "socials": {
       "facebook": "https://www.facebook.com/Stiginnlier"
@@ -7164,6 +6916,8 @@
     "industry_code": "52.230",
     "industry_desc": "Andre tjenester tilknyttet lufttransport",
     "employees": null,
+    "phone": "+47 461 72 590",
+    "email": "je-gje@online.no",
     "website": "https://aurinko.no",
     "socials": {},
     "financials": {
@@ -7243,6 +6997,8 @@
     "industry_code": "69.202",
     "industry_desc": "Regnskapsføring og bokføring",
     "employees": 14,
+    "phone": "+47 32 07 03 00",
+    "email": "post@frodigokonomi.no",
     "website": "https://sagakl.no",
     "socials": {
       "facebook": "https://www.facebook.com/tr?id=709600987713822&ev=PageView&noscript=1"
@@ -7332,6 +7088,8 @@
     "industry_code": "43.223",
     "industry_desc": "Ventilasjonsarbeid",
     "employees": 15,
+    "phone": "+47 76 94 23 68",
+    "email": "post@jespersen.no",
     "website": "https://jespersen.no",
     "socials": {},
     "financials": {
@@ -7410,6 +7168,8 @@
     "industry_code": "47.120",
     "industry_desc": "Detaljhandel med bredt vareutvalg ellers",
     "employees": 15,
+    "phone": "+47 437 30 388",
+    "email": "webstoreorders@neo-tokyo.no",
     "website": "https://neo-tokyo.no",
     "socials": {
       "facebook": "https://www.facebook.com/neotokyo.no",
@@ -7482,6 +7242,8 @@
     "industry_code": "62.200",
     "industry_desc": "Konsulentvirksomhet tilknyttet informasjonsteknologi og forvaltning og drift av it-systemer",
     "employees": null,
+    "phone": "+47 420 01 600",
+    "email": "bj@xago.no",
     "website": "https://xagosoftware.io",
     "socials": {},
     "financials": {
@@ -7561,6 +7323,8 @@
     "industry_code": "46.610",
     "industry_desc": "Engroshandel med maskiner og utstyr til jordbruk og skogbruk",
     "employees": 11,
+    "phone": "+47 904 74 600",
+    "email": "post@telespor.no",
     "website": "https://telespor.no",
     "socials": {
       "facebook": "https://www.facebook.com/TelesporAS",
@@ -7648,6 +7412,8 @@
     "industry_code": "68.200",
     "industry_desc": "Utleie av egen eller leid fast eiendom",
     "employees": null,
+    "phone": "+47 454 40 301",
+    "email": null,
     "website": "https://langset.no",
     "socials": {},
     "financials": {
@@ -7727,6 +7493,8 @@
     "industry_code": "43.410",
     "industry_desc": "Takarbeid",
     "employees": 31,
+    "phone": "+47 924 62 352",
+    "email": "torbjorn@haugesundblikk.no",
     "website": "https://haugesundblikk.no",
     "socials": {
       "facebook": "https://www.facebook.com/haugesundBlikkAS"
@@ -7808,6 +7576,8 @@
     "industry_code": "43.210",
     "industry_desc": "Elektrisk installasjonsarbeid",
     "employees": null,
+    "phone": "+47 404 12 582",
+    "email": "knut@knuthalvorsen.no",
     "website": "https://nj-elektro.no",
     "socials": {},
     "financials": {
@@ -7879,6 +7649,8 @@
     "industry_code": "62.200",
     "industry_desc": "Konsulentvirksomhet tilknyttet informasjonsteknologi og forvaltning og drift av it-systemer",
     "employees": null,
+    "phone": null,
+    "email": "post@devtec.no",
     "website": "https://devtec.no",
     "socials": {},
     "financials": {
@@ -7954,6 +7726,8 @@
     "industry_code": "49.410",
     "industry_desc": "Godstransport på vei",
     "employees": 26,
+    "phone": "+47 969 46 046",
+    "email": "post@andersenairportservice.com",
     "website": "https://andersenairportservice.com",
     "socials": {
       "facebook": "https://www.facebook.com/profile.php?id=100063613538705",
@@ -8033,6 +7807,8 @@
     "industry_code": "46.830",
     "industry_desc": "Engroshandel med tømmer, trelast, byggevarer og sanitærutstyr",
     "employees": 6,
+    "phone": "+47 936 44 468",
+    "email": null,
     "website": "https://arcticspassandnes.no",
     "socials": {
       "facebook": "https://www.facebook.com/arcticspas",
@@ -8117,83 +7893,6 @@
     }
   },
   {
-    "id": "912007553",
-    "orgnr": "912007553",
-    "name": "BUSY AS",
-    "legal_form": "AS",
-    "status": "Aktiv",
-    "is_active": true,
-    "municipality": "DRAMMEN",
-    "address": "c/o Login Regnskap AS, Ingvald Ludvigsens gate 23, 3027 DRAMMEN",
-    "industry_code": "41.000",
-    "industry_desc": "Oppføring av bygninger",
-    "employees": 14,
-    "website": "https://busyas.no",
-    "socials": {
-      "facebook": "https://www.facebook.com/people/Comfort-Elektro-As/100063774570872/"
-    },
-    "financials": {
-      "revenue_nok": 54338913.0,
-      "revenue_display": "54.34M NOK",
-      "result_nok": 3233163.0,
-      "result_display": "3.23M NOK",
-      "assets_nok": 15096400.0,
-      "assets_display": "15.10M NOK",
-      "equity_nok": 3802722.0,
-      "equity_display": "3.80M NOK",
-      "filing_year": "2025",
-      "has_data": true
-    },
-    "people": [
-      {
-        "role": "Daglig leder",
-        "name": "Stein Amundsen"
-      },
-      {
-        "role": "Styremedlem",
-        "name": "Rolandas Domarkas"
-      },
-      {
-        "role": "Varamedlem",
-        "name": "Tomas Domarkas"
-      }
-    ],
-    "locations": [
-      {
-        "name": "BUSY AS",
-        "city": "DRAMMEN",
-        "orgnr": "912018865"
-      }
-    ],
-    "hiring": {
-      "bounded_pages_captured": 1,
-      "verified_social_links": 1,
-      "structured_records": 3,
-      "career_pages_observed": 0
-    },
-    "active_jobs": 0,
-    "places": {
-      "source": "google_places",
-      "place_id": "188064209549216449",
-      "title": "Busy AS",
-      "rating": 5.0,
-      "rating_count": 1,
-      "address": "Ingvald Ludvigsens gate 23, 3027 Drammen",
-      "category": "Bygg- og anleggsfirma"
-    },
-    "buzz": null,
-    "sentiment": null,
-    "news": null,
-    "coverage_score": 6,
-    "qna": {
-      "brief": "BUSY AS er et norsk AS registrert i DRAMMEN (Org.nr: 912007553). Selskapet opererer innen 'Oppføring av bygninger' (NACE 41.000) og har status som aktiv. Registrert med 14 ansatte.",
-      "financials": "For regnskapsåret 2025 rapporterte BUSY AS en omsetning på 54.34M NOK, et driftsresultat på 3.23M NOK, samlede eiendeler på 15.10M NOK og egenkapital på 3.80M NOK.",
-      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Stein Amundsen, Styremedlem: Rolandas Domarkas, Varamedlem: Tomas Domarkas",
-      "digital_footprint": "Verifisert nettside: https://busyas.no. Aktive sosiale profiler: Facebook.",
-      "external_intelligence": "Google Places: 5.0★ (None anmeldelser)."
-    }
-  },
-  {
     "id": "911599465",
     "orgnr": "911599465",
     "name": "KVIKK-RENHOLD AS",
@@ -8205,6 +7904,8 @@
     "industry_code": "81.210",
     "industry_desc": "Rengjøring av bygninger",
     "employees": 22,
+    "phone": "+47 451 29 252",
+    "email": "kontakt@kvikkrenhold.no",
     "website": "https://kvikkrenhold.no",
     "socials": {},
     "financials": {
@@ -8272,6 +7973,8 @@
     "industry_code": "46.820",
     "industry_desc": "Engroshandel med metaller og metallholdig malm",
     "employees": 12,
+    "phone": "+47 452 91 212",
+    "email": "gunnar@bautametal.no",
     "website": "https://bautametal.no",
     "socials": {
       "facebook": "https://www.facebook.com/bauta.group",
@@ -8351,6 +8054,8 @@
     "industry_code": "79.902",
     "industry_desc": "Guide- og reiseledervirksomhet",
     "employees": 5,
+    "phone": "+47 484 60 081",
+    "email": "info@wanderingowl.com",
     "website": "https://wanderingowl.com",
     "socials": {
       "facebook": "https://www.facebook.com/tr?id=2228067494114763&ev=PageView&noscript=1",
@@ -8424,6 +8129,635 @@
       "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Jenna Kate Barnham, Styrets leder: Maarit Hannele Valkonen, Styremedlem: Virginie Ramasco, Styremedlem: Juan Manuel Gonzalez Mantero",
       "digital_footprint": "Verifisert nettside: https://wanderingowl.com. Aktive sosiale profiler: Facebook, Instagram, Tiktok.",
       "external_intelligence": "Google Places: 4.4★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "915388248",
+    "orgnr": "915388248",
+    "name": "HØYLANDET FRIVILLIGSENTRAL STI",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "HØYLANDET",
+    "address": "Gartlandsvegen 8, 7877 HØYLANDET",
+    "industry_code": "88.996",
+    "industry_desc": "Andre sosialtjenester uten botilbud ellers",
+    "employees": null,
+    "phone": "+47 950 19 748",
+    "email": "hoylandet.frivilligsentral@gmail.com",
+    "website": "https://hoylandet.frivilligsentral.no",
+    "socials": {
+      "facebook": "https://www.facebook.com/hoylandet.frivilligsentral"
+    },
+    "financials": {
+      "revenue_nok": 1126688.0,
+      "revenue_display": "1.13M NOK",
+      "result_nok": -44347.0,
+      "result_display": "-44.3k NOK",
+      "assets_nok": 917239.0,
+      "assets_display": "917.2k NOK",
+      "equity_nok": 787780.0,
+      "equity_display": "787.8k NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Bjørg Olaug Grongstad"
+      },
+      {
+        "role": "Styrets leder",
+        "name": "Tove Arnhild Fjerdingen"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Bodil Anita Kolsvik"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Ole Joar Flaat"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Fredrik Steinsvik"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Randi Kristine Skarland"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Ann Jorun Okstad"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Margit Flaat"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Kjersti Lian"
+      }
+    ],
+    "locations": [
+      {
+        "name": "HØYLANDET FRIVILLIGSENTRAL STI",
+        "city": "HØYLANDET",
+        "orgnr": "915550800"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 1,
+      "structured_records": 1,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "7618464328540804441",
+      "title": "Høylandet Frivilligsentral",
+      "rating": 1.0,
+      "rating_count": 1,
+      "address": "Gartlandsvegen 8, 7877",
+      "category": "Klubb"
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": {
+      "title": "Høylandet frivilligsentral",
+      "url": "https://hoylandet.frivilligsentral.no/nyheter/",
+      "source": "company_site"
+    },
+    "coverage_score": 6,
+    "qna": {
+      "brief": "HØYLANDET FRIVILLIGSENTRAL STI er et norsk AS registrert i HØYLANDET (Org.nr: 915388248). Selskapet opererer innen 'Andre sosialtjenester uten botilbud ellers' (NACE 88.996) og har status som aktiv. Ingen ansatte registrert i Aa-registeret.",
+      "financials": "For regnskapsåret 2025 rapporterte HØYLANDET FRIVILLIGSENTRAL STI en omsetning på 1.13M NOK, et driftsresultat på -44.3k NOK, samlede eiendeler på 917.2k NOK og egenkapital på 787.8k NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Bjørg Olaug Grongstad, Styrets leder: Tove Arnhild Fjerdingen, Styremedlem: Bodil Anita Kolsvik, Styremedlem: Ole Joar Flaat",
+      "digital_footprint": "Verifisert nettside: https://hoylandet.frivilligsentral.no. Aktive sosiale profiler: Facebook.",
+      "external_intelligence": "Google Places: 1.0★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "942962568",
+    "orgnr": "942962568",
+    "name": "BOREAL TRAVEL AS",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "HAFRSFJORD",
+    "address": "Treskeveien 5, 4043 HAFRSFJORD",
+    "industry_code": "77.110",
+    "industry_desc": "Utleie og leasing av biler og andre lette motorvogner",
+    "employees": 594,
+    "phone": "+47 51 59 90 60",
+    "email": "post@boreal.no",
+    "website": "https://boreal.no",
+    "socials": {},
+    "financials": {
+      "revenue_nok": 674543000.0,
+      "revenue_display": "674.54M NOK",
+      "result_nok": 10075000.0,
+      "result_display": "10.07M NOK",
+      "assets_nok": 147340000.0,
+      "assets_display": "147.34M NOK",
+      "equity_nok": 23239000.0,
+      "equity_display": "23.24M NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Lars-Marius Lilledal"
+      },
+      {
+        "role": "Styrets leder",
+        "name": "Nikolai Knudsmoen Utheim"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Katrine Voll"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Ida Dybdal Holthe"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Thomas Hetland"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Gunn Karin Næsheim"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Elin Pettersen"
+      },
+      {
+        "role": "Varamedlem",
+        "name": "Stian Pedersen"
+      }
+    ],
+    "locations": [
+      {
+        "name": "BOREAL TRAVEL AS AVD ALTA",
+        "city": "ALTA",
+        "orgnr": "914570697"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD BODØ",
+        "city": "BODØ",
+        "orgnr": "929136071"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD FINNSNES",
+        "city": "FINNSNES",
+        "orgnr": "920726100"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HAFRSFJORD",
+        "city": "HAFRSFJORD",
+        "orgnr": "973443232"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HAMMERFEST",
+        "city": "HAMMERFEST",
+        "orgnr": "914570786"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HARSTAD",
+        "city": "HARSTAD",
+        "orgnr": "819840962"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HERTZ ALTA",
+        "city": "ALTA",
+        "orgnr": "913860500"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HERTZ HAMMERFEST",
+        "city": "HAMMERFEST",
+        "orgnr": "917954712"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HERTZ KIRKENES",
+        "city": "HESSENG",
+        "orgnr": "913912632"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HERTZ LAKSELV",
+        "city": "LAKSELV",
+        "orgnr": "913912780"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD HERTZ VADSØ",
+        "city": "VADSØ",
+        "orgnr": "913859677"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD KRISTIANSAND STADION",
+        "city": "KRISTIANSAND S",
+        "orgnr": "914746744"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD LILLEHAMMER",
+        "city": "LILLEHAMMER",
+        "orgnr": "914570638"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD NARVIK",
+        "city": "NARVIK",
+        "orgnr": "919069473"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD NORTH ADVENTURE",
+        "city": "ALTA",
+        "orgnr": "911693410"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD OSLO",
+        "city": "OSLO",
+        "orgnr": "935478057"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD SORTLAND",
+        "city": "SORTLAND",
+        "orgnr": "914570832"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD STAVANGER",
+        "city": "STAVANGER",
+        "orgnr": "914570581"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD TILLER",
+        "city": "TILLER",
+        "orgnr": "997832752"
+      },
+      {
+        "name": "BOREAL TRAVEL AS AVD TROMSØ",
+        "city": "TROMSØ",
+        "orgnr": "974331225"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 0,
+      "structured_records": 5,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "4400872026921519448",
+      "title": "Boreal Travel AS",
+      "rating": null,
+      "rating_count": 0,
+      "address": "Treskeveien 5, 4018 Stavanger",
+      "category": null
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": null,
+    "coverage_score": 6,
+    "qna": {
+      "brief": "BOREAL TRAVEL AS er et norsk AS registrert i HAFRSFJORD (Org.nr: 942962568). Selskapet opererer innen 'Utleie og leasing av biler og andre lette motorvogner' (NACE 77.110) og har status som aktiv. Registrert med 594 ansatte.",
+      "financials": "For regnskapsåret 2025 rapporterte BOREAL TRAVEL AS en omsetning på 674.54M NOK, et driftsresultat på 10.07M NOK, samlede eiendeler på 147.34M NOK og egenkapital på 23.24M NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Lars-Marius Lilledal, Styrets leder: Nikolai Knudsmoen Utheim, Styremedlem: Katrine Voll, Styremedlem: Ida Dybdal Holthe",
+      "digital_footprint": "Verifisert nettside: https://boreal.no. Ingen verifiserte sosiale profiler.",
+      "external_intelligence": "Google Places: None★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "979955138",
+    "orgnr": "979955138",
+    "name": "ABARIS CONSULTING AS",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "KVAM",
+    "address": "Elvevegen 5, 2642 KVAM",
+    "industry_code": "62.100",
+    "industry_desc": "Dataprogrammeringstjenester",
+    "employees": 10,
+    "phone": "+47 416 23 017",
+    "email": "andre.hukkelaas@abaris.no",
+    "website": "https://abaris.no",
+    "socials": {
+      "twitter": "https://twitter.com/OnAbaris",
+      "linkedin": "https://www.linkedin.com/company/abaris-consulting-as/",
+      "instagram": "https://www.instagram.com/abarisconsulting/",
+      "facebook": "https://www.facebook.com/abarisconsulting/"
+    },
+    "financials": {
+      "revenue_nok": 14923934.0,
+      "revenue_display": "14.92M NOK",
+      "result_nok": 789304.0,
+      "result_display": "789.3k NOK",
+      "assets_nok": 10559649.0,
+      "assets_display": "10.56M NOK",
+      "equity_nok": 6510397.0,
+      "equity_display": "6.51M NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Lars Tungen"
+      },
+      {
+        "role": "Styrets leder",
+        "name": "Erlend Figenschau Lund"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Andrè Hukkelås"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Lars Tungen"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Lukas Emil Wijgaart-Van Dijk"
+      }
+    ],
+    "locations": [
+      {
+        "name": "ABARIS CONSULTING AS AVD HALDEN",
+        "city": "HALDEN",
+        "orgnr": "914873509"
+      },
+      {
+        "name": "ABARIS CONSULTING AS AVD KVAM",
+        "city": "KVAM",
+        "orgnr": "979999461"
+      },
+      {
+        "name": "ABARIS CONSULTING AS AVD LILLEHAMMER",
+        "city": "LILLEHAMMER",
+        "orgnr": "827371262"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 4,
+      "structured_records": 5,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "11980628187490956678",
+      "title": "Abaris Consulting AS",
+      "rating": 5.0,
+      "rating_count": 3,
+      "address": "Elvevegen 5, 2642 Kvam",
+      "category": "Ingeniør"
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": null,
+    "coverage_score": 6,
+    "qna": {
+      "brief": "ABARIS CONSULTING AS er et norsk AS registrert i KVAM (Org.nr: 979955138). Selskapet opererer innen 'Dataprogrammeringstjenester' (NACE 62.100) og har status som aktiv. Registrert med 10 ansatte.",
+      "financials": "For regnskapsåret 2025 rapporterte ABARIS CONSULTING AS en omsetning på 14.92M NOK, et driftsresultat på 789.3k NOK, samlede eiendeler på 10.56M NOK og egenkapital på 6.51M NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Lars Tungen, Styrets leder: Erlend Figenschau Lund, Styremedlem: Andrè Hukkelås, Styremedlem: Lars Tungen",
+      "digital_footprint": "Verifisert nettside: https://abaris.no. Aktive sosiale profiler: Twitter, Linkedin, Instagram, Facebook.",
+      "external_intelligence": "Google Places: 5.0★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "912462048",
+    "orgnr": "912462048",
+    "name": "VEDELD AS",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "LYSAKER",
+    "address": "Strandveien 10, 1366 LYSAKER",
+    "industry_code": "71.129",
+    "industry_desc": "Annen teknisk konsulentvirksomhet",
+    "employees": 12,
+    "phone": "+47 918 43 966",
+    "email": "henrik.vedeld@vedeld.no",
+    "website": "https://vedeld.no",
+    "socials": {},
+    "financials": {
+      "revenue_nok": 34386620.0,
+      "revenue_display": "34.39M NOK",
+      "result_nok": 2330742.0,
+      "result_display": "2.33M NOK",
+      "assets_nok": 31079332.0,
+      "assets_display": "31.08M NOK",
+      "equity_nok": 11071573.0,
+      "equity_display": "11.07M NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Henrik Vedeld"
+      },
+      {
+        "role": "Styrets leder",
+        "name": "Erik Christian Must"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Henrik Vedeld"
+      }
+    ],
+    "locations": [
+      {
+        "name": "VEDELD AS",
+        "city": "LYSAKER",
+        "orgnr": "912575950"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 0,
+      "structured_records": 3,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "3425641022652579604",
+      "title": "Vedeld AS",
+      "rating": null,
+      "rating_count": 0,
+      "address": "Strandveien 10, 1366 Lysaker",
+      "category": "Bedriftstjenester"
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": null,
+    "coverage_score": 6,
+    "qna": {
+      "brief": "VEDELD AS er et norsk AS registrert i LYSAKER (Org.nr: 912462048). Selskapet opererer innen 'Annen teknisk konsulentvirksomhet' (NACE 71.129) og har status som aktiv. Registrert med 12 ansatte.",
+      "financials": "For regnskapsåret 2025 rapporterte VEDELD AS en omsetning på 34.39M NOK, et driftsresultat på 2.33M NOK, samlede eiendeler på 31.08M NOK og egenkapital på 11.07M NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Henrik Vedeld, Styrets leder: Erik Christian Must, Styremedlem: Henrik Vedeld",
+      "digital_footprint": "Verifisert nettside: https://vedeld.no. Ingen verifiserte sosiale profiler.",
+      "external_intelligence": "Google Places: None★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "898743802",
+    "orgnr": "898743802",
+    "name": "NYHEIM LODGE AS",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "TRONDHEIM",
+    "address": "Ladebekken 20, 7041 TRONDHEIM",
+    "industry_code": "56.110",
+    "industry_desc": "Drift av restauranter",
+    "employees": null,
+    "phone": "+47 916 89 702",
+    "email": "post@nyheimlodge.no",
+    "website": "https://nyheimlodge.no",
+    "socials": {
+      "facebook": "https://www.facebook.com/nyheimlodge/",
+      "instagram": "https://www.instagram.com/nyheimlodge/"
+    },
+    "financials": {
+      "revenue_nok": 579496.0,
+      "revenue_display": "579.5k NOK",
+      "result_nok": 19445.0,
+      "result_display": "19.4k NOK",
+      "assets_nok": 1691047.0,
+      "assets_display": "1.69M NOK",
+      "equity_nok": 433517.0,
+      "equity_display": "433.5k NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Ragnhild Johanne Nisja"
+      },
+      {
+        "role": "Styrets leder",
+        "name": "Ragnhild Johanne Nisja"
+      },
+      {
+        "role": "Styremedlem",
+        "name": "Eli Grete Nisja"
+      }
+    ],
+    "locations": [
+      {
+        "name": "NYHEIM LODGE AS",
+        "city": "GJØRA",
+        "orgnr": "998753201"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 2,
+      "structured_records": 2,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "12333802430167253666",
+      "title": "Nyheim lodge AS",
+      "rating": null,
+      "rating_count": 0,
+      "address": "Dronning Åsas vei 34, 7040 Trondheim",
+      "category": null
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": null,
+    "coverage_score": 6,
+    "qna": {
+      "brief": "NYHEIM LODGE AS er et norsk AS registrert i TRONDHEIM (Org.nr: 898743802). Selskapet opererer innen 'Drift av restauranter' (NACE 56.110) og har status som aktiv. Ingen ansatte registrert i Aa-registeret.",
+      "financials": "For regnskapsåret 2025 rapporterte NYHEIM LODGE AS en omsetning på 579.5k NOK, et driftsresultat på 19.4k NOK, samlede eiendeler på 1.69M NOK og egenkapital på 433.5k NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Ragnhild Johanne Nisja, Styrets leder: Ragnhild Johanne Nisja, Styremedlem: Eli Grete Nisja",
+      "digital_footprint": "Verifisert nettside: https://nyheimlodge.no. Aktive sosiale profiler: Facebook, Instagram.",
+      "external_intelligence": "Google Places: None★ (None anmeldelser)."
+    }
+  },
+  {
+    "id": "914839467",
+    "orgnr": "914839467",
+    "name": "TRIMTEX NORGE AS",
+    "legal_form": "AS",
+    "status": "Aktiv",
+    "is_active": true,
+    "municipality": "LILLESAND",
+    "address": "Sekkebekksletta 8, 4790 LILLESAND",
+    "industry_code": "46.420",
+    "industry_desc": "Engroshandel med klær og skotøy",
+    "employees": 6,
+    "phone": "+47 901 65 702",
+    "email": "claims@trimtexstore.com",
+    "website": "https://trimtexstore.no",
+    "socials": {
+      "facebook": "https://www.facebook.com/TrimtexSportNorge",
+      "linkedin": "https://www.linkedin.com/company/5192219/",
+      "instagram": "https://www.instagram.com/trimtex/"
+    },
+    "financials": {
+      "revenue_nok": 61012150.0,
+      "revenue_display": "61.01M NOK",
+      "result_nok": 1259304.0,
+      "result_display": "1.26M NOK",
+      "assets_nok": 14521181.0,
+      "assets_display": "14.52M NOK",
+      "equity_nok": 1258450.0,
+      "equity_display": "1.26M NOK",
+      "filing_year": "2025",
+      "has_data": true
+    },
+    "people": [
+      {
+        "role": "Daglig leder",
+        "name": "Tor Eivind Augland"
+      }
+    ],
+    "locations": [
+      {
+        "name": "TRIMTEX NORGE AS",
+        "city": "LILLESAND",
+        "orgnr": "915797172"
+      }
+    ],
+    "hiring": {
+      "bounded_pages_captured": 2,
+      "verified_social_links": 3,
+      "structured_records": 5,
+      "career_pages_observed": 0
+    },
+    "active_jobs": 0,
+    "places": {
+      "source": "google_places",
+      "place_id": "8854905287688574684",
+      "title": "Trimtex Sport AS",
+      "rating": 4.3,
+      "rating_count": 40,
+      "address": "Sekkebekksletta 8",
+      "category": "Sportsklesbutikk"
+    },
+    "buzz": null,
+    "sentiment": null,
+    "news": null,
+    "coverage_score": 6,
+    "qna": {
+      "brief": "TRIMTEX NORGE AS er et norsk AS registrert i LILLESAND (Org.nr: 914839467). Selskapet opererer innen 'Engroshandel med klær og skotøy' (NACE 46.420) og har status som aktiv. Registrert med 6 ansatte.",
+      "financials": "For regnskapsåret 2025 rapporterte TRIMTEX NORGE AS en omsetning på 61.01M NOK, et driftsresultat på 1.26M NOK, samlede eiendeler på 14.52M NOK og egenkapital på 1.26M NOK.",
+      "leadership": "Nøkkelpersoner registrert i Foretaksregisteret: Daglig leder: Tor Eivind Augland",
+      "digital_footprint": "Verifisert nettside: https://trimtexstore.no. Aktive sosiale profiler: Facebook, Linkedin, Instagram.",
+      "external_intelligence": "Google Places: 4.3★ (None anmeldelser)."
     }
   }
 ]

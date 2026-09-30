@@ -19,9 +19,9 @@ from typing import Any
 from ..identity import IdentitySignals, find_org_numbers, mod11_valid
 
 _EMAIL = re.compile(r"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}")
-# Norwegian numbers: +47 then 8 digits, or 8 digits in 2-3-3 / 3-2-3 groupings.
+# Norwegian numbers: strictly bounded 8 digits starting with 2-9 (Nkom national plan)
 _PHONE = re.compile(
-    r"(?:(?:\+47|0047)[\s]?)?(?:\d[\s]?){8}(?!\d)")
+    r"(?<!\d)(?:(?:\+47|0047)[\s]?)?([2-9](?:[\s]?\d){7})(?!\d)")
 _TITLE = re.compile(r"<title[^>]*>(.*?)</title>", re.I | re.S)
 _META_DESC = re.compile(
     r'<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\']*)["\']', re.I)
@@ -95,11 +95,13 @@ def page_signals(
 
 
 def _clean_phone(raw: str) -> str | None:
-    digits = re.sub(r"[^\d+]", "", raw)
-    core = digits[3:] if digits.startswith("+47") else (
-        digits[4:] if digits.startswith("0047") else digits)
-    if len(core) == 8 and core.isdigit():
-        return "+47 " + core
+    digits = re.sub(r"\D", "", raw)
+    core = digits[2:] if digits.startswith("47") and len(digits) == 10 else digits
+    if len(core) == 8 and core.isdigit() and core[0] in "23456789":
+        if core[0] in "49":
+            return f"+47 {core[:3]} {core[3:5]} {core[5:]}"
+        else:
+            return f"+47 {core[:2]} {core[2:4]} {core[4:6]} {core[6:]}"
     return None
 
 
@@ -119,9 +121,11 @@ def extract_contacts(html: str, text: str) -> dict[str, Any]:
         if low not in emails:
             emails.append(low)
 
+    # Strip script/style tags before searching for phone numbers to prevent JS bundle hashes matching
+    clean_text = _strip_tags(text or html)
     phones: list[str] = []
-    for match in _PHONE.findall(text):
-        cleaned = _clean_phone(match)
+    for match in _PHONE.finditer(clean_text):
+        cleaned = _clean_phone(match.group(0))
         if cleaned and cleaned not in phones:
             phones.append(cleaned)
 

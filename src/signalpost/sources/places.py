@@ -82,8 +82,9 @@ def fetch_places_ratings(
     api_key: str | None = None,
 ) -> list[dict[str, Any]]:
     """Fetch verified Google Place ratings, review count, and Place ID."""
-    key = api_key or os.environ.get("SERPER_API_KEY")
-    if not key:
+    raw_keys = api_key or os.environ.get("SERPER_API_KEY", "")
+    keys = [k.strip() for k in raw_keys.split(",") if k.strip()]
+    if not keys:
         return []
 
     clean_name = str(legal_name or "").strip()
@@ -103,24 +104,34 @@ def fetch_places_ratings(
         "num": 5,
     }).encode("utf-8")
 
-    response = fetcher.get(
-        org,
-        f"{SERPER_PLACES_URL}?q={urllib.parse.quote(query_str)}",
-        headers={
-            "X-API-KEY": key,
-            "Content-Type": "application/json",
-        },
-        data=payload,
-        check_robots=False,
-    )
+    response = None
+    for key in keys:
+        try:
+            resp = fetcher.get(
+                org,
+                f"{SERPER_PLACES_URL}?q={urllib.parse.quote(query_str)}",
+                headers={
+                    "X-API-KEY": key,
+                    "Content-Type": "application/json",
+                },
+                data=payload,
+                check_robots=False,
+            )
+            if resp.ok:
+                response = resp
+                break
+            response = resp
+        except Exception:
+            continue
 
-    if not response.ok:
-        state = "not_available" if response.status in (404, 400) else "failed"
+    if not response or not response.ok:
+        status_code = response.status if response else 0
+        state = "not_available" if status_code in (404, 400) else "failed"
         return [make_claim(
             field="ratings_and_reviews",
             value=None,
             availability=state,
-            note=f"Google Places API returned {response.error or response.status}",
+            note=f"Google Places API returned {response.error if response else 'connection error' or status_code}",
         )]
 
     try:

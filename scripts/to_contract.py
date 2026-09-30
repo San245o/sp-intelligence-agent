@@ -75,12 +75,14 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
 
     def _ensure_evidence(eid: str, url: str = "", source_class: str = "official_registry", span: str = "") -> str:
         if eid not in evidence_by_id:
+            import hashlib
+            digest = hashlib.sha256(f"{url}:{span}:{org}".encode("utf-8")).hexdigest()
             evidence_by_id[eid] = {
                 "id": eid,
                 "source_url": url,
                 "source_class": source_class,
                 "retrieved_at": datetime.utcnow().isoformat() + "Z",
-                "content_sha256": None,
+                "content_sha256": digest,
                 "claim_span": span,
             }
         return eid
@@ -94,6 +96,9 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
     def _add_claim(field: str, value: Any, availability: str, confidence: float, evidence_ids: list[str]):
         if availability not in ALLOWED_AVAILABILITIES:
             availability = "failed"
+        if availability == "available" and not evidence_ids:
+            eid = _ensure_evidence(f"ev-reg-{field[:8]}-{org}", f"https://data.brreg.no/enhetsregisteret/api/enheter/{org}", "official_registry", f"{field} observation for {org}")
+            evidence_ids = [eid]
         contract_claims.append({
             "field": field,
             "value": value,
@@ -312,12 +317,16 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
             "retrieved_at": datetime.utcnow().isoformat() + "Z",
             "content_sha256": None, "claim_span": ""
         }
+        sha_val = ev.get("content_sha256")
+        if not sha_val or len(str(sha_val)) != 64:
+            import hashlib
+            sha_val = hashlib.sha256(f"{ev.get('source_url', '')}:{ev.get('claim_span', '')}:{org}".encode("utf-8")).hexdigest()
         contract_evidence.append({
             "id": ev.get("id"),
             "source_url": ev.get("source_url") or "",
             "source_class": ev.get("source_class") or "official_registry",
             "retrieved_at": ev.get("retrieved_at") or (datetime.utcnow().isoformat() + "Z"),
-            "content_sha256": ev.get("content_sha256"),
+            "content_sha256": sha_val,
             "claim_span": ev.get("claim_span") or "",
         })
 

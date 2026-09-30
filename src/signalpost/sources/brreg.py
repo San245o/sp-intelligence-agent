@@ -170,7 +170,8 @@ def fetch_entity(
     if postal and postal != address:
         add("postal_address", _address(postal), _flat(postal))
 
-    add("phone", entity.get("telefon"), str(entity.get("telefon")))
+    reg_phone = entity.get("telefon") or entity.get("mobil")
+    add("phone", reg_phone, str(reg_phone) if reg_phone else None)
     add("website_registry", entity.get("hjemmeside"), str(entity.get("hjemmeside")))
     add("email", entity.get("epostadresse"), str(entity.get("epostadresse")))
 

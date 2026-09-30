@@ -274,15 +274,19 @@ class TavilySearchProvider:
         if not raw_keys:
             return []
         keys = [k.strip() for k in raw_keys.split(",") if k.strip()]
-        import urllib.parse
+        import json
+        body = json.dumps({"query": query, "max_results": limit, "search_depth": "basic"}).encode("utf-8")
         for key in keys:
             try:
-                url = (
-                    f"https://api.tavily.com/search?query={urllib.parse.quote(query)}"
-                    f"&max_results={limit}&api_key={urllib.parse.quote(key)}&search_depth=basic"
-                )
                 response = self.fetcher.get(
-                    "__search__", url, accept="application/json", check_robots=False)
+                    "__search__",
+                    "https://api.tavily.com/search",
+                    accept="application/json",
+                    check_robots=False,
+                    allow_cache=False,
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    data=body,
+                )
                 if not response.ok:
                     continue
                 payload = response.json()
@@ -640,8 +644,22 @@ def discover(
     if search and not has_authoritative and should_attempt_search(profile, tier):
         addr = profile.get("business_address") or profile.get("forretningsadresse") or {}
         city = str(addr.get("poststed") or addr.get("kommune") or profile.get("municipality") or "").strip()
-        loc_clause = f" {city}" if city else ""
-        query = f'"{name}"{loc_clause} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no -site:yra.no -site:nol.no -site:180.no -site:northdata.com'.strip()
+        postcode = str(addr.get("postnummer") or profile.get("postcode") or "").strip()
+        reg_phone = str(profile.get("phone") or profile.get("telefon") or profile.get("mobil") or "").strip()
+        reg_phone_clean = re.sub(r"\D", "", reg_phone)
+        if reg_phone_clean.startswith("47") and len(reg_phone_clean) == 10:
+            reg_phone_clean = reg_phone_clean[2:]
+
+        anchor_terms: list[str] = []
+        if reg_phone_clean and len(reg_phone_clean) == 8:
+            anchor_terms.append(f'"{reg_phone_clean}"')
+        if postcode and len(postcode) == 4:
+            anchor_terms.append(f'"{postcode}"')
+        if city:
+            anchor_terms.append(f'"{city}"')
+
+        anchor_clause = f" ({' OR '.join(anchor_terms[:2])})" if anchor_terms else ""
+        query = f'"{name}"{anchor_clause} Norge -site:proff.no -site:1881.no -site:gulesider.no -site:brreg.no -site:purehelp.no -site:yra.no -site:nol.no -site:180.no -site:northdata.com'.strip()
         for url in search.search(query):
             offer(url, "search", f"candidate from {search.name} search")
 

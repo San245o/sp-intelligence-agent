@@ -43,6 +43,47 @@ def build_jbox_company(env: dict[str, Any]) -> dict[str, Any]:
     industry_desc = ind_val.get("description") or "Næring ikke spesifisert"
     
     employees = claims.get("employees", {}).get("value")
+
+    # Phone & Email
+    import re
+    reg_phone_raw = claims.get("phone", {}).get("value")
+    phone = None
+    if reg_phone_raw and str(reg_phone_raw).strip() not in ("None", ""):
+        d = re.sub(r"\D", "", str(reg_phone_raw))
+        if d.startswith("47") and len(d) == 10:
+            d = d[2:]
+        if len(d) == 8 and d[0] in "23456789":
+            phone = f"+47 {d[:3]} {d[3:5]} {d[5:]}" if d[0] in "49" else f"+47 {d[:2]} {d[2:4]} {d[4:6]} {d[6:]}"
+
+    if not phone:
+        cp_claim = claims.get("contact_phone", {})
+        cp_val = cp_claim.get("value") if cp_claim.get("availability") == "available" else None
+        if cp_val:
+            cands = cp_val if isinstance(cp_val, list) else [cp_val]
+            def _phone_priority(cand: Any) -> tuple[int, str]:
+                s = re.sub(r"\D", "", str(cand))
+                if s.startswith("47") and len(s) == 10:
+                    s = s[2:]
+                prio = 0 if (len(s) == 8 and s[0] in "49") else (1 if len(s) == 8 and s[0] in "235678" else 2)
+                return (prio, str(cand))
+            sorted_cands = sorted(cands, key=_phone_priority)
+            for cand in sorted_cands:
+                d = re.sub(r"\D", "", str(cand))
+                if d.startswith("47") and len(d) == 10:
+                    d = d[2:]
+                # Enforce valid Norwegian prefix (2-9), and explicitly guard against matching 8-digit slice of org number
+                if len(d) == 8 and d[0] in "23456789" and d != org[1:]:
+                    phone = f"+47 {d[:3]} {d[3:5]} {d[5:]}" if d[0] in "49" else f"+47 {d[:2]} {d[2:4]} {d[4:6]} {d[6:]}"
+                    break
+
+    email_claim = claims.get("email") or claims.get("contact_email")
+    email_val = email_claim.get("value") if email_claim and email_claim.get("availability") == "available" else None
+    if isinstance(email_val, list) and email_val:
+        email = email_val[0]
+    elif isinstance(email_val, str):
+        email = email_val
+    else:
+        email = None
     
     # 2. Website & Socials
     web_val = claims.get("website", {}).get("value")
@@ -165,6 +206,8 @@ def build_jbox_company(env: dict[str, Any]) -> dict[str, Any]:
         "industry_code": industry_code,
         "industry_desc": industry_desc,
         "employees": employees,
+        "phone": phone,
+        "email": email,
         "website": website_url,
         "socials": socials,
         "financials": financials,

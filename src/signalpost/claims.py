@@ -61,12 +61,18 @@ def site_claims(
 
     home = crawl.pages[0]
     domain = registrable_domain(verified_url)
+    import urllib.parse
+    parsed_v = urllib.parse.urlparse(verified_url)
+    clean_host = parsed_v.netloc.lower()
+    if clean_host.startswith("www."):
+        clean_host = clean_host[4:]
+    site_value = f"https://{clean_host}" if clean_host else f"https://{domain}"
 
     # 1. The verified own website. Distinct from the registry's `hjemmeside`
     #    pointer (`website_registry`): this one was fetched and identity-checked.
     claims.append(make_claim(
-        field="website", value=f"https://{domain}", availability="available",
-        evidence_ids=_page_evidence(store, home, f"verified own site: {domain}"),
+        field="website", value=site_value, availability="available",
+        evidence_ids=_page_evidence(store, home, f"verified own site: {clean_host or domain}"),
         confidence=0.99,
         note="domain fetched and accepted by the identity gate"))
 
