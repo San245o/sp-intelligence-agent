@@ -33,3 +33,5 @@ scratch_*.py
 .env.*
 !.env.example
 LLM_WIKI.md
+data/companies*.js
+data/companies*.ts
