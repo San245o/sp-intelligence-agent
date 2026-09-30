@@ -1,6 +1,6 @@
-# Signalpost Agent
+# SP Intelligence Agent
 
-An autonomous Norwegian company intelligence agent built for the Builderr Signalpost challenge. Given organisation numbers from Norway's 411,160-entity universe, it resolves legal identity, harvests full financial statements and balance sheets, discovers company websites via DNS and ML ranking, validates evidence spans with cryptographic SHA-256 hashes, and emits deterministic terminal envelopes at **$0.00 declared spend**.
+An autonomous Nordic entity intelligence pipeline. Given organisation numbers from Norway's 411,160-entity universe, it resolves legal identity, harvests full financial statements and balance sheets, discovers company websites via DNS and ML ranking, validates evidence spans with cryptographic SHA-256 hashes, and emits deterministic terminal envelopes at **$0.00 declared spend**.
 
 ---
 
@@ -57,7 +57,7 @@ python -m unittest discover tests -v
 - Instead of burning budget on commercial search APIs, the agent utilizes:
   - **Local DNS probing:** Generating normalized legal name slugs across `.no` and `.com`.
   - **31-feature ML Ranker:** A calibrated Naive Bayes classifier trained on character/token trigram Jaccard similarity, label lengths, and stratum distributions to rank candidates with zero network cost.
-  - **External Cache Declaration:** Pre-indexes the 44,855 verified domain seeds from Builderr's frozen `company-universe.jsonl.gz` into `data/universe-websites.json` (permitted under clause 65).
+  - **External Cache Declaration:** Pre-indexes the 44,855 verified domain seeds from the frozen corporate universe dataset into `data/universe-websites.json` (permitted under clause 65).
 
 ### C. Deterministic Identity Proof Gate (Zero Hallucination)
 - An identity claim is marked `available` only when:

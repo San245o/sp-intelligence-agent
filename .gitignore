@@ -32,3 +32,4 @@ scratch_*.py
 .env
 .env.*
 !.env.example
+LLM_WIKI.md
