@@ -1,0 +1,20 @@
+{
+  "scorer": "signalpost_product_ux_eval_v1",
+  "profiles_evaluated": 1000,
+  "external_observations_evaluated": 0,
+  "prototype_rendered": true,
+  "checks": {
+    "profile_search_and_list": true,
+    "official_identity_header": true,
+    "normalized_financial_table": true,
+    "roles_and_locations_views": true,
+    "external_intelligence_presented": true,
+    "interactive_research_agent": true,
+    "workspace_history_and_pins": true,
+    "provenance_inspect_and_export": true
+  },
+  "external_intelligence_presented": true,
+  "score": 8.0,
+  "maximum": 8.0,
+  "qualification_passed": true
+}

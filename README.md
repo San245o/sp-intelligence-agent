@@ -35,9 +35,13 @@ python scripts/evaluate_research_agent.py \
   --input runs/submission-1000/envelopes.jsonl \
   --suite tests/fixtures/research-agent-suite-v3-fresh.json \
   --output runs/submission-1000/research-report.json \
-  --workspace runs/submission-1000/workspace.json
+# 6. Evaluate product UX design (8.0 / 8 qualification)
+python scripts/evaluate_ux.py \
+  --prototype runs/submission-1000/prototype.html \
+  --profiles runs/submission-1000/profiles.jsonl \
+  --output runs/submission-1000/ux-report.json
 
-# 6. Run automated test suite
+# 7. Run automated test suite
 python -m unittest discover tests -v
 ```
 
