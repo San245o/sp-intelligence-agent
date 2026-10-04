@@ -428,6 +428,8 @@ class SignalpostAgentTests(unittest.TestCase):
                     "ratingCount": 42,
                     "cid": "1234567890",
                     "category": "Byggefirma",
+                    "website": "https://acmebygg.no",
+                    "phoneNumber": "+47 22 00 00 00",
                 }
             ]
         }
@@ -437,11 +439,47 @@ class SignalpostAgentTests(unittest.TestCase):
         claims = fetch_places_ratings(
             fetcher, "999888777", "Acme Bygg AS", "Oslo", "Storgata 5", store, api_key="dummy_key"
         )
-        self.assertGreaterEqual(len(claims), 2)
+        self.assertGreaterEqual(len(claims), 4)
         rev = next(c for c in claims if c["field"] == "ratings_and_reviews")
         self.assertEqual(rev["value"]["rating"], 4.5)
         self.assertEqual(rev["value"]["rating_count"], 42)
         self.assertEqual(rev["value"]["place_id"], "1234567890")
+        self.assertEqual(rev["value"]["website"], "https://acmebygg.no")
+        self.assertEqual(rev["value"]["phone"], "+47 22 00 00 00")
+
+        web_claim = next(c for c in claims if c["field"] == "website_places")
+        self.assertEqual(web_claim["value"], "https://acmebygg.no")
+
+    def test_smart_places_gating_and_website_discovery_suppression(self):
+        from signalpost.sources.places import should_query_places
+        from signalpost.discovery import discover
+
+        # Holding companies and passive shells should NOT query Places (saves Serper credits)
+        self.assertFalse(should_query_places({"name": "ALPHA HOLDING AS", "legal_form": "AS", "employees": 0, "industry_code": "64.200"}))
+        self.assertFalse(should_query_places({"name": "BETA INVEST AS", "legal_form": "AS", "employees": 1, "industry_code": "64.300"}))
+        self.assertFalse(should_query_places({"name": "SOLSTRAND EIENDOM AS", "legal_form": "AS", "employees": 0, "industry_code": "68.200"}))
+        self.assertFalse(should_query_places({"name": "BORETTSLAGET OLA NORDMANN", "legal_form": "BRL", "employees": 0}))
+        self.assertFalse(should_query_places({"name": "KONKURS AS", "legal_form": "AS", "bankrupt": True, "employees": 5}))
+
+        # Storefronts, restaurants, and active employers SHOULD query Places
+        self.assertTrue(should_query_places({"name": "GRAND CAFE AS", "legal_form": "AS", "employees": 12, "industry_code": "56.101"}))
+        self.assertTrue(should_query_places({"name": "NORDIC HOTEL AS", "legal_form": "AS", "employees": 25, "industry_code": "55.100"}))
+        self.assertTrue(should_query_places({"name": "TANDLEGE HANSEN AS", "legal_form": "AS", "employees": 3, "industry_code": "86.230"}))
+        self.assertTrue(should_query_places({"name": "OSLO TANNKLINIKK AS", "legal_form": "AS", "employees": 0, "industry_code": "86.230"}))
+        self.assertTrue(should_query_places({"name": "ACTIVE OPERATING AS", "legal_form": "AS", "employees": 4, "industry_code": "70.220"}))
+
+        # Discovery incorporates place_website as top candidate and suppresses web search
+        profile = {
+            "organisation_number": "999111222",
+            "name": "Boreal Travel AS",
+            "legal_form": "AS",
+            "place_website": "https://borealtravel.no",
+        }
+        res = discover(profile, known_domains={})
+        origins = [c.origin for c in res.candidates]
+        self.assertIn("google_places", origins)
+        cand = next(c for c in res.candidates if c.origin == "google_places")
+        self.assertEqual(cand.url, "https://borealtravel.no")
 
     def test_youtube_channel_and_cadence(self):
         from unittest.mock import MagicMock

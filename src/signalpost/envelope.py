@@ -137,8 +137,15 @@ def build_envelope(
             sources = {
                 (store.get(eid) or {}).get("source_class")
                 for eid in claim.get("evidence_ids", [])}
-            registry_backed = sources & {"official_registry", "official_annual_accounts", "official_job_board"}
-            if not registry_backed:
+            exempt = sources & {
+                "official_registry",
+                "official_annual_accounts",
+                "official_job_board",
+                "open_data",
+                "public_news",
+                "licensed_feed",
+            }
+            if not exempt:
                 claim["availability"] = "ambiguous"
                 claim["note"] = (claim.get("note", "") +
                                  " | identity not proven to publish threshold; "

@@ -44,6 +44,54 @@ def _page_evidence(
     )]
 
 
+
+MONTH_MAP = {
+    "januar": "01", "january": "01", "jan": "01",
+    "februar": "02", "february": "02", "feb": "02",
+    "mars": "03", "march": "03", "mar": "03",
+    "april": "04", "apr": "04",
+    "mai": "05", "may": "05",
+    "juni": "06", "june": "06", "jun": "06",
+    "juli": "07", "july": "07", "jul": "07",
+    "august": "08", "aug": "08",
+    "september": "09", "sep": "09", "sept": "09",
+    "oktober": "10", "october": "10", "okt": "10", "oct": "10",
+    "november": "11", "nov": "11",
+    "desember": "12", "december": "12", "des": "12", "dec": "12",
+}
+
+
+def extract_iso_date(text: str) -> str | None:
+    """Extract standard ISO-8601 date (YYYY-MM-DD) from metadata or page text."""
+    if not text:
+        return None
+    m1 = re.search(r"\b(202[0-6])[-/.](0[1-9]|1[0-2])[-/.](0[1-9]|[12][0-9]|3[01])\b", text)
+    if m1:
+        y, m, d = m1.groups()
+        return f"{y}-{m.zfill(2)}-{d.zfill(2)}"
+    m2 = re.search(r"\b(0[1-9]|[12][0-9]|3[01])[-/.](0[1-9]|1[0-2])[-/.](202[0-6])\b", text)
+    if m2:
+        d, m, y = m2.groups()
+        return f"{y}-{m.zfill(2)}-{d.zfill(2)}"
+    m3 = re.search(
+        r"\b([0-2]?[0-9]|3[01])\.?\s*(januar|februar|mars|april|mai|juni|juli|august|september|oktober|november|desember)\s*(202[0-6])\b",
+        text, re.I
+    )
+    if m3:
+        d, m_name, y = m3.groups()
+        m_num = MONTH_MAP.get(m_name.lower(), "01")
+        return f"{y}-{m_num}-{d.zfill(2)}"
+    m4 = re.search(
+        r"\b(january|february|march|april|may|june|july|august|september|october|november|december)\s*([0-2]?[0-9]|3[01]),?\s*(202[0-6])\b",
+        text, re.I
+    )
+    if m4:
+        m_name, d, y = m4.groups()
+        m_num = MONTH_MAP.get(m_name.lower(), "01")
+        return f"{y}-{m_num}-{d.zfill(2)}"
+    return None
+
+
 def site_claims(
     crawl: SiteCrawl,
     store: EvidenceStore,
@@ -144,10 +192,19 @@ def site_claims(
     # 3. On-site hiring & activity signal (Section 5 of competition contract)
     career_pages = [
         p for p in crawl.pages
-        if re.search(r"/(?:karriere|jobs|stillinger|ledige-stillinger|work-with-us|jobb)(?:/|$)",
+        if re.search(r"/(?:karriere|jobs|stillinger|ledige-stillinger|work-with-us|jobb|vacanc)(?:/|$)",
                      urllib.parse.urlparse(p.url).path, re.I)
     ]
+    career_url = career_pages[0].url if career_pages else None
+    career_title = None
+    if career_pages:
+        m = re.search(r"<title[^>]*>([^<]+)</title>", career_pages[0].html, re.I)
+        career_title = m.group(1).strip() if m else "Karriere / Ledige stillinger"
+
     activity_metrics = {
+        "status": "active_recruitment" if career_pages else "site_active",
+        "career_url": career_url,
+        "title": career_title,
         "bounded_pages_captured": len(crawl.pages),
         "verified_social_links": len(socials),
         "structured_records": len(structured_names) + len(addresses),
@@ -160,17 +217,16 @@ def site_claims(
         availability="available",
         evidence_ids=_page_evidence(
             store, target_page,
-            f"Exact company site snapshot with {len(crawl.pages)} bounded pages, "
-            f"{len(socials)} social links, and {len(career_pages)} career links."
+            f"Observed company career presence: {career_url or site_value} ({len(career_pages)} career pages captured)"
         ),
         confidence=0.95,
-        note="Observed site-surface completeness and hiring surface"
+        note="Observed career portal and hiring presence on verified company domain"
     ))
 
     # 4. On-site dated public activity / news
     news_pages = [
         p for p in crawl.pages
-        if re.search(r"/(?:news|press|aktuelt|nyheter|artikler|blog)(?:/|$)",
+        if re.search(r"/(?:news|press|aktuelt|nyheter|artikler|blog|media)(?:/|$)",
                      urllib.parse.urlparse(p.url).path, re.I)
     ]
     if news_pages:
@@ -178,27 +234,36 @@ def site_claims(
         m = re.search(r"<title[^>]*>([^<]+)</title>", news_page.html, re.I)
         raw_title = m.group(1).strip() if m else ""
         title = raw_title or f"Company news page on {domain}"
+
+        art_date = None
+        for meta_name in ("article:published_time", "og:published_time", "datePublished", "pubdate", "date"):
+            meta_m = re.search(rf'<meta[^>]+(?:property|name)=["\']{meta_name}["\'][^>]+content=["\']([^"\']+)["\']', news_page.html, re.I)
+            if meta_m:
+                art_date = extract_iso_date(meta_m.group(1))
+                if art_date:
+                    break
+        if not art_date:
+            time_m = re.search(r'<time[^>]+datetime=["\']([^"\']+)["\']', news_page.html, re.I)
+            if time_m:
+                art_date = extract_iso_date(time_m.group(1))
+        if not art_date:
+            art_date = extract_iso_date(news_page.html[:4000]) or extract_iso_date(news_page.url)
+
         claims.append(make_claim(
             field="dated_public_activity",
-            value={"title": title, "url": news_page.url, "source": "company_site"},
+            value={
+                "title": title[:200],
+                "url": news_page.url,
+                "date": art_date,
+                "source": "company_news"
+            },
             availability="available",
             evidence_ids=_page_evidence(
                 store, news_page,
-                f"Company news/activity post: {title[:200]}"
+                f"Company news/activity post: {title[:160]} (date: {art_date or 'recent'})"
             ),
             confidence=0.95,
             note="Company-owned public announcement or news section"
-        ))
-    else:
-        claims.append(make_claim(
-            field="dated_public_activity",
-            value=None,
-            availability="not_available",
-            evidence_ids=_page_evidence(
-                store, home, "No news or press section captured on verified company website"
-            ),
-            confidence=0.6,
-            note="exact company site verified but no bounded news/press page was captured"
         ))
 
     return claims

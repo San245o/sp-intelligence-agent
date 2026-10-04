@@ -13,7 +13,7 @@
   ],
   "history": [
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies in Oslo with above 7 employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -40,7 +40,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies in Bergen with over 4 registered employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -67,7 +67,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies in Trondheim with employees > 10",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -94,7 +94,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "legal form = STI",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -135,7 +135,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "organisation form is BRL",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -196,7 +196,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with at least 75 employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -235,7 +235,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with fewer than 100 employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -602,7 +602,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with revenue above 25 million",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -765,7 +765,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with revenue >= NOK 250 million",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -804,7 +804,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with less than 2 million revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -1191,7 +1191,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:01Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with positive annual result",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -1825,7 +1825,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies with negative annual result",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -2213,7 +2213,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies that have an official website",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -2533,7 +2533,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "companies that have accounts",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3555,7 +3555,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "industry contains 'restauranter'",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3576,7 +3576,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "industry is 'bygninger'",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3597,7 +3597,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "top 7 by revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3623,7 +3623,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:54Z",
       "query": "top 12 by employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3654,7 +3654,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "companies in Oslo with at least 20 employees top 8 by employees",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3685,7 +3685,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "companies in Bergen with revenue above 5 million top 6 by revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3716,7 +3716,7 @@
       "result_organisation_numbers": []
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "organisation form AS with accounts top 9 by revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3757,7 +3757,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "positive annual result top 6 by revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3789,7 +3789,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "negative annual result top 6 by revenue",
       "plan": {
         "version": "closed_company_screen_v1",
@@ -3821,7 +3821,7 @@
       ]
     },
     {
-      "created_at": "2026-09-30T16:30:02Z",
+      "created_at": "2026-10-04T07:55:55Z",
       "query": "legal form ASA with above 20 employees top 5 by employees",
       "plan": {
         "version": "closed_company_screen_v1",

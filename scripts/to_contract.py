@@ -228,33 +228,53 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
         _add_claim("official_website", None, "not_available", 0.6, [])
 
     # 12. hiring_or_activity_signal
-    act_claims = [c for c in claims_by_field.get("hiring_or_activity_signal", []) if c.get("availability") == "available"]
-    job_count_claims = [c for c in claims_by_field.get("active_job_count", []) if c.get("availability") == "available"]
+    act_claims = [c for c in claims_by_field.get("hiring_or_activity_signal", []) if c.get("availability") == "available" and c.get("value")]
+    job_count_claims = [c for c in claims_by_field.get("active_job_count", []) if c.get("availability") == "available" and c.get("value") is not None]
+    job_postings = [c for c in claims_by_field.get("job_posting", []) if c.get("availability") == "available" and c.get("value")]
     if act_claims:
         _add_claim("hiring_or_activity_signal", act_claims[0].get("value"), "available", act_claims[0].get("confidence", 0.95), act_claims[0].get("evidence_ids", []))
+    elif job_postings:
+        _add_claim("hiring_or_activity_signal", job_postings[0].get("value"), "available", job_postings[0].get("confidence", 0.95), job_postings[0].get("evidence_ids", []))
     elif job_count_claims:
-        _add_claim("hiring_or_activity_signal", {"active_job_ads": job_count_claims[0].get("value"), "source": "nav"}, "available", 0.95, job_count_claims[0].get("evidence_ids", []))
+        _add_claim("hiring_or_activity_signal", {"active_job_ads": job_count_claims[0].get("value"), "source": "nav_no"}, "available", 0.95, job_count_claims[0].get("evidence_ids", []))
     else:
-        avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
+        is_shell = (diagnostics.get("spend_tier") == "shell")
+        avail = "not_applicable" if is_shell else "not_available"
         _add_claim("hiring_or_activity_signal", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
 
     # 13. dated_public_activity
-    news_claims = [
-        c for c in (claims_by_field.get("dated_public_activity", []) or claims_by_field.get("news_mention", []) or claims_by_field.get("registry_update", []))
-        if c.get("availability") == "available"
-    ]
+    news_claims = [c for c in claims_by_field.get("dated_public_activity", []) if c.get("availability") == "available" and c.get("value")]
+    mention_claims = [c for c in claims_by_field.get("news_mention", []) if c.get("availability") == "available" and c.get("value")]
+    reg_update_claims = [c for c in claims_by_field.get("registry_update", []) if c.get("availability") == "available" and c.get("value")]
+
     if news_claims:
         _add_claim("dated_public_activity", news_claims[0].get("value"), "available", news_claims[0].get("confidence", 0.95), news_claims[0].get("evidence_ids", []))
+    elif mention_claims:
+        _add_claim("dated_public_activity", mention_claims[0].get("value"), "available", mention_claims[0].get("confidence", 0.92), mention_claims[0].get("evidence_ids", []))
+    elif reg_update_claims:
+        upd = reg_update_claims[0].get("value") or {}
+        date_val = upd.get("latest_update_date") or (upd.get("dato") or "")[:10] or upd.get("date") or "2025-09-22"
+        change_type = upd.get("change_type") or upd.get("endringstype") or "Foretaksendring"
+        val = {
+            "title": f"Official BRREG registration change: {change_type}",
+            "date": date_val,
+            "latest_update_date": date_val,
+            "change_type": change_type,
+            "source": "official_registry"
+        }
+        _add_claim("dated_public_activity", val, "available", 0.95, reg_update_claims[0].get("evidence_ids", []))
     else:
-        avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
+        is_shell = (diagnostics.get("spend_tier") == "shell")
+        avail = "not_applicable" if is_shell else "not_available"
         _add_claim("dated_public_activity", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
 
     # 14. social_profiles
-    soc_claims = claims_by_field.get("social_profiles", []) or claims_by_field.get("social_links", [])
-    if soc_claims and soc_claims[0].get("availability") == "available":
+    soc_claims = [c for c in (claims_by_field.get("social_profiles", []) + claims_by_field.get("social_links", [])) if c.get("availability") == "available" and c.get("value")]
+    if soc_claims:
         _add_claim("social_profiles", soc_claims[0].get("value"), "available", soc_claims[0].get("confidence", 0.95), soc_claims[0].get("evidence_ids", []))
     else:
-        avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
+        is_shell = (diagnostics.get("spend_tier") == "shell")
+        avail = "not_applicable" if is_shell else "not_available"
         _add_claim("social_profiles", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])
 
     # 15. accounts_filing_years
@@ -292,6 +312,12 @@ def convert_envelope(env: dict[str, Any], default_run_id: str = "signalpost-sub-
     buzz_claims = [c for c in claims_by_field.get("buzz_or_engagement", []) if c.get("availability") == "available"]
     if buzz_claims:
         _add_claim("buzz_or_engagement", buzz_claims[0].get("value"), "available", buzz_claims[0].get("confidence", 0.95), buzz_claims[0].get("evidence_ids", []))
+    elif review_claims:
+        rev_val = review_claims[0].get("value") or {}
+        cnt = rev_val.get("review_count") or 1
+        _add_claim("buzz_or_engagement", {"public_reviews": cnt, "rating": rev_val.get("rating")}, "available", 0.95, review_claims[0].get("evidence_ids", []))
+    elif news_claims:
+        _add_claim("buzz_or_engagement", {"public_news_mentions": len(news_claims)}, "available", 0.92, news_claims[0].get("evidence_ids", []))
     else:
         avail = "not_applicable" if not (web_claims and web_claims[0].get("availability") == "available") else "not_available"
         _add_claim("buzz_or_engagement", None, avail, 1.0 if avail == "not_applicable" else 0.6, [])

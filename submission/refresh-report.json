@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "previous_envelopes": 1000,
+  "current_envelopes": 1000,
+  "idempotent": true,
+  "false_changes_on_rerun": 0,
+  "material_changes_count": 0,
+  "changes_sample": []
+}

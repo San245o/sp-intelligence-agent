@@ -179,7 +179,7 @@ _ORIGIN_PRIOR = {
     "dns_guess": 0.45,
 }
 
-AUTHORITATIVE_ORIGINS = ("registry", "wikidata", "registry_email", "universe_snapshot")
+AUTHORITATIVE_ORIGINS = ("registry", "wikidata", "registry_email", "universe_snapshot", "registry_cctld_fallback", "google_places")
 
 
 def rank(

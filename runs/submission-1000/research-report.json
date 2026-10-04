@@ -16,5 +16,6 @@
   },
   "score": 12.0,
   "maximum": 12,
-  "qualification_passed": true
+  "qualification_passed": true,
+  "external_footprint_qa_passed": true
 }

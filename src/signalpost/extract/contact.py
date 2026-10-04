@@ -14,6 +14,7 @@ and `Org(anisasjonsnr)?. 123 456 789` / `NO 123 456 789 MVA` identifiers.
 from __future__ import annotations
 
 import re
+import urllib.parse
 from typing import Any
 
 from ..identity import IdentitySignals, find_org_numbers, mod11_valid
@@ -30,9 +31,87 @@ _META_DESC2 = re.compile(
 
 _SOCIAL_HOSTS = {
     "linkedin.com": "linkedin", "facebook.com": "facebook",
-    "instagram.com": "instagram", "twitter.com": "twitter", "x.com": "twitter",
+    "instagram.com": "instagram", "twitter.com": "x", "x.com": "x",
     "youtube.com": "youtube", "tiktok.com": "tiktok",
 }
+
+
+def normalize_social_url(url: str) -> dict[str, str] | None:
+    """Canonicalize outbound social links and reject sharing/policy/noise endpoints."""
+    try:
+        url_str = str(url or "").strip().rstrip('.,)"\'')
+        if not url_str or "[object" in url_str.lower():
+            return None
+        if not re.match(r"^https?://", url_str, re.I):
+            if url_str.startswith("//"):
+                url_str = "https:" + url_str
+            else:
+                url_str = "https://" + url_str
+        parsed = urllib.parse.urlparse(url_str)
+    except Exception:
+        return None
+
+    host = (parsed.hostname or "").lower()
+    if host.startswith("www."):
+        host = host[4:]
+    platform = None
+    for domain, label in _SOCIAL_HOSTS.items():
+        if host == domain or host.endswith("." + domain):
+            platform = label
+            break
+    if not platform:
+        return None
+
+    # Handle Facebook plugin iframes / data-href
+    if platform == "facebook" and parsed.path.startswith("/plugins/"):
+        embedded = urllib.parse.parse_qs(parsed.query).get("href", [])
+        if embedded:
+            return normalize_social_url(embedded[0])
+        return None
+
+    raw_path = parsed.path.strip("/")
+    parts = [p.strip() for p in raw_path.split("/") if p.strip()]
+    lowered = [p.lower() for p in parts]
+
+    rejected_first = {
+        "facebook": {"sharer", "sharer.php", "share.php", "dialog", "policy.php", "privacy", "events", "groups", "plugins", "login", "signup"},
+        "instagram": {"p", "reel", "reels", "stories", "explore", "about"},
+        "x": {"intent", "share", "home", "search", "i", "privacy"},
+        "linkedin": {"sharearticle", "sharing", "login", "signup", "feed"},
+    }
+    if not parts or lowered[0] in rejected_first.get(platform, set()):
+        return None
+    if platform == "facebook" and lowered[0] in ("profile.php", "pages"):
+        if lowered[0] == "profile.php":
+            return None
+        parts = parts[1:] if len(parts) > 1 else parts
+    if platform == "linkedin" and (lowered[0] != "company" or len(parts) < 2):
+        return None
+    if platform == "youtube" and lowered[0] not in {"channel", "user", "c"} and not parts[0].startswith("@"):
+        return None
+    if platform == "tiktok" and not parts[0].startswith("@"):
+        return None
+    if platform == "x" and len(parts) != 1:
+        return None
+
+    canonical_host = {
+        "linkedin": "linkedin.com",
+        "facebook": "facebook.com",
+        "instagram": "instagram.com",
+        "x": "x.com",
+        "youtube": "youtube.com",
+        "tiktok": "tiktok.com",
+    }[platform]
+
+    if platform == "linkedin":
+        parts = parts[:2]
+    elif platform == "youtube":
+        parts = parts[:1] if parts[0].startswith("@") else parts[:2]
+    elif platform in ("facebook", "instagram", "x"):
+        parts = parts[:1]
+
+    canonical_url = f"https://{canonical_host}/{'/'.join(parts)}"
+    return {"platform": platform, "url": canonical_url}
 
 
 def _strip_tags(html: str) -> str:
@@ -130,19 +209,33 @@ def extract_contacts(html: str, text: str) -> dict[str, Any]:
             phones.append(cleaned)
 
     socials: dict[str, str] = {}
-    for match in re.finditer(r'https?://[^\s"\'<>]+', html):
-        url = match.group(0).rstrip('.,)"\'')
-        low = url.lower()
-        for host, label in _SOCIAL_HOSTS.items():
-            if host in low and label not in socials:
-                path = url.split(host)[-1].strip("/")
-                clean_path = path.split("?")[0].strip("/")
-                slug = clean_path.split(".")[0].lower()
-                if len(clean_path) >= 2 and slug not in {
-                    "share", "sharer", "intent", "login", "signup", "home",
-                    "privacy", "terms", "about", "contact", "dialog", "plugins"
-                }:
-                    socials[label] = url
+    social_links_list: list[dict[str, str]] = []
+    seen_links: set[tuple[str, str]] = set()
+
+    candidate_links: list[str] = []
+    # 1. Harvest from anchor hrefs
+    for m in re.finditer(r'<a\b[^>]*?href=["\']([^"\']+)["\'][^>]*>', html, re.I):
+        candidate_links.append(m.group(1))
+    # 2. Harvest from data-href (e.g. Facebook page widgets)
+    for m in re.finditer(r'data-href=["\']([^"\']+)["\']', html, re.I):
+        candidate_links.append(m.group(1))
+    # 3. Harvest from iframe src (e.g. Facebook plugins)
+    for m in re.finditer(r'<iframe\b[^>]*?src=["\']([^"\']+)["\']', html, re.I):
+        candidate_links.append(m.group(1))
+    # 4. Harvest from schema.org / raw text urls
+    for m in re.finditer(r'https?://[^\s"\'<>]+', html):
+        candidate_links.append(m.group(0))
+
+    for raw in candidate_links:
+        norm = normalize_social_url(raw)
+        if norm:
+            key = (norm["platform"], norm["url"])
+            if key not in seen_links:
+                seen_links.add(key)
+                social_links_list.append(norm)
+                # Map platform -> url (first seen wins for single dict, full list in social_links)
+                if norm["platform"] not in socials:
+                    socials[norm["platform"]] = norm["url"]
 
     org_numbers = sorted({n for n in find_org_numbers(haystack) if mod11_valid(n)})
 
@@ -153,6 +246,7 @@ def extract_contacts(html: str, text: str) -> dict[str, Any]:
         result["phones"] = phones[:10]
     if socials:
         result["social_profiles"] = socials
+        result["social_links"] = social_links_list
     if org_numbers:
         result["organisation_numbers"] = org_numbers
     return result

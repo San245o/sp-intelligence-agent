@@ -33,5 +33,10 @@ scratch_*.py
 .env.*
 !.env.example
 LLM_WIKI.md
+*.bak
+data/*.bak
+data/brreg-enheter.csv.gz
+data/*.gz
 data/companies*.js
 data/companies*.ts
+data/serper_cache/

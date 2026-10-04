@@ -1,7 +1,5 @@
 # SP Intelligence Agent
 
-> 🚀 **Live Interactive Demo**: [https://signalpost-builderr-sankeerth-preview.sites.jboxai.com/](https://signalpost-builderr-sankeerth-preview.sites.jboxai.com/)
-
 An autonomous Nordic entity intelligence pipeline. Given organisation numbers from Norway's 411,160-entity universe, it resolves legal identity, harvests full financial statements and balance sheets, discovers company websites via DNS and ML ranking, validates evidence spans with cryptographic SHA-256 hashes, and emits deterministic terminal envelopes at **$0.00 declared spend**.
 
 ---

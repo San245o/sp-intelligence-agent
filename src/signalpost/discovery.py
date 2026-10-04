@@ -311,7 +311,14 @@ class SerperSearchProvider:
         if not raw_keys:
             return []
         keys = [k.strip() for k in raw_keys.split(",") if k.strip()]
+        import hashlib
         import json
+        from .sources.places import _read_serper_cache, _write_serper_cache
+        cache_key = hashlib.sha256(f"search:{query}".encode("utf-8")).hexdigest()
+        cached = _read_serper_cache(cache_key)
+        if cached and isinstance(cached, list):
+            return cached[:limit]
+
         body = json.dumps({"q": query, "gl": "no", "hl": "no", "num": limit}).encode("utf-8")
         for key in keys:
             try:
@@ -330,6 +337,7 @@ class SerperSearchProvider:
                 results = payload.get("organic") or []
                 urls = [r["link"] for r in results if r.get("link")]
                 if urls:
+                    _write_serper_cache(cache_key, urls)
                     return urls[:limit]
             except Exception:
                 continue
@@ -608,12 +616,22 @@ def discover(
             if reg_domain.endswith(".com"):
                 no_equiv = re.sub(r"\.com$", ".no", reg_domain)
                 offer(f"https://{no_equiv}", "registry_cctld_fallback", "Norwegian .no variant of registered .com")
+            elif reg_domain.endswith(".no"):
+                com_equiv = re.sub(r"\.no$", ".com", reg_domain)
+                offer(f"https://{com_equiv}", "registry_cctld_fallback", "International .com variant of registered .no")
 
     # 2. Frozen universe website snapshot (44,855 verified seeds) & open-data index.
     # Permitted under the competition contract ("Cached public-universe material is allowed").
     seeds = known_domains if known_domains is not None else get_default_known_domains()
     if seeds and org in seeds:
         offer(seeds[org], "universe_snapshot", "Frozen company universe / Wikidata website snapshot")
+
+    # 2b. Verified Google Places listing website (operating physical storefront / venue)
+    place_site = profile.get("place_website")
+    if place_site:
+        normalised_place = _normalise_url(str(place_site))
+        if normalised_place:
+            offer(str(place_site), "google_places", "Verified website from Google Places profile")
 
     # 3. Statutory email domain from Enhetsregisteret (epostadresse).
     # Official board-filed contact address; often carries the company's real domain.
@@ -622,6 +640,12 @@ def discover(
         email_domain = str(email).split("@")[-1].strip().lower()
         if email_domain and email_domain not in FREE_EMAIL_PROVIDERS and "." in email_domain:
             offer(f"https://{email_domain}", "registry_email", "official epostadresse domain in Enhetsregisteret")
+            if email_domain.endswith(".com"):
+                no_equiv = re.sub(r"\.com$", ".no", email_domain)
+                offer(f"https://{no_equiv}", "registry_cctld_fallback", "Norwegian .no variant of statutory email domain")
+            elif email_domain.endswith(".no"):
+                com_equiv = re.sub(r"\.no$", ".com", email_domain)
+                offer(f"https://{com_equiv}", "registry_cctld_fallback", "International .com variant of statutory email domain")
 
     # 4. Name-derived guesses, DNS-filtered. Free, and the primary lever for
     # the ~89% of entities with no registry URL. Also provides a fallback if
@@ -640,7 +664,7 @@ def discover(
     # 5. Search fallback. Runs for operating entities without an authoritative registry site,
     # ensuring that even if DNS guesses are uncorroborated or fail the identity gate,
     # search candidates are available to be evaluated.
-    has_authoritative = bool(result.registry_url or (seeds and org in seeds))
+    has_authoritative = bool(result.registry_url or (seeds and org in seeds) or profile.get("place_website"))
     if search and not has_authoritative and should_attempt_search(profile, tier):
         addr = profile.get("business_address") or profile.get("forretningsadresse") or {}
         city = str(addr.get("poststed") or addr.get("kommune") or profile.get("municipality") or "").strip()

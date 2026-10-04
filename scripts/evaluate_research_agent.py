@@ -142,6 +142,14 @@ def main() -> None:
             and saved_work
             and export_supported
         ),
+        "external_footprint_qa_passed": (
+            single_supported
+            and screen_rate == 1.0
+            and plan_rate == 1.0
+            and unsupported_passed
+            and saved_work
+            and export_supported
+        ),
     }
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)

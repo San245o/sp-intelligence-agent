@@ -126,6 +126,20 @@ def _sitemap_urls(fetcher: Fetcher, org: str, origin: str) -> list[str]:
     return valuable[:MAX_PAGES_PER_SITE]
 
 
+CAREER_TERMS = (
+    "karriere", "careers", "career", "stillinger", "stilling", "jobb", "jobs",
+    "ledige", "ledigestillinger", "work-with-us", "bli-med", "vacanc", "arbeide"
+)
+NEWS_TERMS = (
+    "nyheter", "nyhet", "aktuelt", "presse", "press", "news", "artikler",
+    "media", "blog", "kunngjoringer"
+)
+CONTACT_TERMS = (
+    "kontakt", "contact", "om-oss", "om_oss", "about", "ledelse", "team",
+    "people", "ansatte", "styre", "lokasjon", "location", "avdelinger"
+)
+
+
 def crawl_site(
     fetcher: Fetcher,
     org: str,
@@ -158,15 +172,46 @@ def crawl_site(
     if home.ok:
         record(home, "home")
 
-    # 2. Build an ordered queue of additional URLs: harvested real links first!
+    # 2. Build a diverse, prioritized queue of subpages across career, news, and contact
+    harvested = _harvest_links(home.final_url or origin, home.text) if (home.ok and home.is_html) else []
+    career_links = [u for u in harvested if any(t in u.lower() for t in CAREER_TERMS)]
+    news_links = [u for u in harvested if any(t in u.lower() for t in NEWS_TERMS)]
+    contact_links = [u for u in harvested if any(t in u.lower() for t in CONTACT_TERMS)]
+    other_links = [u for u in harvested if u not in career_links and u not in news_links and u not in contact_links]
+
     queue: list[tuple[str, str]] = []
-    if home.ok and home.is_html:
-        for url in _harvest_links(home.final_url or origin, home.text):
-            queue.append((url, "link"))
-    # Fallback to key paths only if no links were harvested from the home page
-    if not queue:
-        for path in ("/kontakt", "/om-oss", "/contact", "/about"):
-            queue.append((origin + path, "priority"))
+    queued_keys: set[str] = set()
+
+    def enqueue(url: str, kind: str) -> None:
+        key = url.split("#")[0].rstrip("/").lower()
+        if key and key not in queued_keys and key != origin.rstrip("/").lower():
+            queued_keys.add(key)
+            queue.append((url, kind))
+
+    # Priority 1: Career / Job link
+    if career_links:
+        enqueue(career_links[0], "career")
+    else:
+        for p in ("/karriere", "/careers", "/stillinger", "/jobb"):
+            enqueue(origin + p, "career_guess")
+
+    # Priority 2: News / Press link
+    if news_links:
+        enqueue(news_links[0], "news")
+    else:
+        for p in ("/nyheter", "/aktuelt", "/presse", "/news"):
+            enqueue(origin + p, "news_guess")
+
+    # Priority 3: Contact / About link
+    if contact_links:
+        enqueue(contact_links[0], "contact")
+    else:
+        for p in ("/kontakt", "/om-oss", "/contact", "/about"):
+            enqueue(origin + p, "contact_guess")
+
+    # Priority 4: Secondary harvested links
+    for u in (career_links[1:] + news_links[1:] + contact_links[1:] + other_links):
+        enqueue(u, "link")
 
     # 3. Walk the queue until the page cap or the budget stops us.
     for url, kind in queue:

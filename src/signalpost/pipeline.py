@@ -49,7 +49,9 @@ from .sources.brreg import (
 )
 from .sources.nav import fetch_nav_jobs
 from .sources.news import fetch_news_activity
-from .sources.places import fetch_places_ratings
+from .sources.places import _get_verified_rating, fetch_places_ratings, should_query_places
+from .sources.sentiment import build_sentiment_claims, classify_news_sentiment
+from .sources.socials import fetch_verified_socials
 from .sources.youtube import fetch_youtube_activity
 from .synthesis import synthesise
 from .website import crawl_site
@@ -78,6 +80,11 @@ def _enrich_profile(profile: dict[str, Any], entity: dict[str, Any]) -> dict[str
         enriched["bankrupt"] = bool(entity.get("konkurs"))
     if not enriched.get("latest_submitted_accounts"):
         enriched["latest_submitted_accounts"] = entity.get("sisteInnsendteAarsregnskap")
+    if not enriched.get("industry_code"):
+        nace_obj = entity.get("naeringskode1") or {}
+        if isinstance(nace_obj, dict):
+            enriched["industry_code"] = nace_obj.get("kode")
+            enriched["industry_label"] = nace_obj.get("beskrivelse")
     return enriched
 
 
@@ -143,19 +150,44 @@ def research_company(
                 fetcher, org, enriched.get("name") or input_name, store
             )
 
-        claims += fetch_news_activity(
+        news_claims = fetch_news_activity(
             fetcher, org, enriched.get("name") or input_name, store
         )
+        claims += news_claims
+        if news_claims:
+            news_items = []
+            for nc in news_claims:
+                v = nc.get("value") or {}
+                if v.get("title"):
+                    news_items.append({
+                        "id": v["title"],
+                        "company_name": enriched.get("name") or input_name,
+                        "title": v["title"],
+                    })
+            if news_items:
+                s_map = classify_news_sentiment(news_items)
+                claims += build_sentiment_claims(
+                    enriched.get("name") or input_name, org, news_claims, s_map, store
+                )
 
-        # Google Places ratings & reviews (operating physical businesses)
-        if not is_passive:
+        # Google Places & verified directory ratings & reviews
+        if _get_verified_rating(org) or should_query_places(enriched, spend_tier=spend_tier):
             muni = enriched.get("municipality") or (entity.get("forretningsadresse") or {}).get("kommune")
             raw_addr = (entity.get("forretningsadresse") or {}).get("adresse")
             b_addr = raw_addr[0] if isinstance(raw_addr, list) and raw_addr else (str(raw_addr) if raw_addr else None)
-            claims += fetch_places_ratings(
+            places_claims = fetch_places_ratings(
                 fetcher, org, enriched.get("name") or input_name,
                 municipality=muni, business_address=b_addr, store=store
             )
+            claims += places_claims
+            for pc in places_claims:
+                if pc.get("field") == "ratings_and_reviews" and isinstance(pc.get("value"), dict):
+                    pw = pc["value"].get("website")
+                    if pw:
+                        enriched["place_website"] = pw
+                    pp = pc["value"].get("phone")
+                    if pp and not enriched.get("phone"):
+                        enriched["phone"] = pp
 
     # --- 3. Website discovery + identity gate ------------------------------
     identity_verdict = None
@@ -223,16 +255,6 @@ def research_company(
             crawl = crawl_site(fetcher, org, best_domain, home=best_response)
             claims += site_claims(crawl, store, verified_url=f"https://{best_domain}")
             
-            # YouTube channel and video cadence if company site links to YouTube
-            soc_claims = [c for c in claims if c.get("field") == "social_profiles" and isinstance(c.get("value"), dict)]
-            if soc_claims:
-                soc_dict = soc_claims[0].get("value") or {}
-                yt_url = soc_dict.get("youtube")
-                if yt_url:
-                    claims += fetch_youtube_activity(
-                        fetcher, org, enriched.get("name") or input_name, yt_url, store
-                    )
-
             discovery_info["crawl"] = {
                 "domain": best_domain,
                 "pages_fetched": crawl.fetched,
@@ -260,6 +282,24 @@ def research_company(
                 confidence=1.0,
                 note="no verified company website available to extract dated activity from"
             ))
+
+        # Multi-source verified corporate socials & YouTube activity
+        soc_claims = [c for c in claims if c.get("field") == "social_profiles" and isinstance(c.get("value"), dict)]
+        existing_socials = soc_claims[0].get("value") if soc_claims else {}
+        merged_socials, extra_claims = fetch_verified_socials(
+            org, enriched.get("name") or input_name, store, existing_socials=existing_socials
+        )
+        if extra_claims:
+            if soc_claims:
+                soc_claims[0]["value"] = merged_socials
+            else:
+                claims += extra_claims
+
+        yt_url = merged_socials.get("youtube")
+        if yt_url:
+            claims += fetch_youtube_activity(
+                fetcher, org, enriched.get("name") or input_name, yt_url, store
+            )
 
     # --- 4. Envelope --------------------------------------------------------
     envelope = build_envelope(
