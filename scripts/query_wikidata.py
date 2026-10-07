@@ -20,7 +20,7 @@ SELECT ?item ?itemLabel ?org_nr ?website ?article ?twitter ?facebook ?linkedin ?
 """
 
 url = 'https://query.wikidata.org/sparql?query=' + urllib.parse.quote(sparql) + '&format=json'
-req = urllib.request.Request(url, headers={'User-Agent': 'SignalpostResearch/1.0 (contact@signalpost.local)'})
+req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'})
 
 try:
     with urllib.request.urlopen(req, timeout=45) as resp:

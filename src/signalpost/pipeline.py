@@ -66,8 +66,19 @@ def _enrich_profile(profile: dict[str, Any], entity: dict[str, Any]) -> dict[str
     if not enriched.get("name"):
         enriched["name"] = entity.get("navn")
     enriched["business_address"] = entity.get("forretningsadresse")
-    if not enriched.get("website"):
-        enriched["website"] = entity.get("hjemmeside")
+    raw_web = entity.get("hjemmeside")
+    if raw_web and not enriched.get("website"):
+        raw_web = str(raw_web).strip()
+        if "@" in raw_web:
+            raw_web = raw_web.split("@")[-1].strip()
+        if raw_web and not raw_web.startswith(("http://", "https://")):
+            raw_web = "https://" + raw_web
+        if raw_web:
+            enriched["website"] = raw_web
+
+    formers = [f["navn"] for f in entity.get("historiskeNavn", []) if isinstance(f, dict) and f.get("navn")]
+    if formers:
+        enriched["former_names"] = formers
     if not enriched.get("email"):
         enriched["email"] = entity.get("epostadresse")
     if not enriched.get("phone"):
@@ -283,23 +294,28 @@ def research_company(
                 note="no verified company website available to extract dated activity from"
             ))
 
-        # Multi-source verified corporate socials & YouTube activity
-        soc_claims = [c for c in claims if c.get("field") == "social_profiles" and isinstance(c.get("value"), dict)]
-        existing_socials = soc_claims[0].get("value") if soc_claims else {}
-        merged_socials, extra_claims = fetch_verified_socials(
-            org, enriched.get("name") or input_name, store, existing_socials=existing_socials
-        )
-        if extra_claims:
-            if soc_claims:
-                soc_claims[0]["value"] = merged_socials
-            else:
-                claims += extra_claims
+        pass
 
-        yt_url = merged_socials.get("youtube")
-        if yt_url:
-            claims += fetch_youtube_activity(
-                fetcher, org, enriched.get("name") or input_name, yt_url, store
-            )
+    # --- 3.5 Verified social & encyclopedic channels ------------------------
+    soc_claims = [c for c in claims if c.get("field") == "social_profiles" and isinstance(c.get("value"), dict)]
+    existing_socials = soc_claims[0].get("value") if soc_claims else {}
+    merged_socials, extra_claims = fetch_verified_socials(
+        org, enriched.get("name") or input_name, store, existing_socials=existing_socials
+    )
+    if extra_claims:
+        if soc_claims:
+            soc_claims[0]["value"] = merged_socials
+            for eid in extra_claims[0].get("evidence_ids", []):
+                if eid not in soc_claims[0].get("evidence_ids", []):
+                    soc_claims[0]["evidence_ids"].append(eid)
+        else:
+            claims += extra_claims
+
+    yt_url = merged_socials.get("youtube")
+    if yt_url and spend_tier != TIER_SHELL:
+        claims += fetch_youtube_activity(
+            fetcher, org, enriched.get("name") or input_name, yt_url, store
+        )
 
     # --- 4. Envelope --------------------------------------------------------
     envelope = build_envelope(

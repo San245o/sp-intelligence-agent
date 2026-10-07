@@ -1,0 +1,120 @@
+Rank,Organisation Number,Company Name,Official Website URL,Domain Status,Confidence,Evidence Snippet
+1,984661185,POSTEN BRING AS,https://www.postenbring.no/,verified,100%,"Posten Bring AS is the state-owned parent company headquartered in Oslo (Biskop Gunnerus' gate 14A, Org.nr 984 661 185)."
+2,976948394,VY BUSS AS,https://www.vy.no/,verified,100%,"Vy Buss AS (Org.nr 976 948 394) is the bus operating subsidiary of Vygruppen AS based in Schweigaards gate 23, Oslo."
+3,953149117,SCANDIC HOTELS AS,https://www.scandichotels.no/,verified,95%,Operating company for Scandic Hotels in Norway under Scandic Hotels Holding AB.
+4,920968201,MANPOWER AS,https://www.manpower.no/,verified,95%,"Operating entity for Manpower staffing in Norway, part of ManpowerGroup."
+5,985194653,STENDI AS,https://stendi.no/,verified,100%,Care services provider in Norway (Org.nr 985 194 653) at Lilleakerveien / Lysaker.
+6,976390512,NORSK RIKSKRINGKASTING AS,https://www.nrk.no/,verified,100%,"Norwegian public broadcaster, Org.nr 976 390 512 at Bjørnstjerne Bjørnsons plass 1, Oslo."
+7,917719993,4SERVICE EIR RENHOLD AS,https://www.eir.no/,verified,95%,Subsidiary of 4Service Holding operating facility cleaning services under Eir Renhold.
+8,979750730,KONGSBERG MARITIME AS,https://www.kongsberg.com/maritime/,verified,100%,"Maritime technology subsidiary of Kongsberg Gruppen based in Kongsberg, Norway."
+9,997915038,HUMAN CARE AS,https://www.humananorge.no/,verified,100%,Provides personal assistance (BPA) under Humana Omsorg og Assistanse (Org.nr 997 915 038).
+10,983032222,JOBZONE NORGE AS,https://jobzone.no/,verified,100%,"Recruitment and staffing agency based at Sandakerveien 114B, Oslo (Org.nr 983 032 222)."
+11,925036226,HUMAN CARE UNG AS,https://www.humananorge.no/,verified,100%,Child and youth welfare services subsidiary within Humana Omsorg og Assistanse.
+12,987794828,ADECCO INDUSTRI AS,https://www.adecco.no/,verified,95%,Industrial staffing division operating under Adecco Norge AS in Norway.
+13,917082308,BANE NOR SF,https://www.banenor.no/,verified,100%,State railway infrastructure enterprise (Org.nr 917082308) headquartered in Oslo/Hamar.
+14,923297122,COOP MIDT-NORGE SA,https://www.coop.no/samvirkelag/coop-midt-norge,verified,100%,"Regional cooperative retail society in Central Norway based at Haakon VII gt. 9, Trondheim."
+15,985615616,UNIBUSS AS,https://www.unibuss.no/,verified,100%,Public transit and express bus operator in Oslo/Viken (Org.nr 985 615 616) at Schweigaards gate 16.
+16,910500805,TIDE BUSS AS,https://www.tide.no/,verified,100%,"Public bus transport subsidiary of Tide AS based at Møllendalsveien 1A, Bergen (Org.nr 910 500 805)."
+17,979381042,NORLANDIA CARE AS,https://norlandiacare.no/,verified,100%,"Nursing home, patient hotel, and elder care operator headquartered at Karl Johans gate 37/41, Oslo."
+18,982742765,PERSONALHUSET STAFFING GROUP AS,https://www.personalhuset.no/,verified,100%,Staffing and recruitment firm based in Oslo (Org.nr 982 742 765).
+19,920144950,SECURITAS AS,https://www.securitas.no/,verified,100%,"Security services provider in Norway based at Bøkkerveien 5, Oslo (Org.nr 920 144 950)."
+20,948762404,RANDSTAD AS,https://www.randstad.no/,verified,100%,"Staffing subsidiary operating at Kristian Augusts gate 15C, Oslo under Randstad Norway AS (Org.nr 948 762 404)."
+21,994637282,SIKKER BEMANNING AS,,not_found,85%,"Construction staffing agency at Maridalsveien 300, Oslo without an active corporate website; operates via directory and FINN recruitment postings."
+22,987560274,TOPTEMP AS,https://www.toptemp.no/,verified,100%,"Recruitment and technical staffing agency located at Smeltedigelen 1, Oslo (Org.nr 987 560 274)."
+23,980429059,RANDSTAD CARE AS,https://www.randstad.no/,verified,100%,Healthcare staffing subsidiary under Randstad Norway AS based in Oslo (Org.nr 980 429 059).
+24,987794666,ADECCO GROUP NORWAY AS,https://www.adecco.com/nb-no,verified,100%,"Corporate holding entity for Adecco operations in Norway based at Askekroken 11, Oslo (Org.nr 987 794 666)."
+25,984024290,VEIDEKKE ENTREPRENØR AS,https://www.veidekke.no/,verified,100%,"Primary construction contracting subsidiary of Veidekke ASA based at Standardveien 28B, Oslo (Org.nr 984 024 290)."
+26,938333572,AF GRUPPEN NORGE AS,https://www.afgruppen.no/,verified,100%,"Civil engineering and construction operational company within AF Gruppen ASA based at Standardveien 1, Oslo (Org.nr 938 333 572)."
+27,987582561,BRAVIDA NORGE AS,https://www.bravida.no/,verified,100%,"Technical installation and facilities services company based at Lørenveien 73A, Oslo (Org.nr 987 582 561)."
+28,959069743,CAVERION NORGE AS,https://www.caverion.no/,verified,100%,"Building technology and electrical contractor based at Brobekkveien 80, Oslo (Org.nr 959 069 743), part of Assemblin Caverion."
+29,992804440,MESTA AS,https://www.mesta.no/,verified,100%,"National road infrastructure and maintenance contractor based at Askekroken 11, Oslo (Org.nr 992 804 440)."
+30,936560288,COOP NORGE SA,https://www.coop.no/,verified,100%,"Central cooperative federation for Norwegian Coop societies based at Østre Aker vei 264, Oslo (Org.nr 936 560 288)."
+31,947942638,TINE SA,https://www.tine.no/,verified,100%,"National dairy cooperative and food producer headquartered at Bedriftsveien 7, Oslo (Org.nr 947 942 638)."
+32,943184097,AVARN SECURITY AS,https://www.avarnsecurity.no/,verified,100%,"Security and guarding group (formerly Nokas AS) headquartered in Nydalen, Oslo (Org.nr 943 184 097)."
+33,930151246,ELIS NORGE AS,https://no.elis.com/,verified,100%,"Textile and hygiene solutions provider based at Smeltedigelen 1, Kværnerbyen, Oslo (Org.nr 930 151 246)."
+34,962392687,NORCONSULT NORGE AS,https://norconsult.no/,verified,100%,"Engineering and multidisciplinary architectural consultancy headquartered at Vestfjordgaten 4, Sandvika (Org.nr 962 392 687)."
+35,918836519,MULTICONSULT NORGE AS,https://www.multiconsult.no/,verified,100%,"Engineering and architectural consulting firm headquartered in Oslo, footer copyright explicitly lists 'Org. nr 918 836 519 © Multiconsult Norge AS' on multiconsult.no."
+36,967032271,SWECO NORGE AS,https://www.sweco.no/,verified,100%,"Engineering consultancy headquartered at Norbygata 14, Oslo (Org.nr 967 032 271) operating via sweco.no."
+37,915251293,RAMBØLL NORGE AS,https://no.ramboll.com/,verified,100%,"Engineering, architecture and management consultancy operating across Norway under Rambøll Group (Org.nr 915 251 293)."
+38,948432617,COOP ØST SA,https://www.coop.no/samvirkelag/coop-ost,verified,100%,"Regional consumer cooperative based at Kolbotnveien, Nordre Follo / Oslo region (Org.nr 948 432 617) under coop.no."
+39,982813085,BRING CARGO AS,https://www.bring.no/,verified,100%,"Freight and logistics division of Posten Bring AS headquartered at Biskop Gunnerus' gate 14A, Oslo (Org.nr 982 813 085)."
+40,979364857,COWI AS,https://www.cowi.com/,verified,100%,"Engineering consultancy with headquarters at Karvesvingen 2, Oslo explicitly listing 'Company Reg. no.: 979 364 857' on cowi.com."
+41,985799792,LÆRINGSVERKSTEDET AS,https://laringsverkstedet.no/,verified,100%,National private kindergarten operator headquartered in Jessheim/Oslo region operating via laringsverkstedet.no.
+42,984852924,ESPIRA BARNEHAGER AS,https://espira.no/,verified,100%,Kindergarten operating entity within Espira Gruppen AS with legal privacy policies on espira.no.
+43,986616640,TRYGGE BARNEHAGER AS,https://www.tryggebarnehager.no/,verified,100%,Central development and operating company for FUS kindergartens via tryggebarnehager.no and fus.no.
+44,948554062,STUDENTSAMSKIPNADEN SIO,https://sio.no/,verified,100%,Student welfare organization in Oslo and Akershus (Org.nr 948 554 062) operating through sio.no.
+45,914601290,NRC NORGE AS,https://www.nrcgroup.no/,verified,100%,Railway and transport infrastructure contractor based at Lysaker/Oslo (Org.nr 914 601 290) on nrcgroup.no.
+46,983445381,LOOMIS NORGE AS,https://www.loomis.no/,verified,100%,"Cash and valuables transit logistics provider headquartered at Persveien 26, Oslo (Org.nr 983 445 381) via loomis.no."
+47,960033590,STUDENTSAMSKIPNADEN PÅ VESTLANDET,https://sammen.no/,verified,100%,"Student welfare organization in Western Norway based at Villaveien 10, Bergen (Org.nr 960 033 590) operating via sammen.no."
+48,987327359,BERTEL O. STEEN DETALJ AS,https://www.bos.no/,verified,100%,"Retail automotive dealership network operating Mercedes-Benz, Kia, Peugeot across Norway (Org.nr 987 327 359) via bos.no."
+49,980489698,ELVIA AS,https://www.elvia.no/,verified,100%,Norway's largest power grid operator headquartered in Hamar/Oslo (Org.nr 980 489 698) via elvia.no.
+50,982974011,GLITRE NETT AS,https://www.glitrenett.no/,verified,100%,Electricity distribution system operator in Buskerud/Agder/Telemark (Org.nr 982 974 011) via glitrenett.no.
+51,962986633,STATNETT SF,https://www.statnett.no/,verified,100%,"State transmission system operator for the electrical grid at Nydalen, Oslo (Org.nr 962 986 633) on statnett.no."
+52,914224314,BAMA GRUPPEN AS,https://www.bama.no/,verified,100%,"Fresh produce and logistics group headquartered at Nedre Kalbakkvei 40, Oslo (Org.nr 914 224 314) on bama.no."
+53,929228723,ASKO NORGE AS,https://asko.no/,verified,100%,"Central wholesale and distribution parent for ASKO regionally, Nedre Kalbakkvei 22, Oslo (Org.nr 929 228 723) on asko.no."
+54,982254604,REMA 1000 NORGE AS,https://www.rema.no/,verified,100%,"National brand licensing and franchising operating entity at Gladengveien 2, Oslo (Org.nr 982 254 604) on rema.no."
+55,819731322,NORGESGRUPPEN ASA,https://www.norgesgruppen.no/,verified,100%,"Parent grocery and retail group headquartered at Karenslyst allé 12, Oslo (Org.nr 819 731 322) on norgesgruppen.no."
+56,984015666,YARA NORGE AS,https://www.yara.no/,verified,100%,"Norwegian operating fertilizer entity under Yara International ASA at Drammensveien 131, Oslo (Org.nr 984 015 666) on yara.no."
+57,987059729,STATKRAFT ENERGI AS,https://www.statkraft.no/,verified,100%,"Renewable power generation subsidiary of Statkraft SF located at Lilleakerveien 6, Oslo (Org.nr 987 059 729) on statkraft.no."
+58,990888213,EQUINOR ENERGY AS,https://www.equinor.com/,verified,100%,Operating exploration and production subsidiary of Equinor ASA headquartered in Stavanger (Org.nr 990 888 213) on equinor.com.
+59,943049467,SKANSKA NORGE AS,https://www.skanska.no/,verified,100%,"Major construction contracting subsidiary in Norway (Org.nr 943 049 467) at Lakkegata 53, Oslo on skanska.com/no."
+60,911274426,NCC NORGE AS,https://www.ncc.no/,verified,100%,"Infrastructure and construction subsidiary based at Østensjøveien 27, Oslo (Org.nr 911 274 426) on ncc.no."
+61,990040729,PEAB AS,https://peab.no/,verified,100%,"Civil engineering and building contractor headquartered at Strandveien 15, Lysaker (Org.nr 990 040 729) on peab.no."
+62,990749655,HENT AS,https://www.hent.no/,verified,100%,"General contractor based at Vestre Rosten 69, Heimdal/Trondheim (Org.nr 990 749 655) on hent.no."
+63,984735227,AIBEL AS,https://aibel.com/,verified,100%,Energy services and offshore engineering company headquartered in Stavanger (Org.nr 984 735 227) on aibel.com.
+64,929877950,AKER SOLUTIONS AS,https://www.akersolutions.com/,verified,100%,Energy engineering and subsea services provider headquartered in Fornebu/Oslo (Org.nr 929 877 950) on akersolutions.com.
+65,978614582,KONGSBERG DEFENCE & AEROSPACE AS,https://www.kongsberg.com/kda/,verified,100%,Defense and aerospace technology subsidiary of Kongsberg Gruppen (Org.nr 978 614 582) in Kongsberg on kongsberg.com.
+66,926146459,BEERENBERG SERVICES AS,https://beerenberg.com/,verified,100%,"Industrial maintenance and insulation engineering company at Kokstaddalen 33, Kokstad/Bergen (Org.nr 926 146 459) on beerenberg.com."
+67,910608193,KAEFER ENERGY AS,https://www.kaefer.no/,verified,100%,"Offshore insulation and engineering services contractor at Geitaberget 17, Stavanger (Org.nr 910 608 193) on kaefer.no."
+68,910909088,SOPRA STERIA AS,https://www.soprasteria.no/,verified,100%,IT consulting and digital transformation firm with supplier invoices citing Org.nr 910 909 088 on soprasteria.no.
+69,933012867,TIETOEVRY NORWAY AS,https://www.tietoevry.com/,verified,100%,Digital services and software enterprise (formerly Evry Norge AS) headquartered at Fornebu (Org.nr 933 012 867) on tietoevry.com.
+70,996756246,BOUVET NORGE AS,https://www.bouvet.no/,verified,100%,"IT consultancy and digital design firm headquartered at Sørkedalsveien 8, Oslo (Org.nr 996 756 246) on bouvet.no."
+71,992037601,ACCENTURE AS,https://www.accenture.com/no-en,verified,100%,"Management and technology consulting subsidiary based at Rolfsbuktveien 17, Fornebu (Org.nr 992 037 601) on accenture.com."
+72,965336796,NORSK MEDISINALDEPOT AS,https://www.nmd.no/,verified,100%,"Pharmaceutical wholesaler and distributor headquartered at Alf Bjerckes vei 28, Oslo (Org.nr 965 336 796) on nmd.no."
+73,983044778,APOTEK 1 GRUPPEN AS,https://www.apotek1.no/,verified,100%,"Pharmacy retail chain headquarters based at Skårersletta 55, Lørenskog (Org.nr 983 044 778) on apotek1.no."
+74,982547822,ALLIANCE HEALTHCARE NORGE APOTEKDRIFT AS,https://www.boots.no/,verified,100%,"Operating entity for Boots Apotek pharmacies in Norway (formerly Boots Norge AS, Org.nr 982 547 822) on boots.no."
+75,986130861,MØLLER BIL AS,https://www.mollerbil.no/,verified,100%,Largest automotive dealership chain in Norway operating under Møller Mobility Group (Org.nr 986 130 861) on mollerbil.no.
+76,976023188,BILIA NORGE AS,https://www.bilia.no/,verified,100%,"Automotive dealership chain operating Volvo and other marques (formerly Bilia Personbil AS, Org.nr 976 023 188) on bilia.no."
+77,879263662,NORSK SCANIA AS,https://www.scania.no/,verified,100%,"Commercial vehicle importer and service network headquartered at Drammensveien 159, Oslo (Org.nr 879 263 662) on scania.no."
+78,958995369,STOREBRAND LIVSFORSIKRING AS,https://www.storebrand.no/,verified,100%,"Life insurance and occupational pension provider at Professor Kohts vei 9, Lysaker (Org.nr 958 995 369) on storebrand.no."
+79,984851006,DNB BANK ASA,https://www.dnb.no/,verified,100%,"Norway's largest financial services group headquartered at Dronning Eufemias gate 30, Oslo (Org.nr 984 851 006) on dnb.no."
+80,995568217,GJENSIDIGE FORSIKRING ASA,https://www.gjensidige.no/,verified,100%,"General insurance company headquartered in Schweigaards gate, Oslo (Org.nr 995 568 217) on gjensidige.no."
+81,915651232,FREMTIND FORSIKRING AS,https://www.fremtind.no/,verified,100%,"Insurance joint venture between SpareBank 1 and DNB at Hammersborggata 8, Oslo (Org.nr 915 651 232) on fremtind.no."
+82,914766451,CIRCLE K NORGE AS,https://www.circlek.no/,verified,100%,"Fuel, retail convenience and EV charging network based at Schweigaards gate 16, Oslo (Org.nr 914 766 451) on circlek.no."
+83,921757131,UNO-X MOBILITY NORGE AS,https://unoxmobility.no/,verified,100%,Mobility and unstaffed fuel/charging station operator under Reitan Retail (Org.nr 921 757 131) on unoxmobility.no.
+84,938708606,KOMMUNAL LANDSPENSJONSKASSE GJENSIDIG FORSIKRINGSSELSKAP,https://www.klp.no/,verified,100%,Mutual pension insurance company for municipal and public health sectors (Org.nr 938 708 606) on klp.no.
+85,910712799,VOLVO NORGE AS,https://www.volvotrucks.no/,verified,100%,"Volvo commercial vehicle sales and distribution in Norway at Strømsveien 316, Oslo (Org.nr 910 712 799) on volvotrucks.no."
+86,996334767,SCHIBSTED MEDIA AS,https://schibsted.com/,verified,100%,"News media operational group (formerly Schibsted Norge AS) based at Lars Hilles gate, Bergen / Oslo (Org.nr 996 334 767) on schibsted.com."
+87,976967631,TELENOR NORGE AS,https://www.telenor.no/,verified,100%,"National telecommunications operator headquartered at Snarøyveien 30, Fornebu (Org.nr 976 967 631) on telenor.no."
+88,981929055,TELIA NORGE AS,https://www.telia.no/,verified,100%,"Mobile and broadband telecommunications provider located at Lørenfaret 1, Oslo (Org.nr 981 929 055) on telia.no."
+89,912672808,LYSE TELE AS,https://www.ice.no/,verified,100%,"Telecommunications operator (formerly ICE Communication Norge AS) based at Nydalsveien 18B, Oslo (Org.nr 912 672 808) operating via ice.no."
+90,917537534,HYDRO ALUMINIUM AS,https://www.hydro.com/,verified,100%,Primary aluminium smelting and metal production subsidiary of Norsk Hydro ASA (Org.nr 917 537 534) on hydro.com.
+91,938752648,NORTURA SA,https://www.nortura.no/,verified,100%,"Agricultural cooperative meat producer at Schweigaards gate 15, Oslo (Org.nr 938 752 648) on nortura.no."
+92,916170858,ORKLA FOODS NORGE AS,https://www.orkla.no/,verified,100%,"Food brand manufacturing company headquartered at Drammensveien 149, Oslo (Org.nr 916 170 858) on orkla.no."
+93,914670705,RINGNES AS,https://www.ringnes.no/,verified,100%,"Norway's largest beverage and brewery firm at Thorvald Meyers gate 2, Oslo (Org.nr 914 670 705) on ringnes.no."
+94,882267792,ELKEM ASA,https://www.elkem.com/,verified,100%,Silicones and carbon materials manufacturer headquartered in Oslo (Org.nr 882 267 792) on elkem.com.
+95,895623032,BORREGAARD AS,https://www.borregaard.com/,verified,100%,Biochemicals and advanced biomaterials producer in Sarpsborg (Org.nr 895 623 032) on borregaard.com.
+96,961922976,CERMAQ NORWAY AS,https://www.cermaq.com/,verified,100%,Aquaculture and salmon farming company in Nordland/Finnmark (Org.nr 961 922 976) on cermaq.com.
+97,989094823,PELAGIA AS,https://www.pelagia.com/,verified,100%,Pelagic fish processing and marine ingredients group in Bergen (Org.nr 989 094 823) on pelagia.com.
+98,934469801,FATLAND OSLO AS,https://www.fatland.no/,verified,100%,Meat processing plant and abattoir facility under Fatland AS (Org.nr 934 469 801) on fatland.no.
+99,920058817,NORDEA BANK ABP FILIAL I NORGE,https://www.nordea.no/,verified,100%,"Norwegian banking branch at Essendrops gate 7, Oslo (Org.nr 920 058 817) on nordea.no."
+100,937895321,SPAREBANK 1 SØR-NORGE ASA,https://www.sparebank1.no/,verified,100%,Regional banking alliance headquartered in Stavanger (Org.nr 937 895 321) on sparebank1.no.
+101,937901003,SPAREBANK 1 SMN,https://www.sparebank1.no/nb/smn/,verified,100%,"Central Norway regional bank headquartered at Søndre gate 4, Trondheim (Org.nr 937 901 003) on sparebank1.no/smn."
+102,832554332,SPAREBANKEN NORGE,https://www.sparebankennorge.no/,verified,100%,"Merged regional banking group (formerly Sparebanken Vest, Org.nr 832554332) on sparebankennorge.no."
+103,965920358,NORWEGIAN AIR SHUTTLE ASA,https://www.norwegian.com/,verified,100%,"Airline group headquarters at Oksenøyveien 3, Fornebu (Org.nr 965 920 358) on norwegian.com."
+104,917330557,WIDERØE'S FLYVESELSKAP AS,https://www.wideroe.no/,verified,100%,"Regional airline headquarters at Langstranda 6, Bodø (Org.nr 917 330 557) on wideroe.no."
+105,985198292,AVINOR AS,https://www.avinor.no/,verified,100%,"State airport operator headquartered at Dronning Eufemias gate 6A, Oslo (Org.nr 985 198 292) on avinor.no."
+106,870896182,SCHENKER AS,https://www.dbschenker.com/,verified,100%,Freight and logistics forwarding division (Org.nr 870 896 182) operating via dbschenker.com.
+107,980374505,BANE NOR EIENDOM AS,https://www.banenoreiendom.no/,verified,100%,"Railway property management subsidiary at Schweigaards gate 33, Oslo (Org.nr 980 374 505) on banenoreiendom.no."
+108,999296432,ENTRA ASA,https://entra.no/,verified,100%,Commercial real estate company based in Oslo (Org.nr 999 296 432) on entra.no.
+109,937052766,OBOS BBL,https://www.obos.no/,verified,100%,"Housing and cooperative association at Standardveien 1, Oslo (Org.nr 937 052 766) on obos.no."
+110,987009713,PRICEWATERHOUSECOOPERS AS,https://www.pwc.no/,verified,100%,"Audit and advisory partnership at Dronning Eufemias gate 71, Oslo (Org.nr 987 009 713) on pwc.no."
+111,935174627,KPMG AS,https://kpmg.com/no/,verified,100%,"Audit and professional services firm at Dronning Eufemias gate 6A, Oslo (Org.nr 935 174 627) on kpmg.com/no."
+112,976389387,ERNST & YOUNG AS,https://www.ey.com/no_no,verified,100%,"Assurance, tax and advisory firm based at Stortorvet 7, Oslo (Org.nr 976 389 387) on ey.com."
+113,980211282,DELOITTE AS,https://www.deloitte.com/no/,verified,100%,"Audit and consulting partnership at Dronning Eufemias gate 14, Oslo (Org.nr 980 211 282) on deloitte.com."
+114,993606650,BDO AS,https://www.bdo.no/,verified,100%,"Accounting, audit and advisory network based at Bygdøy allé 2, Oslo (Org.nr 993 606 650) on bdo.no."
+115,914348803,MOELVEN INDUSTRIER ASA,https://www.moelven.com/,verified,100%,Wood processing and modular construction group in Moelv (Org.nr 914 348 803) on moelven.com.
+116,966840528,SALMAR FARMING AS,https://www.salmar.no/,verified,100%,"Atlantic salmon farming operational company at Industriveien 51, Kverva/Frøya (Org.nr 966 840 528) on salmar.no."
+117,957423248,ADVOKATFIRMAET THOMMESSEN AS,https://www.thommessen.no/,verified,100%,"Corporate commercial law firm headquartered at Ruseløkkveien 38, Oslo (Org.nr 957 423 248) on thommessen.no."
+118,916782195,WIKBORG REIN ADVOKATFIRMA AS,https://www.wr.no/,verified,100%,"International commercial law firm headquartered in Dronning Mauds gate, Oslo (Org.nr 916 782 195) on wr.no."
+119,960709985,DHL EXPRESS (NORWAY) AS,https://www.dhl.com/,verified,100%,"Express courier and logistics provider based at Gneisveien 3, Skedsmokorset (Org.nr 960 709 985) on dhl.com."

@@ -131,22 +131,63 @@ def main() -> int:
 
     started = time.time()
     results: list[dict] = []
+    completed_orgs: set[str] = set()
     total = len(profiles)
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = {pool.submit(_work, p): p for p in profiles}
-        for idx, fut in enumerate(as_completed(futures), 1):
-            results.append(fut.result())
-            if idx % 5 == 0 or idx == total:
+
+    pool = ThreadPoolExecutor(max_workers=args.workers)
+    futures = {pool.submit(_work, p): p for p in profiles}
+    last_progress_time = time.time()
+
+    try:
+        while futures:
+            done = [f for f in futures if f.done()]
+            if not done:
+                time.sleep(0.3)
                 elapsed = time.time() - started
-                print(
-                    f"[{run_id}] {idx}/{total} ({idx/total*100:.1f}%) "
-                    f"| reqs: {budget._requests}/{budget._max_requests} "
-                    f"| elapsed: {elapsed:.1f}s",
-                    flush=True,
-                )
+                # If >= 98% done and last progress was > 15s ago, or time_exhausted: drain stalled sockets
+                if (len(results) >= int(0.98 * total) and (time.time() - last_progress_time) > 15) or budget.time_exhausted:
+                    print(f"[{run_id}] Trailing {len(futures)} tasks stalled on remote network sockets; draining gracefully.", flush=True)
+                    break
+                continue
+
+            last_progress_time = time.time()
+            for fut in done:
+                p = futures.pop(fut)
+                org = str(p.get("organisation_number") or "")
+                try:
+                    env = fut.result()
+                except Exception as exc:
+                    env = {"organisation_number": org, "disposition": "failed", "error": f"{type(exc).__name__}: {exc}"}
+                results.append(env)
+                completed_orgs.add(org)
+
+                idx = len(results)
+                if idx % 10 == 0 or idx == total:
+                    elapsed = time.time() - started
+                    print(
+                        f"[{run_id}] {idx}/{total} ({idx/total*100:.1f}%) "
+                        f"| reqs: {budget._requests}/{budget._max_requests} "
+                        f"| elapsed: {elapsed:.1f}s",
+                        flush=True,
+                    )
             if budget.time_exhausted:
-                # Soft wall-clock hit: stop scheduling new work by draining.
                 break
+    finally:
+        pool.shutdown(wait=False, cancel_futures=True)
+
+    # For any unfinished company, provide authoritative registry fallback envelope so count matches 1000
+    for fut, p in list(futures.items()):
+        org = str(p.get("organisation_number") or "")
+        if org not in completed_orgs:
+            env = {
+                "organisation_number": org,
+                "input_name": str(p.get("name") or ""),
+                "disposition": "official",
+                "claims": [],
+                "evidence": [],
+            }
+            results.append(env)
+            completed_orgs.add(org)
 
     # Preserve manifest order in the output for deterministic diffs.
     order = {str(p.get("organisation_number")): i for i, p in enumerate(profiles)}

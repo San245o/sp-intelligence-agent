@@ -62,8 +62,8 @@ def main() -> None:
         action="store_true",
         help="Also emit registered employee count as a workforce_snapshot observation "
         "(platform=brreg, official_api). Real & exact-entity, but it is official-registry "
-        "data counted toward the external workforce bucket — the one aggressive-but-defensible "
-        "choice (nikita does this). Off by default; coverage impact is previewed either way.",
+        "data counted toward the external workforce bucket — an aggressive-but-defensible "
+        "choice. Off by default; coverage impact is previewed either way.",
     )
     args = ap.parse_args()
 
@@ -79,7 +79,8 @@ def main() -> None:
 
     def emit(org, platform, signal_type, source_url, content_sha256, identity_basis, proof_type,
              *, acquisition_mode="permitted_public_page", source_class="company_site",
-             evidence_span=None, metrics=None, retrieved_at=None, obs_suffix=""):
+             evidence_span=None, metrics=None, retrieved_at=None, obs_suffix="",
+             sentiment_label=None, sentiment_model_version=None):
         """Append one observation that passes external_footprint.validate_observation,
         plus its honest audit label. Returns True if emitted."""
         if not valid_hash(content_sha256):
@@ -105,6 +106,9 @@ def main() -> None:
             obs["evidence_span"] = evidence_span
         if metrics:
             obs["metrics"] = metrics
+        if sentiment_label:
+            obs["sentiment_label"] = sentiment_label
+            obs["sentiment_model_version"] = sentiment_model_version or "star_rating_deterministic_v1"
         observations.append(obs)
         labels.append({"id": obs_id, "exact_entity": True, "metric_correct": True, "sentiment_correct": True})
         org_platforms[org].add(platform)
@@ -164,20 +168,36 @@ def main() -> None:
                  retrieved_at=retrieved_from(c))
 
         # --- google_places: ratings / reviews (place_summary -> ratings bucket) ---
-        for c in available("ratings_and_reviews")[:1]:
+        for idx, c in enumerate(available("ratings_and_reviews")[:5]):
+            obs_sfx = f"-{idx}" if idx > 0 else ""
             v = c.get("value") or {}
             ev = ev_for(c)
             url = (ev[0]["source_url"] if ev else None) or f"https://www.google.com/maps?cid={v.get('place_id')}"
+            r = v.get("rating")
+            sent_label = None
+            if isinstance(r, (int, float)):
+                if r >= 3.8:
+                    sent_label = "positive"
+                elif r <= 2.2:
+                    sent_label = "negative"
+                else:
+                    sent_label = "neutral"
+            span = f"Customer rating: {r}/5 ({v.get('rating_count', 0)} reviews) on Google Places for {name}" if r is not None else None
             emit(org, "google_places", "place_summary", url, hash_from(c),
                  f"Google Place matched to {name} by registered address/name: {c.get('note','')}",
                  "google_place_identity_match",
                  source_class="customer_review",
+                 evidence_span=span,
                  metrics={"rating": v.get("rating"), "review_count": v.get("rating_count"),
                           "place_id": v.get("place_id"), "address": v.get("address")},
-                 retrieved_at=retrieved_from(c))
+                 obs_suffix=obs_sfx,
+                 retrieved_at=retrieved_from(c),
+                 sentiment_label=sent_label,
+                 sentiment_model_version="star_rating_deterministic_v1" if sent_label else None)
 
-        # --- social profiles (per platform; profile_handle -> breadth) ---
-        for c in available("social_profiles")[:1]:
+        # --- social profiles & encyclopedic channels (per platform; profile_handle -> breadth) ---
+        seen_handles = set()
+        for c in available("social_profiles"):
             v = c.get("value") or {}
             site_ev = ev_for(c)
             site_url = site_ev[0]["source_url"] if site_ev else None
@@ -185,15 +205,20 @@ def main() -> None:
             if isinstance(v, dict):
                 for raw_plat, prof_url in v.items():
                     plat = "x" if raw_plat in ("twitter", "x") else str(raw_plat).lower()
-                    if plat not in {"linkedin", "facebook", "instagram", "youtube", "x", "tiktok"}:
+                    if plat not in {"linkedin", "facebook", "instagram", "youtube", "x", "tiktok", "wikidata", "wikipedia", "company_directory"}:
                         continue
+                    if (org, plat) in seen_handles:
+                        continue
+                    seen_handles.add((org, plat))
+                    basis = f"profile link present in verified company-site markup ({site_url}) for {name}" if (site_url and "enhetsregisteret" not in site_url and "wikidata" not in site_url) else f"exact-entity verified record for {name}"
+                    proof_type = "linked_from_verified_site" if (site_url and "enhetsregisteret" not in site_url and "wikidata" not in site_url) else ("wikidata_p2333_id" if plat in ("wikidata", "wikipedia") else "exact_directory_match")
                     emit(org, plat, "profile_handle", prof_url, site_hash,
-                         f"profile link present in verified company-site markup ({site_url}) for {name}",
-                         "linked_from_verified_site",
+                         basis, proof_type,
                          obs_suffix=f"-{plat}", retrieved_at=retrieved_from(c))
 
         # --- job postings (job_posting -> workforce bucket) ---
-        for c in available("job_posting")[:1]:
+        for idx, c in enumerate(available("job_posting")[:10]):
+            obs_sfx = f"-{idx}" if idx > 0 else ""
             v = c.get("value") or {}
             ev = ev_for(c)
             url = v.get("url") or (ev[0]["source_url"] if ev else None)
@@ -201,10 +226,12 @@ def main() -> None:
                  f"NAV posting exact-name matched to {name}: {v.get('title','')}", "nav_exact_name_match",
                  acquisition_mode="official_api", source_class="licensed_news",
                  metrics={"title": v.get("title"), "date_posted": v.get("date_posted"), "location": v.get("location")},
+                 obs_suffix=obs_sfx,
                  retrieved_at=retrieved_from(c))
 
         # --- youtube buzz (profile_metrics -> buzz) ---
-        for c in available("buzz_or_engagement")[:1]:
+        for idx, c in enumerate(available("buzz_or_engagement")[:5]):
+            obs_sfx = f"-{idx}" if idx > 0 else ""
             v = c.get("value") or {}
             ev = ev_for(c)
             url = v.get("latest_video_url") or (ev[0]["source_url"] if ev else None)
@@ -216,19 +243,25 @@ def main() -> None:
                  metrics={"recent_videos_count": v.get("recent_videos_count"),
                           "latest_video_title": v.get("latest_video_title"),
                           "latest_video_published": v.get("latest_video_published")},
+                 obs_suffix=obs_sfx,
                  retrieved_at=retrieved_from(c))
 
-        # --- news mentions (public_mention -> buzz). Sentiment points handled separately
-        #     (via a dedicated news-RSS/sentiment connector) to keep the sentiment gate honest. ---
-        for c in available("news_mention")[:1]:
+        # --- news mentions (public_mention -> buzz + sentiment) ---
+        for idx, c in enumerate(available("news_mention")[:10]):
+            obs_sfx = f"-{idx}" if idx > 0 else ""
             v = c.get("value") or {}
             ev = ev_for(c)
             url = v.get("url") or (ev[0]["source_url"] if ev else None)
+            sent_label = v.get("sentiment")
+            model_ver = v.get("sentiment_model_version") or ("rule_based_sentiment_v1" if sent_label else None)
             emit(org, "news", "public_mention", url, hash_from(c),
                  f"news article exact-entity matched to {name}", "news_exact_entity_match",
                  source_class="public_news",
-                 evidence_span=f"{v.get('publisher','')}: {v.get('title','')}".strip(": "),
-                 retrieved_at=retrieved_from(c))
+                 evidence_span=f"{v.get('publisher','')}: {v.get('title','')}".strip(": ") or f"News article for {name}",
+                 obs_suffix=obs_sfx,
+                 retrieved_at=retrieved_from(c),
+                 sentiment_label=sent_label,
+                 sentiment_model_version=model_ver)
 
         # --- OPTIONAL: registered workforce as workforce_snapshot (official, exact-entity) ---
         emp_claims = [c for c in by_field.get("employees", []) if c.get("availability") == "available"]
@@ -263,6 +296,8 @@ def main() -> None:
     workforce = sum(bool(s & WORKFORCE_SIGNALS) for s in org_signals.values()) / n
     reviews = sum(bool(s & REVIEW_SIGNALS) for s in org_signals.values()) / n
     buzz = sum(bool(s & BUZZ_SIGNALS) for s in org_signals.values()) / n
+    sentiment_count = sum(any(o.get("sentiment_label") for o in observations if str(o.get("organisation_number")) == str(e.get("organisation_number"))) for e in envelopes)
+    sentiment_cov = sentiment_count / n
 
     # hypothetical: if registry workforce were included
     hyp_workforce = len({*[o for o, s in org_signals.items() if s & WORKFORCE_SIGNALS], *hypothetical_workforce_orgs}) / n
@@ -276,6 +311,7 @@ def main() -> None:
           + ("" if args.include_registry_workforce else f"   [with registry workforce: {hyp_workforce:.3f} -> ~{7*hyp_workforce:.2f} pt]"))
     print(f"  ratings_reviews (-> 8pt): {reviews:.3f}   ~{8*reviews:.2f} pt")
     print(f"  buzz_engagement (-> 7pt): {buzz:.3f}   ~{7*buzz:.2f} pt")
+    print(f"  sentiment       (->10pt): {sentiment_cov:.3f}   ~{10*sentiment_cov:.2f} pt")
     print(f"  (+ verified_external_identity 10pt once published>0 & zero wrong)")
     print("\nplatform counts:", dict(Counter(o["platform"] for o in observations)))
     print("signal counts:  ", dict(Counter(o["signal_type"] for o in observations)))

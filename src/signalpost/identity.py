@@ -270,6 +270,22 @@ def assess_identity(
     matched_anywhere = [t for t in expected if _token_match(t, folded_all)]
     ratio = len(matched) / len(expected) if expected else 0.0
 
+    former_names = profile.get("former_names") or []
+    former_token_sets = [name_tokens(fn) for fn in former_names if fn]
+    if ratio < 0.75 and former_token_sets:
+        for f_tokens in former_token_sets:
+            if not f_tokens:
+                continue
+            f_m = [t for t in f_tokens if _token_match(t, folded_identity)]
+            f_ratio = len(f_m) / len(f_tokens)
+            if f_ratio >= 0.75 or (len(f_tokens) >= 2 and len(f_m) >= 2):
+                expected = f_tokens
+                matched = f_m
+                matched_anywhere = [t for t in f_tokens if _token_match(t, folded_all)]
+                ratio = f_ratio
+                reasons.append("entity matched by official historical legal name from register")
+                break
+
     if org_found:
         span = (_proof_span(all_text, org)
                 or _proof_span(all_text, f"{org[:3]} {org[3:6]} {org[6:]}"))
@@ -376,6 +392,21 @@ def assess_identity(
 
     is_authoritative_origin = origin in ("registry", "registry_email", "universe_snapshot", "registry_cctld_fallback")
 
+    # Comprehensive homepage identity token sets (title, meta description, contact, footer, hostname, structured data)
+    homepage_token_sets = [
+        set(name_tokens(part))
+        for part in [
+            signals.title,
+            signals.meta_description,
+            signals.contact_text,
+            signals.footer_text,
+            signals.hostname,
+            " ".join(signals.structured_names),
+        ]
+        if part
+    ]
+    exact_homepage_name = bool(expected and any(set(expected).issubset(t_set) for t_set in homepage_token_sets))
+
     # Strict Rule #4 Gating Ladder:
     # 1. Authoritative statutory registry domain with name/token match (e.g. ELOPAK ASA on elopak.com, G3 on g3i.no)
     if is_authoritative_origin and (domain_matches_name or full_name_in_identity) and (matched or len(expected) == 0):
@@ -388,6 +419,13 @@ def assess_identity(
         else:
             reasons.append("authoritative registry domain corroborated by name tokens")
             score = 0.92
+    # 2. Exact Homepage / Domain Matches with substantive Norwegian context
+    elif len(expected) >= 2 and (exact_homepage_name or (full_name_in_identity and domain_matches_name)) and substantive and (is_norwegian_domain or has_norwegian_context):
+        reasons.append("all normalized legal-name tokens appear together in homepage identity evidence")
+        score = 0.95
+    elif len(expected) == 1 and (exact_homepage_name or domain_matches_name or full_name_in_identity) and substantive and (is_norwegian_domain or has_norwegian_context):
+        reasons.append("single distinctive legal-name token on matching substantive domain with Norwegian context")
+        score = 0.95
     elif len(expected) < 2 and not corroboration and not org_found:
         reasons.append("single-token name requires explicit registered address, phone, or org number corroboration")
         score = 0.50
@@ -454,3 +492,186 @@ def assess_identity(
     return IdentityVerdict(
         score, status, score >= PUBLISH_THRESHOLD, reasons, matched or matched_anywhere, expected,
         conflicting_org_numbers=conflicting, proof_span=span)
+
+
+# ==============================================================================
+# Social & News Exact-Entity Identity Gates
+# ==============================================================================
+
+def assess_social_identity(profile: dict[str, Any], link: dict[str, str]) -> dict[str, Any]:
+    """Direct handle exact-entity assessment."""
+    core = name_tokens(profile.get("name"))
+    parsed = urllib.parse.urlparse(link.get("url") or "")
+    handle_text = urllib.parse.unquote(parsed.path)
+    handle_compact = "".join(name_tokens(handle_text))
+    matched = [token for token in core if token in handle_compact]
+    core_compact = "".join(core)
+    ratio = len(set(matched)) / len(set(core)) if core else 0.0
+    if core_compact and core_compact in handle_compact:
+        score = 0.98
+        reason = "normalized legal-name sequence appears in the social handle"
+    elif len(core) == 1 and matched:
+        score = 0.95
+        reason = "single distinctive legal-name token appears in the social handle"
+    elif ratio >= 0.75 and len(set(matched)) >= 2:
+        score = 0.90
+        reason = "most legal-name tokens appear in the social handle"
+    else:
+        score = 0.30
+        reason = "social handle lacks strong exact-entity name evidence"
+    return {
+        **link,
+        "identity_score": score,
+        "publishable": score >= 0.90,
+        "matched_tokens": matched,
+        "reason": reason,
+        "method": "deterministic_social_handle_identity_v1",
+    }
+
+
+def assess_verified_website_social_identity(
+    profile: dict[str, Any],
+    website_publishable: bool,
+    link: dict[str, str],
+    website_source_url: str = "",
+) -> dict[str, Any]:
+    """Verified-website inherited social identity gate.
+
+    If a social link is extracted directly from a verified company website (>= 0.90),
+    and contains the primary domain token, it safely inherits 0.92 publishable status.
+    """
+    if not website_publishable:
+        return {
+            **link,
+            "identity_score": 0.0,
+            "publishable": False,
+            "reason": "website is not publishable",
+            "method": "verified_website_domain_identity_v1",
+        }
+
+    platform = str(link.get("platform") or "").strip().casefold()
+    if platform in ("x", "twitter"):
+        return {
+            **link,
+            "identity_score": 0.0,
+            "publishable": False,
+            "reason": "X/Twitter requires direct handle identity evidence",
+            "method": "verified_website_domain_identity_v1",
+        }
+
+    website_host = registrable_domain(website_source_url)
+    social_url = str(link.get("url") or "").strip()
+    if not website_host or not social_url:
+        return {
+            **link,
+            "identity_score": 0.0,
+            "publishable": False,
+            "reason": "missing website or social URL",
+            "method": "verified_website_domain_identity_v1",
+        }
+
+    domain_token = website_host.casefold().removeprefix("www.").split(".")[0]
+    social_text = urllib.parse.unquote(social_url).casefold()
+
+    if not domain_token or len(domain_token) < 3 or domain_token not in social_text:
+        return {
+            **link,
+            "identity_score": 0.0,
+            "publishable": False,
+            "reason": "social URL does not contain the verified website domain token",
+            "method": "verified_website_domain_identity_v1",
+        }
+
+    return {
+        **link,
+        "identity_score": 0.92,
+        "publishable": True,
+        "matched_tokens": [domain_token],
+        "reason": "non-X social URL contains the primary token of a verified company website",
+        "method": "verified_website_domain_identity_v1",
+    }
+
+
+def assess_news_identity(
+    profile: dict[str, Any],
+    article_text: str,
+    article_title: str = "",
+) -> dict[str, Any]:
+    """Conservative exact-company identity gate for news with 14-word proximity window."""
+    company_tokens = name_tokens(profile.get("name"))
+    text = " ".join([str(article_title or ""), str(article_text or "")])
+    text_tokens = set(name_tokens(text))
+
+    org_number = normalise_org_number(profile.get("organisation_number"))
+    compact_text = re.sub(r"\D", "", text)
+
+    # Strongest proof: organisation number appears in article evidence.
+    if org_number and org_number in compact_text:
+        return {
+            "status": "exact",
+            "score": 1.0,
+            "publishable": True,
+            "method": "deterministic_news_identity_v1",
+            "reasons": ["exact organisation number appears in article evidence"],
+            "matched_tokens": company_tokens,
+        }
+
+    if not company_tokens:
+        return {
+            "status": "related_or_uncertain",
+            "score": 0.0,
+            "publishable": False,
+            "method": "deterministic_news_identity_v1",
+            "reasons": ["company legal name has no usable identity tokens"],
+            "matched_tokens": [],
+        }
+
+    matched = sorted(set(company_tokens) & text_tokens)
+    ratio = len(matched) / len(set(company_tokens))
+
+    def _in_proximity(target_tokens: list[str], full_text_tokens: list[str], max_window: int = 14) -> bool:
+        k = len(target_tokens)
+        if not k or not full_text_tokens:
+            return False
+        for i in range(len(full_text_tokens) - k + 1):
+            if full_text_tokens[i:i + k] == target_tokens:
+                return True
+        req_set = set(target_tokens)
+        window_size = max(max_window, k + 4)
+        for i in range(len(full_text_tokens)):
+            if req_set.issubset(set(full_text_tokens[i:i + window_size])):
+                return True
+        return False
+
+    raw_tokens_list = name_tokens(text)
+    proximity_matched = _in_proximity(company_tokens, raw_tokens_list)
+
+    if len(company_tokens) >= 2 and ratio == 1.0 and proximity_matched:
+        return {
+            "status": "exact",
+            "score": 0.95,
+            "publishable": True,
+            "method": "deterministic_news_identity_v1",
+            "reasons": ["all normalized legal-name tokens appear together in article evidence"],
+            "matched_tokens": matched,
+        }
+
+    if len(company_tokens) == 1 and company_tokens[0] in text_tokens and len(company_tokens[0]) >= 5:
+        return {
+            "status": "review",
+            "score": 0.80,
+            "publishable": False,
+            "method": "deterministic_news_identity_v1",
+            "reasons": ["single distinctive company token without corroboration in news body"],
+            "matched_tokens": matched,
+        }
+
+    return {
+        "status": "related_or_uncertain",
+        "score": 0.30,
+        "publishable": False,
+        "method": "deterministic_news_identity_v1",
+        "reasons": ["news article text lacks exact-company identification"],
+        "matched_tokens": matched,
+    }
+

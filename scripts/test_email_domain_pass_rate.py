@@ -52,7 +52,7 @@ single_1to1 = [(org, univ[org], dom) for org, dom in org_to_dom.items() if dom_c
 def fetch_html(dom):
     for u in (f"https://www.{dom}", f"https://{dom}", f"http://www.{dom}", f"http://{dom}"):
         try:
-            req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 Signalpost/1.0"})
+            req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"})
             with urllib.request.urlopen(req, timeout=3.0, context=_SSL_CTX) as resp:
                 raw = resp.read(250_000)
                 try: html = raw.decode("utf-8")
