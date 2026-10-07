@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from ..evidence import (
-    SOURCE_OPEN_DATA,
+    SOURCE_EXTERNAL_DIRECTORY,
     EvidenceStore,
     make_claim,
     sha256_text,
@@ -90,7 +90,7 @@ def fetch_verified_socials(
     )
     eid = store.create(
         source_url=source_url,
-        source_class=SOURCE_OPEN_DATA,
+        source_class=SOURCE_EXTERNAL_DIRECTORY,
         claim_span=span,
         content_sha256=sha256_text(span),
     )
@@ -99,8 +99,12 @@ def fetch_verified_socials(
         field="social_profiles",
         value=merged,
         availability="available",
-        confidence=0.95,
+        confidence=0.75,
         evidence_ids=[eid],
-        note=f"Verified multi-platform corporate social presence ({len(merged)} channels)",
+        note=(
+            f"Name-matched external social cache ({len(merged)} channels); "
+            "gated by the exact-entity identity check — publishes only when the "
+            "company website is verified, held ambiguous otherwise."
+        ),
     )
     return merged, [claim]

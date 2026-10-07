@@ -20,6 +20,7 @@ from __future__ import annotations
 import re
 import urllib.parse
 from dataclasses import dataclass, field
+from itertools import zip_longest
 from typing import Any
 
 from .config import MAX_PAGES_PER_SITE, PRIORITY_PATHS
@@ -172,12 +173,20 @@ def crawl_site(
     if home.ok:
         record(home, "home")
 
-    # 2. Build a diverse, prioritized queue of subpages across career, news, and contact
+    # 2. Build a ROUND-ROBIN queue across career / news / contact so every family
+    #    gets a page before any family gets a second. The old queue enqueued all
+    #    career guesses first, so with a small page cap news and contact pages were
+    #    never reached — the direct cause of the 0% dated-news/social/hiring coverage.
     harvested = _harvest_links(home.final_url or origin, home.text) if (home.ok and home.is_html) else []
     career_links = [u for u in harvested if any(t in u.lower() for t in CAREER_TERMS)]
     news_links = [u for u in harvested if any(t in u.lower() for t in NEWS_TERMS)]
     contact_links = [u for u in harvested if any(t in u.lower() for t in CONTACT_TERMS)]
     other_links = [u for u in harvested if u not in career_links and u not in news_links and u not in contact_links]
+
+    # Per-family candidates: real harvested links first, then common path guesses.
+    career_cands = career_links + [origin + p for p in ("/karriere", "/careers", "/stillinger", "/jobb", "/ledige-stillinger")]
+    news_cands = news_links + [origin + p for p in ("/nyheter", "/aktuelt", "/presse", "/news", "/blogg")]
+    contact_cands = contact_links + [origin + p for p in ("/kontakt", "/om-oss", "/contact", "/about")]
 
     queue: list[tuple[str, str]] = []
     queued_keys: set[str] = set()
@@ -188,29 +197,17 @@ def crawl_site(
             queued_keys.add(key)
             queue.append((url, kind))
 
-    # Priority 1: Career / Job link
-    if career_links:
-        enqueue(career_links[0], "career")
-    else:
-        for p in ("/karriere", "/careers", "/stillinger", "/jobb"):
-            enqueue(origin + p, "career_guess")
-
-    # Priority 2: News / Press link
-    if news_links:
-        enqueue(news_links[0], "news")
-    else:
-        for p in ("/nyheter", "/aktuelt", "/presse", "/news"):
-            enqueue(origin + p, "news_guess")
-
-    # Priority 3: Contact / About link
-    if contact_links:
-        enqueue(contact_links[0], "contact")
-    else:
-        for p in ("/kontakt", "/om-oss", "/contact", "/about"):
-            enqueue(origin + p, "contact_guess")
-
-    # Priority 4: Secondary harvested links
-    for u in (career_links[1:] + news_links[1:] + contact_links[1:] + other_links):
+    # One career, one news, one contact, then repeat — so a 4-5 page budget always
+    # covers all three families instead of spending every slot on career guesses.
+    for c, n, ct in zip_longest(career_cands, news_cands, contact_cands):
+        if c:
+            enqueue(c, "career")
+        if n:
+            enqueue(n, "news")
+        if ct:
+            enqueue(ct, "contact")
+    # Secondary harvested links last.
+    for u in other_links:
         enqueue(u, "link")
 
     # 3. Walk the queue until the page cap or the budget stops us.

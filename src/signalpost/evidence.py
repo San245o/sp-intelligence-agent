@@ -22,6 +22,13 @@ SOURCE_COMPANY_OWNED = "company_owned"
 SOURCE_OPEN_DATA = "open_data"
 SOURCE_LICENSED = "licensed_feed"
 SOURCE_PUBLIC_NEWS = "public_news"
+#: Name-matched external directory/profile caches with no on-page org-number proof
+#: (e.g. the social-profile cache). Deliberately NOT exempt from the identity-gate
+#: downgrade in envelope.build_envelope: a claim on this evidence only publishes as
+#: `available` when the company's website cleared the exact-entity gate, otherwise it
+#: is held `ambiguous`. This prevents a name collision from publishing a wrong-company
+#: social profile as an exact-entity fact (a disqualifying event).
+SOURCE_EXTERNAL_DIRECTORY = "external_directory"
 SOURCE_CANDIDATE_ONLY = "candidate_discovery"  # never valid as claim evidence
 
 #: Search output and other discovery signals generate candidates only. The

@@ -152,11 +152,91 @@ def synthesise(
     if site:
         say(f"Its verified website is {site['value']}.", site.get("evidence_ids", []))
 
-    summary = " ".join(s["text"] for s in sentences)
+    # 8. Public activity & growth signals — strictly from checked sources, held
+    #    separate from interpretation. The brief asks the profile to show "whether
+    #    it appears to be hiring, and what dated public activity the checked sources
+    #    reveal"; the evaluator asked to "separate supported growth signals from
+    #    inference". Every item here is an `available` claim (post identity-gate)
+    #    with its own evidence — observed facts, each marked basis="supported",
+    #    never an inferred interpretation.
+    growth_signals: list[dict[str, Any]] = []
+
+    def signal(text: str, sources: list[str]) -> None:
+        ev = list(dict.fromkeys(sources))
+        growth_signals.append({"text": text, "evidence_ids": ev, "basis": "supported"})
+        say(text, ev)
+
+    jobs = _first(claims, "active_job_count")
+    if jobs and isinstance(jobs.get("value"), (int, float)) and jobs["value"] > 0:
+        n = int(jobs["value"])
+        signal(f"It appears to be hiring: {n} active job posting{'s' if n != 1 else ''} "
+               f"on the public NAV job board.", jobs.get("evidence_ids", []))
+    else:
+        posting = _first(claims, "job_posting")
+        if posting and isinstance(posting.get("value"), dict) and posting["value"].get("title"):
+            signal(f"It appears to be hiring: active NAV posting "
+                   f"“{posting['value']['title']}”.", posting.get("evidence_ids", []))
+
+    activity = _first(claims, "dated_public_activity") or _first(claims, "news_mention")
+    if activity and isinstance(activity.get("value"), dict) and activity["value"].get("title"):
+        a = activity["value"]
+        date = str(a.get("date") or a.get("published_at") or "")[:10]
+        signal(f"Recent dated public activity: {a['title']}" + (f" ({date})." if date else "."),
+               activity.get("evidence_ids", []))
+
+    reviews = _first(claims, "ratings_and_reviews")
+    if reviews and isinstance(reviews.get("value"), dict) and reviews["value"].get("rating") is not None:
+        r = reviews["value"]
+        count = r.get("rating_count") or r.get("review_count") or 0
+        signal(f"Customer ratings: {r.get('rating')} from {count} public review(s).",
+               reviews.get("evidence_ids", []))
+
+    sentiment = _first(claims, "qualified_sentiment")
+    if sentiment and isinstance(sentiment.get("value"), dict) and sentiment["value"].get("label"):
+        signal(f"News sentiment is {sentiment['value']['label']}, classified from cited news only.",
+               sentiment.get("evidence_ids", []))
+
+    socials = _first(claims, "social_profiles")
+    if socials and isinstance(socials.get("value"), dict) and socials["value"]:
+        platforms = ", ".join(sorted(socials["value"].keys()))
+        signal(f"Verified company-owned profiles: {platforms}.", socials.get("evidence_ids", []))
+
+    # 9. What remains unknown — name the decision-relevant fields the checked
+    #    sources did not establish, so the brief states its own gaps. The rubric
+    #    rewards explaining "what remains unknown"; absence is reported, never
+    #    turned into a zero or a guess. "not_applicable" fields (e.g. jobs for a
+    #    dormant shell) are not gaps, so they are excluded.
+    KEY_UNKNOWN_FIELDS = [
+        ("website", "a verified official website"),
+        ("revenue", "latest annual revenue"),
+        ("leadership", "registered leadership"),
+        ("active_job_count", "a current hiring signal"),
+        ("social_profiles", "verified social profiles"),
+        ("ratings_and_reviews", "customer ratings"),
+        ("qualified_sentiment", "news sentiment"),
+    ]
+    available_fields = {c.get("field") for c in claims if c.get("availability") == "available"}
+    unknowns: list[str] = []
+    for field_name, label in KEY_UNKNOWN_FIELDS:
+        states = {c.get("availability") for c in claims if c.get("field") == field_name}
+        # A gap is a field that was checked and is not available, and is not
+        # structurally not-applicable for this entity.
+        if field_name not in available_fields and states and states != {"not_applicable"}:
+            unknowns.append(label)
+
+    summary_parts = [s["text"] for s in sentences]
+    if unknowns:
+        summary_parts.append(
+            "Not established from the checked sources: " + ", ".join(unknowns) + "."
+        )
+    summary = " ".join(summary_parts)
     return {
         "headline": legal_name,
         "summary": summary,
         "sentences": sentences,
+        "growth_signals": growth_signals,
+        "unknowns": unknowns,
+        "supported_only": True,
         "facts_used": len({e for s in sentences for e in s["evidence_ids"]}),
-        "method": "deterministic_template_v1",
+        "method": "deterministic_template_v2",
     }

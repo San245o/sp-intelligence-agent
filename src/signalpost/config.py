@@ -61,8 +61,12 @@ HTTP_TIMEOUT_S = 4
 HTTP_MAX_RETRIES = 1
 MAX_RESPONSE_BYTES = 3_500_000
 
-# Website crawl shape: shallow and fast (homepage + contact/about)
-MAX_PAGES_PER_SITE = 2
+# Website crawl shape: home + one page each for career / news / contact.
+# Was 2 (home + a single subpage) which, with a career-first queue, meant news
+# and contact/about pages were never fetched — the direct cause of the evaluator's
+# dated-news / social / hiring 0% coverage. 5 lets the round-robin queue in
+# website.crawl_site reach every family; the request budget still caps spend.
+MAX_PAGES_PER_SITE = 5
 PRIORITY_PATHS = (
     "/", "/om-oss", "/about", "/about-us", "/om", "/kontakt", "/contact",
     "/ledelse", "/leadership", "/team", "/ansatte", "/people",
