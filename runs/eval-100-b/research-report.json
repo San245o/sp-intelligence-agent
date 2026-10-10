@@ -1,0 +1,21 @@
+{
+  "corpus": "fresh post-lock 40-question Signalpost research suite v3",
+  "profiles": 100,
+  "single_company_supported": true,
+  "screen_results_count": 24,
+  "unsupported_abstention": true,
+  "saved_work": true,
+  "provenance_export": true,
+  "points": {
+    "cited_single_company_qa": 4,
+    "cross_company_screening": 3.0,
+    "exact_inspectable_filters": 2.0,
+    "unsupported_abstention": 1,
+    "saved_history": 1,
+    "provenance_export": 1
+  },
+  "score": 12.0,
+  "maximum": 12,
+  "qualification_passed": true,
+  "external_footprint_qa_passed": true
+}

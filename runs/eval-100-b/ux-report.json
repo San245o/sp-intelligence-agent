@@ -1,0 +1,17 @@
+{
+  "score": 8.0,
+  "maximum": 8.0,
+  "external_intelligence_presented": true,
+  "prototype_path": "C:\\Users\\sanke\\Desktop\\signalpost\\agent\\runs\\eval-100-b\\prototype.html",
+  "features": {
+    "official_company_overview": true,
+    "annual_accounts_inspection": true,
+    "leadership_and_subunits": true,
+    "company_website_preview": true,
+    "external_social_profiles": true,
+    "external_ratings_and_reviews": true,
+    "news_sentiment_and_activity": true,
+    "natural_language_agent_qa": true,
+    "interactive_filtering_and_export": true
+  }
+}

@@ -1,0 +1,639 @@
+{
+  "schema_version": 1,
+  "pins": [
+    "815837932",
+    "942962568",
+    "948281554",
+    "977123186"
+  ],
+  "history": [
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies in Oslo with above 7 employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies in Oslo with above 7 employees",
+        "filters": [
+          {
+            "field": "municipality",
+            "operator": "eq",
+            "value": "OSLO",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "employees",
+            "operator": ">",
+            "value": 7,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies in Bergen with over 4 registered employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies in Bergen with over 4 registered employees",
+        "filters": [
+          {
+            "field": "municipality",
+            "operator": "eq",
+            "value": "BERGEN",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "employees",
+            "operator": ">",
+            "value": 4,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies in Trondheim with employees > 10",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies in Trondheim with employees > 10",
+        "filters": [
+          {
+            "field": "municipality",
+            "operator": "eq",
+            "value": "TRONDHEIM",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "employees",
+            "operator": ">",
+            "value": 10,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "legal form = STI",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "legal form = STI",
+        "filters": [
+          {
+            "field": "legal_form",
+            "operator": "eq",
+            "value": "STI",
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 4,
+      "result_organisation_numbers": [
+        "977123186",
+        "977151317",
+        "979449437",
+        "979983581"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "organisation form is BRL",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "organisation form is BRL",
+        "filters": [
+          {
+            "field": "legal_form",
+            "operator": "eq",
+            "value": "BRL",
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 3,
+      "result_organisation_numbers": [
+        "948281554",
+        "952237225",
+        "991474137"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with at least 75 employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with at least 75 employees",
+        "filters": [
+          {
+            "field": "employees",
+            "operator": ">=",
+            "value": 75,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 2,
+      "result_organisation_numbers": [
+        "942962568",
+        "976686608"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with fewer than 100 employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with fewer than 100 employees",
+        "filters": [
+          {
+            "field": "employees",
+            "operator": "<",
+            "value": 100,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 30,
+      "result_organisation_numbers": [
+        "815837932",
+        "897173972",
+        "898558762",
+        "910386441",
+        "912362620",
+        "913070232",
+        "913177843",
+        "914526698",
+        "916594259",
+        "917037388",
+        "918369651",
+        "921387695",
+        "925202819",
+        "925345776",
+        "926330012",
+        "933436527",
+        "934156609",
+        "935822254",
+        "964413312",
+        "976488423",
+        "977208424",
+        "977298601",
+        "979469241",
+        "984223897",
+        "984911785",
+        "986980210",
+        "989503332",
+        "990080011",
+        "993470635",
+        "996131416"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with revenue above 25 million",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with revenue above 25 million",
+        "filters": [
+          {
+            "field": "revenue",
+            "operator": ">",
+            "value": 25000000.0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with revenue >= NOK 250 million",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with revenue >= NOK 250 million",
+        "filters": [
+          {
+            "field": "revenue",
+            "operator": ">=",
+            "value": 250000000.0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with less than 2 million revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with less than 2 million revenue",
+        "filters": [
+          {
+            "field": "revenue",
+            "operator": "<",
+            "value": 2000000.0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with positive annual result",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with positive annual result",
+        "filters": [
+          {
+            "field": "annual_result",
+            "operator": ">",
+            "value": 0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies with negative annual result",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies with negative annual result",
+        "filters": [
+          {
+            "field": "annual_result",
+            "operator": "<",
+            "value": 0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies that have an official website",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies that have an official website",
+        "filters": [
+          {
+            "field": "website",
+            "operator": "present",
+            "value": true,
+            "evidence_module": "website"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies that have accounts",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies that have accounts",
+        "filters": [
+          {
+            "field": "financials",
+            "operator": "available",
+            "value": true,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "industry contains 'restauranter'",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "industry contains 'restauranter'",
+        "filters": [
+          {
+            "field": "industry",
+            "operator": "contains",
+            "value": "restauranter",
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "industry is 'bygninger'",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "industry is 'bygninger'",
+        "filters": [
+          {
+            "field": "industry",
+            "operator": "contains",
+            "value": "bygninger",
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": null,
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "top 7 by revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "top 7 by revenue",
+        "filters": [],
+        "sort": {
+          "field": "revenue",
+          "direction": "desc",
+          "limit": 7
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 7,
+      "result_organisation_numbers": [
+        "815837932",
+        "819524432",
+        "897173972",
+        "898558762",
+        "910386441",
+        "911631849",
+        "912362620"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "top 12 by employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "top 12 by employees",
+        "filters": [],
+        "sort": {
+          "field": "employees",
+          "direction": "desc",
+          "limit": 12
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 12,
+      "result_organisation_numbers": [
+        "942962568",
+        "976686608",
+        "979469241",
+        "925202819",
+        "918369651",
+        "916594259",
+        "921387695",
+        "898558762",
+        "912362620",
+        "815837932",
+        "996131416",
+        "935822254"
+      ]
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies in Oslo with at least 20 employees top 8 by employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies in Oslo with at least 20 employees top 8 by employees",
+        "filters": [
+          {
+            "field": "municipality",
+            "operator": "eq",
+            "value": "OSLO",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "employees",
+            "operator": ">=",
+            "value": 20,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": {
+          "field": "employees",
+          "direction": "desc",
+          "limit": 8
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "companies in Bergen with revenue above 5 million top 6 by revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "companies in Bergen with revenue above 5 million top 6 by revenue",
+        "filters": [
+          {
+            "field": "municipality",
+            "operator": "eq",
+            "value": "BERGEN",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "revenue",
+            "operator": ">",
+            "value": 5000000.0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": {
+          "field": "revenue",
+          "direction": "desc",
+          "limit": 6
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "organisation form AS with accounts top 9 by revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "organisation form AS with accounts top 9 by revenue",
+        "filters": [
+          {
+            "field": "legal_form",
+            "operator": "eq",
+            "value": "AS",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "financials",
+            "operator": "available",
+            "value": true,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": {
+          "field": "revenue",
+          "direction": "desc",
+          "limit": 9
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "positive annual result top 6 by revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "positive annual result top 6 by revenue",
+        "filters": [
+          {
+            "field": "annual_result",
+            "operator": ">",
+            "value": 0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": {
+          "field": "revenue",
+          "direction": "desc",
+          "limit": 6
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "negative annual result top 6 by revenue",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "negative annual result top 6 by revenue",
+        "filters": [
+          {
+            "field": "annual_result",
+            "operator": "<",
+            "value": 0,
+            "evidence_module": "financials"
+          }
+        ],
+        "sort": {
+          "field": "revenue",
+          "direction": "desc",
+          "limit": 6
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    },
+    {
+      "created_at": "2026-10-03T07:42:37Z",
+      "query": "legal form ASA with above 20 employees top 5 by employees",
+      "plan": {
+        "version": "closed_company_screen_v1",
+        "query": "legal form ASA with above 20 employees top 5 by employees",
+        "filters": [
+          {
+            "field": "legal_form",
+            "operator": "eq",
+            "value": "ASA",
+            "evidence_module": "registry"
+          },
+          {
+            "field": "employees",
+            "operator": ">",
+            "value": 20,
+            "evidence_module": "registry"
+          }
+        ],
+        "sort": {
+          "field": "employees",
+          "direction": "desc",
+          "limit": 5
+        },
+        "unsupported": [],
+        "executable": true
+      },
+      "result_count": 0,
+      "result_organisation_numbers": []
+    }
+  ]
+}

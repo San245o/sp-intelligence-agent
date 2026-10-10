@@ -1,0 +1,48 @@
+{
+  "gold_items": 300,
+  "published_predictions": 300,
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "macro_f1_labels": [
+    "positive",
+    "neutral",
+    "negative",
+    "mixed"
+  ],
+  "per_label": {
+    "positive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 75
+    },
+    "neutral": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 75
+    },
+    "negative": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 75
+    },
+    "mixed": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 75
+    }
+  },
+  "wrong_entity_predictions": 0,
+  "exact_entity_precision": 1.0,
+  "evidence_supported_predictions": 300,
+  "evidence_support_rate": 1.0,
+  "company_owned_predictions": 0,
+  "coverage": 1.0,
+  "minimum_items_gate": 300,
+  "required_labels_present": true,
+  "qualification_passed": true,
+  "production_scale_gate_passed": false
+}

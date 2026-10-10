@@ -1,0 +1,44 @@
+{
+  "run_id": "run-1791012995",
+  "config": {
+    "run_id": "run-1791012995",
+    "expected_count": 100,
+    "max_requests": 1840,
+    "max_spend_usd": 10.0,
+    "wall_clock_s": 2214,
+    "workers": 16,
+    "search_provider": "none",
+    "respect_robots": true,
+    "tier_budgets": {
+      "shell": 3,
+      "standard": 12,
+      "rich": 30
+    }
+  },
+  "inputs": 100,
+  "resolved": 100,
+  "elapsed_s": 290.1,
+  "dispositions": {
+    "official": 100
+  },
+  "budget": {
+    "requests_used": 997,
+    "requests_cap": 1840,
+    "requests_denied": 9,
+    "reserve_remaining": 763,
+    "third_party_cost_usd": 0.0,
+    "spend_cap_usd": 10.0,
+    "elapsed_s": 290.1,
+    "wall_clock_cap_s": 2214,
+    "companies_per_tier": {
+      "rich": 57,
+      "shell": 19,
+      "standard": 24
+    },
+    "requests_per_tier": {
+      "shell": 68,
+      "standard": 245,
+      "rich": 684
+    }
+  }
+}

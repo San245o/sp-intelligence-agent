@@ -27,6 +27,7 @@ htmlcov/
 *.tmp
 runs/*
 !runs/submission-1000/
+!runs/eval-100-b/
 scratch/
 scratch_*.py
 .env
