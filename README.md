@@ -9,37 +9,44 @@ An autonomous Nordic entity intelligence pipeline. Given organisation numbers fr
 Requires Python 3.11+.
 
 ```bash
-# 1. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 pip install -e .
 
-# 2. Run the 1,000-company official submission batch
+# One-command full pipeline execution (envelopes -> contract -> refresh -> footprint -> UX)
+python scripts/package_submission.py --manifest data/submission-manifest-1000.jsonl --out runs/submission --workers 12
+```
+
+### Modular Pipeline Execution (Step-by-Step)
+
+```bash
+# 1. Run the batch crawler on any input manifest
 python scripts/run_batch.py \
   --manifest data/submission-manifest-1000.jsonl \
-  --out runs/submission-1000 \
+  --out runs/submission \
   --workers 12
 
 # 3. Format into exact OUTPUT_CONTRACT schema
 python scripts/to_contract.py \
-  --input runs/submission-1000/envelopes.jsonl \
-  --output runs/submission-1000/submission.jsonl
+  --input runs/submission/envelopes.jsonl \
+  --output runs/submission/submission.jsonl
 
 # 4. Verify refresh idempotency (0 false changes)
 python scripts/run_refresh.py \
-  --previous runs/submission-1000/submission.jsonl \
-  --current runs/submission-1000/submission.jsonl \
-  --output runs/submission-1000/refresh-report.json
+  --previous runs/submission/submission.jsonl \
+  --current runs/submission/submission.jsonl \
+  --output runs/submission/refresh-report.json
 
 # 5. Evaluate research agent (12.0 / 12 qualification)
 python scripts/evaluate_research_agent.py \
-  --input runs/submission-1000/envelopes.jsonl \
+  --input runs/submission/envelopes.jsonl \
   --suite tests/fixtures/research-agent-suite-v3-fresh.json \
-  --output runs/submission-1000/research-report.json \
+  --output runs/submission/research-report.json \
 # 6. Evaluate product UX design (8.0 / 8 qualification)
 python scripts/evaluate_ux.py \
-  --prototype runs/submission-1000/prototype.html \
-  --profiles runs/submission-1000/profiles.jsonl \
-  --output runs/submission-1000/ux-report.json
+  --prototype runs/submission/prototype.html \
+  --profiles runs/submission/profiles.jsonl \
+  --output runs/submission/ux-report.json
 
 # 7. Run automated test suite
 python -m unittest discover tests -v
