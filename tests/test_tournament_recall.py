@@ -92,6 +92,22 @@ class EntryForwardingRegression(unittest.TestCase):
             self.assertEqual(forwarded[forwarded.index('--web-requests-per-company')+1],'0')
             self.assertEqual(forwarded[forwarded.index('--nav-window-days')+1],'0')
 
+
+    def test_thousand_company_entry_forwards_500_credit_default_and_zero_override(self):
+        import tempfile
+        from scripts import run_research_batch as entry
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);bulk=root/'bulk.gz';bulk.write_bytes(b'fixture')
+            rows=[{'organisation_number':str(900000000+i)} for i in range(1000)]
+            for extra,expected in [([], '500'),(['--paid-search-budget','0'], '0')]:
+                forwarded=[]
+                def stop(path,run_name):
+                    forwarded.extend(sys.argv)
+                    raise SystemExit(37)
+                with patch.object(entry,'_load_manifest',return_value=rows),patch.object(entry.runpy,'run_path',side_effect=stop):
+                    with self.assertRaises(SystemExit):entry.main(['--manifest','fixture.jsonl','--out',str(root/'result'),'--bulk',str(bulk),*extra])
+                self.assertEqual(forwarded[forwarded.index('--paid-search-budget')+1],expected)
+
 class ContractRegression(unittest.TestCase):
     def test_contract_does_not_publish_unverified_website_or_manufacture_hash(self):
         from scripts.run_research_batch import contract_envelope

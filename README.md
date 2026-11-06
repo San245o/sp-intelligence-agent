@@ -18,7 +18,7 @@ For public sources without paid search:
 python run.py --manifest <batch-file> --out <output-directory> --search none
 ```
 
-Inputs can be JSON arrays, JSONL, text or CSV, including gzip. `--bulk <snapshot.csv.gz>` selects a specific public registry snapshot. The default `data/brreg-enheter.csv.gz` is reused locally or downloaded from the official Brønnøysund public source if missing. New organisations outside that snapshot currently require an updated snapshot. The default paid budget is half the batch size in credits (500 for 1,000 companies), shared across providers and all key slots, with up to 2 credits per company. It favors high-potential companies; this is not a dollar-cost estimate. Automatic place discovery uses Places, not Maps. `--search none` sets the paid ceiling to zero.
+Inputs can be JSON arrays, JSONL, text or CSV, including gzip. `--bulk <snapshot.csv.gz>` selects a specific public registry snapshot. The default `data/brreg-enheter.csv.gz` is reused locally or downloaded from the official Brønnøysund public source if missing. New organisations outside that snapshot currently require an updated snapshot. The default paid budget is half the batch size in credits (500 for 1,000 companies), shared across providers and all key slots, with up to 2 credits per company. It favors high-potential companies; this is not a dollar-cost estimate. The network allowance also scales with batch size (2,000 attempts for 100 companies or 20,000 for 1,000 companies); `--request-budget` explicitly overrides it. Automatic place discovery uses Places, not Maps. `--search none` sets the paid ceiling to zero.
 
 Outputs include `submission.jsonl` / `envelopes.jsonl` with the flat evaluator contract, `raw_envelopes.jsonl`, `profiles.jsonl`, `run-report.json`, a structured acquisition-attempt ledger and provider usage checkpoints. Records keep real source hashes and acquisition times; the adapter does not manufacture missing evidence. Per-company operations include measured runtime and paid credits. Dollar cost is reported as unknown when credits were used without a configured USD-per-credit rate; set `SERPER_USD_PER_CREDIT` to your actual rate (including 0 for a known free allocation).
 
@@ -53,6 +53,6 @@ The workspace provides company search, evidence filters, source-linked research 
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-The current suite passes 212 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
+The current suite passes 215 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
 
 Read [search policy](docs/search-budget.md), [migration record](docs/migration-20261105.md), [pipeline details](docs/research-pipeline-guide.md) for measurement boundaries. Historical architecture and performance claims are preserved separately in [legacy guide](docs/legacy-agent-guide.md); they do not describe the new default paid-search path. The legacy entry remains `python scripts/run_batch.py ...`.

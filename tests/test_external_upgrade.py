@@ -41,11 +41,24 @@ class ProviderTests(unittest.TestCase):
         self.assertEqual(providers.provider_summary()['paid_credits_used'],39)
         self.assertLessEqual(providers.provider_summary()['paid_credits_used'],40)
 
-    def test_search_plan_keeps_missing_payroll_and_holding_entities_eligible(self):
-        plan=providers.plan_search_budget([{'organisation_number':'1','name':'Example Holding AS','employees':100},
-            {'organisation_number':'2','name':'Workshop AS','employees':None}],limit=1,per_company=2)
-        self.assertEqual(plan['1'],2)
-        self.assertEqual(plan['2'],2)
+    def test_search_plan_prioritizes_operating_company_within_total_allocation(self):
+        profiles=[{'organisation_number':'123456789','name':'Example Holding AS','employees':1,'evidence':{'registry':{'value':{'forretningsadresse.adresse':'Gate 1','forretningsadresse.postnummer':'0123'}}}},
+                  {'organisation_number':'987654321','name':'Workshop AS','employees':50,'website':'https://workshop.no','evidence':{'registry':{'value':{'forretningsadresse.adresse':'Gate 2','forretningsadresse.postnummer':'0123'}}}}]
+        plan=providers.plan_search_budget(profiles,limit=1,per_company=2)
+        self.assertEqual(sum(plan.values()),1)
+        self.assertEqual(plan['987654321'],1)
+        self.assertEqual(plan['123456789'],0)
+
+    def test_empty_address_cannot_earn_readiness_points(self):
+        profile={'organisation_number':'123456789','name':'Example AS','employees':100}
+        plan=providers.plan_search_budget([profile],limit=1,per_company=2)
+        self.assertEqual(profile['paid_discovery_readiness_score'],70)
+        self.assertEqual(sum(plan.values()),0)
+
+    def test_missing_payroll_can_receive_paid_credit_with_registered_identity_and_site(self):
+        profile={'organisation_number':'123456789','name':'Example AS','employees':None,'website':'https://example.no','evidence':{'registry':{'value':{'forretningsadresse.adresse':'Gate 1','forretningsadresse.postnummer':'0123'}}}}
+        self.assertEqual(providers.plan_search_budget([profile],limit=1)['123456789'],1)
+
 
     def test_exhausted_paid_budget_keeps_public_search_available(self):
         import io

@@ -54,17 +54,18 @@ def plan_search_budget(profiles, limit=0, per_company=2):
         registry = (profile.get("evidence", {}).get("registry") or {}).get("value") or {}
         name = str(profile.get("name") or registry.get("navn") or "").strip()
         address = profile.get("business_address") or profile.get("forretningsadresse.adresse") or registry.get("forretningsadresse.adresse") or registry.get("forretningsadresse") or {}
-        address_text = " ".join(address) if isinstance(address, list) else str(address)
+        address_text = " ".join(str(part) for part in address) if isinstance(address, list) else str(address or "")
         postcode = str(profile.get("postcode") or profile.get("forretningsadresse.postnummer") or registry.get("forretningsadresse.postnummer") or "")
         status_text = " ".join(str(profile.get(key) or registry.get(key) or "") for key in ("konkurs", "underAvvikling", "slettedato")).casefold()
-        active = not any(token in status_text for token in ("true", "konkurs", "avvik", "slett"))
-        identity = (30 if len(name) >= 4 else 0) + (20 if address_text.strip() else 0) + (10 if len(postcode) == 4 else 0) + (20 if active else 0) + (20 if profile.get("organisation_number") else 0)
+        active = not (profile.get("bankrupt") or profile.get("liquidating")) and not any(token in status_text for token in ("true", "konkurs", "avvik", "slett"))
+        identity = (30 if len(name) >= 4 else 0) + (20 if address_text.strip() else 0) + (10 if len(postcode) == 4 else 0) + (20 if active else 0) + (20 if len(str(profile.get("organisation_number") or "")) == 9 and str(profile["organisation_number"]).isdigit() else 0)
         try:
             employees = int(profile.get("employees") or registry.get("antallAnsatte") or 0)
         except (TypeError, ValueError):
             employees = 0
         financials = profile.get("evidence", {}).get("financials", {}).get("value") or {}
-        revenue = number(profile.get("revenue") or financials.get("revenue") or financials.get("driftsinntekter") or registry.get("revenue") or registry.get("driftsinntekter"))
+        account = next((record for record in financials.get("records", []) if record.get("account_type") == "SELSKAP"), {})
+        revenue = number(profile.get("revenue") or account.get("revenue") or financials.get("revenue") or financials.get("driftsinntekter") or registry.get("revenue") or registry.get("driftsinntekter"))
         website = profile.get("website") or registry.get("hjemmeside")
         site_value = profile.get("evidence", {}).get("website", {}).get("value") or {}
         own_site = bool((site_value.get("identity_assessment") or {}).get("content_attributable"))

@@ -320,7 +320,7 @@ def main() -> None:
     parser.add_argument("--changes-output", type=Path)
     parser.add_argument("--cache-dir", default=None, help="Company-keyed discovery cache (defaults to data/local-cache)")
     parser.add_argument("--fresh-web", action="store_true", help="Ignore persistent website responses for a cold-network comparison; retain within-run deduplication")
-    parser.add_argument("--request-budget", type=int, default=2000, help="Maximum counted network requests for the full run, including registry calls")
+    parser.add_argument("--request-budget", type=int, default=None, help="Maximum network attempts; internal default is 20 attempts per company; pass the official supplied limit explicitly")
     parser.add_argument("--web-requests-per-company", type=int, default=30, help="Maximum website/search/feed requests for one company")
     parser.add_argument("--generated-site-candidate-cap", type=int, default=3, help="Maximum guessed domains making HTTP attempts per company; DNS-only failures do not consume the cap")
     parser.add_argument("--site-activity-request-cap", type=int, default=16, help="Maximum estimated requests for verified-site feed/sitemap discovery per company")
@@ -332,7 +332,6 @@ def main() -> None:
     args = parser.parse_args()
     website_client.READ_DISK_CACHE = not args.fresh_web
     search_client.READ_SEARCH_CACHE = not args.fresh_web
-    network_meter.activate(args.request_budget)
     attempts_output = Path(args.attempts_output) if args.attempts_output else Path(args.report).with_suffix(".attempts.jsonl")
 
     started_at = utc_now()
@@ -361,6 +360,9 @@ def main() -> None:
     requested_modules = [item.strip() for item in args.modules.split(",") if item.strip()]
     fetch_modules = set(requested_modules) - {"registry", "accounting_obligation", "website", "external_footprint"}
     expected_official_requests = len(profiles) * len(fetch_modules)
+    if args.request_budget is None:
+        args.request_budget = len(profiles) * 20
+    network_meter.activate(args.request_budget)
     network_meter.reserve_official(expected_official_requests)
     web_request_budget = WebRequestBudget(max(0, args.request_budget - expected_official_requests))
     if min(args.nav_window_days, args.nav_max_pages, args.nav_max_details) < 0 or args.nav_delay_seconds < 0:
@@ -745,7 +747,7 @@ def main() -> None:
                 social_query = f'"{profile["name"]}" "{profile.get("municipality") or "Norway"}" (site:linkedin.com/company OR site:instagram.com OR site:facebook.com OR site:youtube.com)'
                 if company_web_budget.reserve(SEARCH_REQUEST_CEILING):
                     try:
-                        search_results, search_requests, search_status = search_company_websites(social_query, timeout=4.0, use_paid=True)
+                        search_results, search_requests, search_status = search_company_websites(social_query, timeout=4.0, use_paid=False)
                     except Exception as exc:
                         search_results, search_requests, search_status = [], 0, "provider_error"
                         search_error = f"{type(exc).__name__}: {str(exc)[:160]}"
