@@ -25,6 +25,7 @@ import trafilatura
 
 from .evidence import evidence
 from .source_store import capture_source
+from .network_meter import RequestLimitExceeded
 
 USER_AGENT = "builderr-signalpost-poc/0.1 (+https://builderr.ai)"
 SOCIAL_HOSTS = {
@@ -565,7 +566,10 @@ def fetch_website(url: str | None, *, timeout: float = 15.0, max_bytes: int = 2_
         disk = _disk_record(key)
         if disk is not None:
             return disk, {"requests": 0, "bytes": 0, "latencies_ms": [], "cache_hit": True, "cache_source": "disk"}
-        record, metrics = _fetch_website(url, timeout=timeout, max_bytes=max_bytes, max_secondary_pages=max_secondary_pages)
+        try:
+            record, metrics = _fetch_website(url, timeout=timeout, max_bytes=max_bytes, max_secondary_pages=max_secondary_pages)
+        except RequestLimitExceeded:
+            return evidence("website", "not_fetched", "registry_linked_company_website", normalized, note="request_budget_exhausted"), {"requests": 0, "bytes": 0, "latencies_ms": [], "budget_exhausted": True}
         ttl = 3600 if record.get("status") == "available" else 30
         _disk_record(key, record, ttl)
         with _FETCH_LOCK:

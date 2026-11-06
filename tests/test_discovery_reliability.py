@@ -110,6 +110,37 @@ class AcquisitionTests(unittest.TestCase):
             self.assertEqual(Path(ref["snapshot_path"]).read_bytes(), b"company page")
             self.assertEqual(ref["snapshot_sha256"], hashlib.sha256(b"company page").hexdigest())
 
+    def test_transport_reserve_protects_registry_first_attempts_from_discovery_and_retries(self):
+        network_meter.activate(3)
+        network_meter.reserve_official(2)
+        self.addCleanup(network_meter.deactivate)
+        sys.audit("urllib.Request", "https://example.no/", None, {}, "GET")
+        with self.assertRaises(network_meter.RequestLimitExceeded):
+            sys.audit("urllib.Request", "https://example.no/news", None, {}, "GET")
+        sys.audit("urllib.Request", "https://data.brreg.no/entity/1", None, {}, "GET")
+        with self.assertRaises(network_meter.RequestLimitExceeded):
+            sys.audit("urllib.Request", "https://data.brreg.no/entity/1", None, {}, "GET")
+        sys.audit("urllib.Request", "https://data.brreg.no/entity/2", None, {}, "GET")
+        self.assertEqual(network_meter.snapshot()["attempts"], 3)
+        self.assertEqual(network_meter.snapshot()["official_reserve_remaining"], 0)
+
+    def test_registry_budget_exhaustion_returns_failure_without_retry_or_hash(self):
+        from norway_company_agent.http import fetch_json
+        with patch("urllib.request.urlopen", side_effect=network_meter.RequestLimitExceeded), patch("time.sleep") as sleep:
+            result = fetch_json("https://data.brreg.no/entity/1")
+        self.assertEqual(result.error, "request_budget_exhausted")
+        self.assertEqual(result.status, 0)
+        self.assertIsNone(result.content_sha256)
+        sleep.assert_not_called()
+
+    def test_website_budget_stop_is_explicit_and_not_cached(self):
+        with patch.object(website, "_fetch_website", side_effect=network_meter.RequestLimitExceeded):
+            record, metrics = website.fetch_website("https://example.no/")
+        self.assertEqual(record["status"], "not_fetched")
+        self.assertEqual(record["note"], "request_budget_exhausted")
+        self.assertTrue(metrics["budget_exhausted"])
+        self.assertFalse(website._FETCH_CACHE)
+
     def test_transport_meter_caps_attempts_including_redirects(self):
         network_meter.activate(2)
         self.addCleanup(network_meter.deactivate)

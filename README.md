@@ -53,6 +53,6 @@ The workspace provides company search, evidence filters, source-linked research 
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-The current suite passes 209 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
+The current suite passes 212 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
 
 Read [search policy](docs/search-budget.md), [migration record](docs/migration-20261105.md), [pipeline details](docs/research-pipeline-guide.md) for measurement boundaries. Historical architecture and performance claims are preserved separately in [legacy guide](docs/legacy-agent-guide.md); they do not describe the new default paid-search path. The legacy entry remains `python scripts/run_batch.py ...`.

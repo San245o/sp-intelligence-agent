@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 from .source_store import capture_source
+from .network_meter import RequestLimitExceeded
 
 
 @dataclass
@@ -44,6 +45,8 @@ def fetch_json(url: str, *, timeout: float = 20.0, attempts: int = 3) -> FetchRe
                 elapsed = int((time.monotonic() - started) * 1000)
                 body = json.loads(raw)
                 return FetchResult(url, response.status, elapsed, len(raw), body, content_sha256=hashlib.sha256(raw).hexdigest(), retrieved_at=_utc_now(), **capture_source(raw))
+        except RequestLimitExceeded:
+            return FetchResult(url, 0, int((time.monotonic() - started) * 1000), 0, error="request_budget_exhausted", retrieved_at=_utc_now())
         except urllib.error.HTTPError as exc:
             elapsed = int((time.monotonic() - started) * 1000)
             raw = exc.read()

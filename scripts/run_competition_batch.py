@@ -360,6 +360,7 @@ def main() -> None:
     requested_modules = [item.strip() for item in args.modules.split(",") if item.strip()]
     fetch_modules = set(requested_modules) - {"registry", "accounting_obligation", "website", "external_footprint"}
     expected_official_requests = len(profiles) * len(fetch_modules)
+    network_meter.reserve_official(expected_official_requests)
     web_request_budget = WebRequestBudget(max(0, args.request_budget - expected_official_requests))
     if min(args.nav_window_days, args.nav_max_pages, args.nav_max_details) < 0 or args.nav_delay_seconds < 0:
         raise SystemExit("NAV window, request caps, and delay must be non-negative")
