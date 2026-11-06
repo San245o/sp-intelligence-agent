@@ -311,7 +311,7 @@ def main() -> None:
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--expected-count", type=int, default=100)
     parser.add_argument("--workers", type=int, default=8)
-    parser.add_argument("--paid-search-budget", type=int, default=40, help="Shared provider-credit ceiling: search/news/Places=1, Maps=3; failed and fallback attempts reserve credits too")
+    parser.add_argument("--paid-search-budget", type=int, default=2000, help="Shared provider-credit ceiling for the whole run: search/news/Places=1, Maps=3; failed and fallback attempts reserve credits too")
     parser.add_argument("--paid-search-per-company", type=int, default=2)
     parser.add_argument("--external-request-cap", type=int, default=18)
     parser.add_argument("--checkpoint-every", type=int, default=25)
@@ -741,10 +741,10 @@ def main() -> None:
             # Keep search-discovered accounts in the ledger as leads. Search-result text is not a
             # retained source capture and cannot, by itself, establish publication rights or exact entity.
             if profile.get("name") and not social_observations:
-                social_query = f'"{profile["name"]}" (LinkedIn OR Instagram OR Facebook OR YouTube)'
+                social_query = f'"{profile["name"]}" "{profile.get("municipality") or "Norway"}" (site:linkedin.com/company OR site:instagram.com OR site:facebook.com OR site:youtube.com)'
                 if company_web_budget.reserve(SEARCH_REQUEST_CEILING):
                     try:
-                        search_results, search_requests, search_status = search_company_websites(social_query, timeout=4.0, use_paid=False)
+                        search_results, search_requests, search_status = search_company_websites(social_query, timeout=4.0, use_paid=True)
                     except Exception as exc:
                         search_results, search_requests, search_status = [], 0, "provider_error"
                         search_error = f"{type(exc).__name__}: {str(exc)[:160]}"

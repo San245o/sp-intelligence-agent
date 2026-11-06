@@ -81,7 +81,7 @@ def main(argv=None):
     parser.add_argument('--out','--output','-o',required=True)
     parser.add_argument('--workers','-w',type=int,default=8)
     parser.add_argument('--search',choices=['none','auto','serper'],default='auto')
-    parser.add_argument('--paid-search-budget',type=int,default=40)
+    parser.add_argument('--paid-search-budget',type=int,default=2000)
     parser.add_argument('--bulk',type=Path,default=ROOT/'data/brreg-enheter.csv.gz')
     parser.add_argument('--report',type=Path)
     parser.add_argument('--limit',type=int,default=0)

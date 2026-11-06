@@ -23,7 +23,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--profiles", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--paid-search-budget", type=int, default=40)
+    parser.add_argument("--paid-search-budget", type=int, default=2000)
     parser.add_argument("--paid-search-per-company", type=int, default=2)
     parser.add_argument("--public-request-budget", type=int, default=800)
     parser.add_argument("--requests-per-company", type=int, default=18)

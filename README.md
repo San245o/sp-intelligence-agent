@@ -9,7 +9,7 @@ Python 3.12+ is required.
 ```powershell
 python -m pip install -r requirements-lock.txt
 python -m pip install --no-deps -e .
-python run.py --manifest <batch-file> --out <output-directory> --workers 8 --paid-search-budget 40
+python run.py --manifest <batch-file> --out <output-directory> --workers 8 --paid-search-budget 2000
 ```
 
 For public sources without paid search:
@@ -18,7 +18,7 @@ For public sources without paid search:
 python run.py --manifest <batch-file> --out <output-directory> --search none
 ```
 
-Inputs can be JSON arrays, JSONL, text or CSV, including gzip. `--bulk <snapshot.csv.gz>` selects a specific public registry snapshot. The default `data/brreg-enheter.csv.gz` is reused locally or downloaded from the official Brønnøysund public source if missing. New organisations outside that snapshot currently require an updated snapshot. The default run shares a 40-credit ceiling across our providers, key slots and categories; this is not 40 calls per key or a dollar-cost estimate. Automatic place discovery uses Places, not Maps. `--search none` sets the paid ceiling to zero.
+Inputs can be JSON arrays, JSONL, text or CSV, including gzip. `--bulk <snapshot.csv.gz>` selects a specific public registry snapshot. The default `data/brreg-enheter.csv.gz` is reused locally or downloaded from the official Brønnøysund public source if missing. New organisations outside that snapshot currently require an updated snapshot. The default run shares a 2,000-credit ceiling across our providers, key slots and categories, with at most 2 paid attempts per company; this is not 2,000 credits per key or a dollar-cost estimate. Automatic place discovery uses Places, not Maps. `--search none` sets the paid ceiling to zero.
 
 Outputs include `submission.jsonl` / `envelopes.jsonl` with the flat evaluator contract, `raw_envelopes.jsonl`, `profiles.jsonl`, `run-report.json`, a structured acquisition-attempt ledger and provider usage checkpoints. Records keep real source hashes and acquisition times; the adapter does not manufacture missing evidence. Per-company operations include measured runtime and paid credits. Dollar cost is reported as unknown when credits were used without a configured USD-per-credit rate; set `SERPER_USD_PER_CREDIT` to your actual rate (including 0 for a known free allocation).
 
