@@ -125,7 +125,7 @@ Read `docs/competition-control-loop.md`, `docs/external-connectors.md` and the p
 
 ## Submission contract
 
-The current provider/search policy and CLI options are documented in [Budgeted external discovery](docs/search-budget.md). Automatic place lookups use the one-credit Places endpoint, and `--paid-search-budget 2000` is a credit ceiling across our complete run. Live development results, limitations and the corrected credit audit are in `out/provider-upgrade-20261104/report.md`.
+The current provider/search policy and CLI options are documented in [Budgeted external discovery](docs/search-budget.md). Automatic place lookups use the one-credit Places endpoint, and the default paid-search budget is half the batch size in credits across our complete run. Live development results, limitations and the corrected credit audit are in `out/provider-upgrade-20261104/report.md`.
 
 Submit a repository with:
 

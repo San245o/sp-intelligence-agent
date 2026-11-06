@@ -23,18 +23,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--profiles", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--paid-search-budget", type=int, default=2000)
+    parser.add_argument("--paid-search-budget", type=int, default=None)
     parser.add_argument("--paid-search-per-company", type=int, default=2)
     parser.add_argument("--public-request-budget", type=int, default=800)
     parser.add_argument("--requests-per-company", type=int, default=18)
     parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args()
-    configure_search_budget(args.paid_search_budget, args.paid_search_per_company)
-    network_meter.activate(args.public_request_budget)
     rows = [json.loads(x) for x in args.profiles.read_text(encoding="utf-8").splitlines() if x]
+    configure_search_budget(args.paid_search_budget if args.paid_search_budget is not None else max(1, len(rows) // 2), args.paid_search_per_company)
+    network_meter.activate(args.public_request_budget)
     if len({r["organisation_number"] for r in rows}) != len(rows):
         parser.error("Duplicate input organisation numbers")
-    plan_search_budget(rows, args.paid_search_budget, args.paid_search_per_company)
+    plan_search_budget(rows, args.paid_search_budget if args.paid_search_budget is not None else max(1, len(rows) // 2), args.paid_search_per_company)
     started = datetime.now(timezone.utc).isoformat()
     budget = WebRequestBudget(args.public_request_budget)
     def enrich(row):

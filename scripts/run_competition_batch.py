@@ -311,7 +311,7 @@ def main() -> None:
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--expected-count", type=int, default=100)
     parser.add_argument("--workers", type=int, default=8)
-    parser.add_argument("--paid-search-budget", type=int, default=2000, help="Shared provider-credit ceiling for the whole run: search/news/Places=1, Maps=3; failed and fallback attempts reserve credits too")
+    parser.add_argument("--paid-search-budget", type=int, default=None, help="Shared provider-credit ceiling (default: half the batch size); search/news/Places=1, Maps=3")
     parser.add_argument("--paid-search-per-company", type=int, default=2)
     parser.add_argument("--external-request-cap", type=int, default=18)
     parser.add_argument("--checkpoint-every", type=int, default=25)
@@ -330,7 +330,6 @@ def main() -> None:
     parser.add_argument("--nav-delay-seconds", type=float, default=0.1, help="Delay between shared NAV requests")
     parser.add_argument("--modules", default="registry,accounting_obligation,registry_live,financials,roles,group,locations,website,external_footprint")
     args = parser.parse_args()
-    configure_search_budget(args.paid_search_budget, args.paid_search_per_company)
     website_client.READ_DISK_CACHE = not args.fresh_web
     search_client.READ_SEARCH_CACHE = not args.fresh_web
     network_meter.activate(args.request_budget)
@@ -339,6 +338,8 @@ def main() -> None:
     started_at = utc_now()
     organisation_inputs = read_organisation_inputs(args.organisations)
     orgs = [item["organisation_number"] for item in organisation_inputs]
+    args.paid_search_budget = max(1, len(orgs) // 2) if args.paid_search_budget is None and orgs else max(0, args.paid_search_budget or 0)
+    configure_search_budget(args.paid_search_budget, args.paid_search_per_company)
     previous_profiles = None
     if args.previous_profiles:
         previous_profiles = [json.loads(line) for line in args.previous_profiles.read_text(encoding="utf-8").splitlines() if line.strip()]

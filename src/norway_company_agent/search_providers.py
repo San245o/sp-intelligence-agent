@@ -35,28 +35,63 @@ def configure_search_budget(limit: int = 40, per_company: int = 2) -> None:
         _allowances = None
 
 
-def plan_search_budget(profiles, limit=40, per_company=2):
-    """Rank discovery opportunities without treating missing payroll as no website.
+def plan_search_budget(profiles, limit=0, per_company=2):
+    """Allocate paid searches to the strongest current company opportunities.
 
-    Every input remains eligible. The atomic global credit guard, rather than a
-    preallocated shortlist, controls spending as cheap discovery finishes.
+    A 75/100 registry-backed readiness score is a spend eligibility gate only;
+    publication still requires the stricter source-specific identity checks.
     """
     global _allowances
     configure_search_budget(limit, per_company)
-    def priority(profile):
-        name = str(profile.get("name") or "").casefold()
-        try: employees = int(profile.get("employees") or 0)
-        except (TypeError, ValueError): employees = 0
-        website = profile.get("evidence", {}).get("website", {}).get("value") or {}
-        owned = bool((website.get("identity_assessment") or {}).get("content_attributable"))
-        dormant = any(token in name for token in ("holding", "invest", "eiendom", "sameie", "borettslag"))
-        return (12 if owned else 0) + (4 if profile.get('website') else 0) + min(12, employees // 3) + (4 if profile.get("discovery_operating_names") else 0) - (3 if dormant else 0)
-    ranked = sorted(profiles, key=lambda p: (-priority(p), str(p["organisation_number"])))
-    allowances = {}
+
+    def number(value):
+        try:
+            return float(str(value).replace(",", "").replace(" ", ""))
+        except (TypeError, ValueError):
+            return 0.0
+
+    def scores(profile):
+        registry = (profile.get("evidence", {}).get("registry") or {}).get("value") or {}
+        name = str(profile.get("name") or registry.get("navn") or "").strip()
+        address = profile.get("business_address") or profile.get("forretningsadresse.adresse") or registry.get("forretningsadresse.adresse") or registry.get("forretningsadresse") or {}
+        address_text = " ".join(address) if isinstance(address, list) else str(address)
+        postcode = str(profile.get("postcode") or profile.get("forretningsadresse.postnummer") or registry.get("forretningsadresse.postnummer") or "")
+        status_text = " ".join(str(profile.get(key) or registry.get(key) or "") for key in ("konkurs", "underAvvikling", "slettedato")).casefold()
+        active = not any(token in status_text for token in ("true", "konkurs", "avvik", "slett"))
+        identity = (30 if len(name) >= 4 else 0) + (20 if address_text.strip() else 0) + (10 if len(postcode) == 4 else 0) + (20 if active else 0) + (20 if profile.get("organisation_number") else 0)
+        try:
+            employees = int(profile.get("employees") or registry.get("antallAnsatte") or 0)
+        except (TypeError, ValueError):
+            employees = 0
+        financials = profile.get("evidence", {}).get("financials", {}).get("value") or {}
+        revenue = number(profile.get("revenue") or financials.get("revenue") or financials.get("driftsinntekter") or registry.get("revenue") or registry.get("driftsinntekter"))
+        website = profile.get("website") or registry.get("hjemmeside")
+        site_value = profile.get("evidence", {}).get("website", {}).get("value") or {}
+        own_site = bool((site_value.get("identity_assessment") or {}).get("content_attributable"))
+        operating_names = bool(profile.get("discovery_operating_names"))
+        dormant = any(token in name.casefold() for token in ("holding", "invest", "eiendom", "sameie", "borettslag"))
+        potential = min(30, employees // 2) + (25 if revenue > 0 else 0) + (15 if website else 0) + (15 if own_site else 0) + (15 if operating_names else 0) - (20 if dormant else 0)
+        return min(100, identity), max(0, potential)
+
+    ranked = []
+    for profile in profiles:
+        confidence, potential = scores(profile)
+        profile["paid_discovery_identity_score"] = confidence
+        profile["discovery_priority"] = potential
+        if confidence >= 75:
+            ranked.append(profile)
+    ranked.sort(key=lambda profile: (-profile["discovery_priority"], -profile["paid_discovery_identity_score"], str(profile["organisation_number"])))
+    remaining = max(0, int(limit))
+    allowances = {str(profile["organisation_number"]): 0 for profile in profiles}
     for profile in ranked:
-        profile['discovery_priority'] = priority(profile)
-        allowances[str(profile["organisation_number"])] = per_company
-    with _lock: _allowances = allowances
+        if remaining <= 0:
+            break
+        allocation = min(max(0, int(per_company)), remaining)
+        if allocation:
+            allowances[str(profile["organisation_number"])] = allocation
+            remaining -= allocation
+    with _lock:
+        _allowances = allowances
     return allowances
 
 
@@ -99,8 +134,8 @@ def provider_summary() -> dict:
             "paid_request_cap": _paid_limit, "per_company_paid_request_cap": _company_limit,
             "paid_credit_cap": _paid_limit, "paid_credits_used": counts.get("paid_credits_used", 0),
             "credit_basis": "Search/news/Places=1, Maps=3, Tavily basic=1. Failed attempts reserve the same cost conservatively; successful Serper charges are reconciled with response credits.",
-            "scheduled_companies": len(_allowances) if _allowances is not None else None,
-            "eligible_companies": len(_allowances) if _allowances is not None else None,
+            "scheduled_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
+            "eligible_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
             "selection_policy": "All input companies remain eligible for website discovery. Rank existing leads, operating names and payroll signals; missing payroll never excludes. Global credit guard controls actual spending; Places validates physical opportunities separately.",
             "paid_requests_used": counts.get("serper_requests", 0) + counts.get("tavily_requests", 0),
             "attempts": counts, "result_policy": "Discovery leads; independently fetch source pages before publishing. Cached leads retain their original acquisition times."}

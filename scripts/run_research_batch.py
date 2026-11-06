@@ -81,7 +81,7 @@ def main(argv=None):
     parser.add_argument('--out','--output','-o',required=True)
     parser.add_argument('--workers','-w',type=int,default=8)
     parser.add_argument('--search',choices=['none','auto','serper'],default='auto')
-    parser.add_argument('--paid-search-budget',type=int,default=2000)
+    parser.add_argument('--paid-search-budget',type=int,default=None)
     parser.add_argument('--bulk',type=Path,default=ROOT/'data/brreg-enheter.csv.gz')
     parser.add_argument('--report',type=Path)
     parser.add_argument('--limit',type=int,default=0)
@@ -103,7 +103,7 @@ def main(argv=None):
         temporary=args.bulk.with_suffix(args.bulk.suffix+'.tmp')
         download(temporary,120,None);temporary.replace(args.bulk)
     report=args.report or directory/'run-report.json'
-    command=[str(ROOT/'scripts/run_competition_batch.py'),'--organisations',str(normalized),'--bulk',str(args.bulk),'--output',str(directory/'raw_envelopes.jsonl'),'--profiles-output',str(directory/'profiles.jsonl'),'--report',str(report),'--run-id',directory.name,'--expected-count',str(len(rows)),'--workers',str(args.workers),'--paid-search-budget',str(0 if args.search=='none' else args.paid_search_budget),*extra]
+    command=[str(ROOT/'scripts/run_competition_batch.py'),'--organisations',str(normalized),'--bulk',str(args.bulk),'--output',str(directory/'raw_envelopes.jsonl'),'--profiles-output',str(directory/'profiles.jsonl'),'--report',str(report),'--run-id',directory.name,'--expected-count',str(len(rows)),'--workers',str(args.workers),'--paid-search-budget',str(0 if args.search=='none' else args.paid_search_budget if args.paid_search_budget is not None else max(1,len(rows)//2)),*extra]
     previous=sys.argv;sys.argv=command
     try:
         try:runpy.run_path(command[0],run_name='__main__')
