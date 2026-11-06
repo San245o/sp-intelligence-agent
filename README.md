@@ -56,3 +56,7 @@ python -m unittest discover -s tests -p "test_*.py"
 The current suite passes 215 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
 
 Read [search policy](docs/search-budget.md), [migration record](docs/migration-20261105.md), [pipeline details](docs/research-pipeline-guide.md) for measurement boundaries. Historical architecture and performance claims are preserved separately in [legacy guide](docs/legacy-agent-guide.md); they do not describe the new default paid-search path. The legacy entry remains `python scripts/run_batch.py ...`.
+
+## Submission review
+
+The [official-rule review](docs/official-submission-check.md), [100-company execution smoke report](docs/smoke-100-20261106.json), and [runtime/API/licence disclosure](docs/submission-dependencies.md) record the current submission checks. The smoke used 41/50 paid credits, returned 100/100 terminal results and had zero company-level errors. Its 3,000-attempt local allowance is explicitly disclosed and is not a published official competition limit.

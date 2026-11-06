@@ -1,0 +1,58 @@
+{
+  "name": "100-company live execution smoke test",
+  "date": "2026-11-06",
+  "official_score": false,
+  "status": "passed",
+  "companies": 100,
+  "unique_terminal_envelopes": 100,
+  "validation": {
+    "passed": true,
+    "checks": {
+      "exact_expected_count": true,
+      "unique_organisation_numbers": true,
+      "all_entity_states_terminal": true,
+      "all_module_states_terminal": true,
+      "zero_silent_drops": true
+    },
+    "invalid_states": []
+  },
+  "company_errors": 0,
+  "runtime_seconds": 442.119,
+  "http_attempts": 2043,
+  "http_attempt_allowance": 3000,
+  "paid_credit_cap": 50,
+  "paid_credits_used": 41,
+  "serper_successful_responses": 41,
+  "cached_sources_allowed": true,
+  "registry_snapshot_sha256": "302a115368b31ae0680ce985ab9acd7baf380b73f26832abdc14251aef54ab57",
+  "manifest_sha256": "62307fe7fac0e84d604d20253918402ae7ce77fc3d915175a338acfa06cf7b78",
+  "contract_sha256": "405b5b0ae8c3feaca4bf596f2a5caf19d5973bf9cecc8c4a36900dc482900e2f",
+  "observed_evidence_counts": {
+    "accepted_website_companies": 18,
+    "content_attributable_website_companies": 16,
+    "social_profile_companies": 7,
+    "dated_publication_urls": 3,
+    "ratings_review_companies": 4,
+    "job_posting_companies": 1
+  },
+  "limitations": [
+    "Execution/contract smoke only; no official recall/precision score or independent full evidence audit.",
+    "Reuses local caches; not a cold-network coverage benchmark.",
+    "The process resolved a 3000-attempt local allowance before the final default was corrected to 20 attempts per company. This smoke configuration can be reproduced with --request-budget 3000. Official budget numbers are supplied by Builderr, not published in the public contract.",
+    "Private local Serper credentials were used for this development check; no keys are included in the submitted repository."
+  ],
+  "reproduction_command": "python run.py --manifest <same-100-company-manifest> --bulk <frozen-registry-snapshot.csv.gz> --out runs/smoke --workers 12 --request-budget 3000 --web-requests-per-company 20 --generated-site-candidate-cap 1 --site-activity-request-cap 6 --nav-max-pages 5 --nav-max-details 5",
+  "tests_passed": 215,
+  "clean_environment_verification": {
+    "source_commit": "b22f22ed533d35f913b3595b7b9e3fb6b4c0ca2a",
+    "empty_virtual_environment": true,
+    "locked_dependencies_installed": true,
+    "archived_tracked_checkout_tests_passed": 215,
+    "private_credentials_present_in_archived_checkout": false
+  },
+  "flat_contract_checks": {
+    "rows": 100,
+    "valid_availability_and_evidence_references": true,
+    "errors": []
+  }
+}
