@@ -38,7 +38,7 @@ def configure_search_budget(limit: int = 40, per_company: int = 2) -> None:
 def plan_search_budget(profiles, limit=0, per_company=2):
     """Allocate paid searches to the strongest current company opportunities.
 
-    A 75/100 registry-backed readiness score is a spend eligibility gate only;
+    A 75/100 registry-completeness score is a spend eligibility gate only;
     publication still requires the stricter source-specific identity checks.
     """
     global _allowances
@@ -76,11 +76,11 @@ def plan_search_budget(profiles, limit=0, per_company=2):
     ranked = []
     for profile in profiles:
         confidence, potential = scores(profile)
-        profile["paid_discovery_identity_score"] = confidence
+        profile["paid_discovery_readiness_score"] = confidence
         profile["discovery_priority"] = potential
         if confidence >= 75:
             ranked.append(profile)
-    ranked.sort(key=lambda profile: (-profile["discovery_priority"], -profile["paid_discovery_identity_score"], str(profile["organisation_number"])))
+    ranked.sort(key=lambda profile: (-profile["discovery_priority"], -profile["paid_discovery_readiness_score"], str(profile["organisation_number"])))
     remaining = max(0, int(limit))
     allowances = {str(profile["organisation_number"]): 0 for profile in profiles}
     for profile in ranked:
@@ -136,7 +136,7 @@ def provider_summary() -> dict:
             "credit_basis": "Search/news/Places=1, Maps=3, Tavily basic=1. Failed attempts reserve the same cost conservatively; successful Serper charges are reconciled with response credits.",
             "scheduled_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
             "eligible_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
-            "selection_policy": "Every company receives public-source discovery. Paid credits are assigned in priority order to companies scoring at least 75/100 on registry identity completeness; opportunity ranking favors workforce, reported revenue when available, attributable or registered websites and operating names. Publication retains stricter source-specific identity gates.",
+            "selection_policy": "Every company receives public-source discovery. Paid credits are assigned in priority order to companies scoring at least 75/100 on registry completeness; opportunity ranking favors workforce, reported revenue when available, attributable or registered websites and operating names. Publication retains stricter source-specific identity gates.",
             "paid_requests_used": counts.get("serper_requests", 0) + counts.get("tavily_requests", 0),
             "attempts": counts, "result_policy": "Discovery leads; independently fetch source pages before publishing. Cached leads retain their original acquisition times."}
 
