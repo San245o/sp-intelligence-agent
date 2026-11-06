@@ -136,7 +136,7 @@ def provider_summary() -> dict:
             "credit_basis": "Search/news/Places=1, Maps=3, Tavily basic=1. Failed attempts reserve the same cost conservatively; successful Serper charges are reconciled with response credits.",
             "scheduled_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
             "eligible_companies": sum(value > 0 for value in _allowances.values()) if _allowances is not None else None,
-            "selection_policy": "All input companies remain eligible for website discovery. Rank existing leads, operating names and payroll signals; missing payroll never excludes. Global credit guard controls actual spending; Places validates physical opportunities separately.",
+            "selection_policy": "Every company receives public-source discovery. Paid credits are assigned in priority order to companies scoring at least 75/100 on registry identity completeness; opportunity ranking favors workforce, reported revenue when available, attributable or registered websites and operating names. Publication retains stricter source-specific identity gates.",
             "paid_requests_used": counts.get("serper_requests", 0) + counts.get("tavily_requests", 0),
             "attempts": counts, "result_policy": "Discovery leads; independently fetch source pages before publishing. Cached leads retain their original acquisition times."}
 
