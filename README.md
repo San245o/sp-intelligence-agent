@@ -1,86 +1,58 @@
-# SP Intelligence Agent
+# Signalpost company research agent
 
-An autonomous Nordic entity intelligence pipeline. Given organisation numbers from Norway's 411,160-entity universe, it resolves legal identity, harvests full financial statements and balance sheets, discovers company websites via DNS and ML ranking, validates evidence spans with cryptographic SHA-256 hashes, and emits deterministic terminal envelopes at **$0.00 declared spend**.
+Research Norwegian organisation numbers using official registries, independently verified company sites, dated publications, public job sources and captured external evidence. This checkout includes the imported discovery pipeline and preserves the original `signalpost` package and legacy runner.
 
----
+## Run the supplied evaluator batch
 
-## 1. Quick Start / Evaluator Command
+Python 3.12+ is required.
 
-Requires Python 3.11+.
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-pip install -e .
-
-# One-command direct live batch crawl on the evaluator's supplied batch:
-python scripts/run_batch.py --manifest <path_to_batch> --out <output_dir> --workers 8
-
-# Alternatively, from repository root:
-python run.py --manifest <path_to_batch> --out <output_dir> --workers 8
+```powershell
+python -m pip install -r requirements-lock.txt
+python -m pip install --no-deps -e .
+python run.py --manifest <batch-file> --out <output-directory> --workers 8 --paid-search-budget 40
 ```
 
-The agent directly crawls and researches the evaluator's supplied batch live across official Norwegian registries (BRREG Enhetsregisteret, Regnskapsregisteret, Roller, Underenheter), NAV public labour market records, and permitted sources at **$0.00 declared third-party spend** (`--search none`).
+For public sources without paid search:
 
-### Evaluator Command Options
-* **Input formats accepted**: Any file containing Norwegian organisation numbers — JSON array (`["123456789", ...]`), JSONL (`{"organisation_number": "..."}`), plain line-delimited text (`123456789`), or CSV (with `.gz` support).
-* **CLI flags supported**:
-  * Input: `--manifest`, `--organisations`, `--input`, `-i`, or positional argument `<batch>`
-  * Output: `--out`, `--output`, `-o` (accepts directory path or `.jsonl` file path)
-  * Workers: `--workers`, `-w` (default: `8`)
-  * Spend / Search: `--search none` (default: `none` for $0.00 spend; also supports `auto`)
-
-### Output Contract Artifacts
-Directly emits all required terminal envelopes and machine-readable execution metrics into `<output_dir>`:
-1. `submission.jsonl` — Flat terminal envelopes adhering 100% to `OUTPUT_CONTRACT.md` schema (`organisation_number`, `run`, `claims`, `evidence`, `changes`, `errors`, `operations`).
-2. `envelopes.jsonl` — Exact terminal envelopes adhering 100% to `OUTPUT_CONTRACT.md`.
-3. `run-report.json` — Evaluator budget ledger, timing, p50/p95 latency metrics, request counts, and validation checks.
-4. `raw_envelopes.jsonl` — Detailed per-entity diagnostic snapshots.
-
-### Verification & Testing
-
-```bash
-# Run automated test suite
-python -m unittest discover tests -v
+```powershell
+python run.py --manifest <batch-file> --out <output-directory> --search none
 ```
 
----
+Inputs can be JSON arrays, JSONL, text or CSV, including gzip. `--bulk <snapshot.csv.gz>` selects a specific public registry snapshot. The default `data/brreg-enheter.csv.gz` is reused locally or downloaded from the official Brønnøysund public source if missing. New organisations outside that snapshot currently require an updated snapshot. The default run shares a 40-credit ceiling across our providers, key slots and categories; this is not 40 calls per key or a dollar-cost estimate. Automatic place discovery uses Places, not Maps. `--search none` sets the paid ceiling to zero.
 
-## 2. Architecture & Multi-Source Intelligence
+Outputs include `submission.jsonl` / `envelopes.jsonl` with the flat evaluator contract, `raw_envelopes.jsonl`, `profiles.jsonl`, `run-report.json`, a structured acquisition-attempt ledger and provider usage checkpoints. Records keep real source hashes and acquisition times; the adapter does not manufacture missing evidence. Per-company operations include measured runtime and paid credits. Dollar cost is reported as unknown when credits were used without a configured USD-per-credit rate; set `SERPER_USD_PER_CREDIT` to your actual rate (including 0 for a known free allocation).
 
-### A. Deep Official Anchoring (Silo 1 Dominance)
-- Ingests official government open data from **Brønnøysundregistrene (BRREG)**:
-  - `enheter/{org}`: Legal entity identity, status, NACE industry codes, and registered addresses.
-  - `enheter/{org}/roller`: Daglig leder, styrets leder, and board officers.
-  - `underenheter?overordnetEnhet={org}`: Physical operating branches and workplaces.
-  - `regnskapsregisteret/regnskap/{org}`: Audited annual accounts, extracting operating revenue, operating results, net profit, balance sheet assets, equity, and liabilities without ever coercing missing numbers to zero.
+## Evidence rules
 
-### B. Machine Learning Domain Discovery (Cold-Start Resolution)
-- ~89% of Norwegian companies have no registered website in Enhetsregisteret.
-- Instead of burning budget on commercial search APIs, the agent utilizes:
-  - **Local DNS probing:** Generating normalized legal name slugs across `.no` and `.com`.
-  - **31-feature ML Ranker:** A calibrated Naive Bayes classifier trained on character/token trigram Jaccard similarity, label lengths, and stratum distributions to rank candidates with zero network cost.
-  - **External Cache Declaration:** Pre-indexes the 44,855 verified domain seeds from the frozen corporate universe dataset into `data/universe-websites.json` (permitted under clause 65).
+- A directory listing or company mention never establishes ownership of its host. Deep entries need independent owner-homepage/registered-domain evidence.
+- Scoped owner identifiers, explicit legal footer/contact identity and exact registry corroboration can verify a site. Namesake matches, placeholder pages and contradictory identifiers are withheld.
+- Company-published news and independent publisher coverage are separate source classes. Modification dates are not publication dates. Default template posts and publications before the current legal entity was established are withheld.
+- A job requires a specific, current posting with exact employer proof. A board link is a lead. NAV uses public feed changes plus retained active entries; it is not a complete historical bootstrap.
+- Places ratings require legal/official operating-name and exact registered street/postcode corroboration. Aggregates are not individual reviews or text sentiment.
+- Audience metrics require captured numeric evidence. Upload cadence, profile links and search snippets are not engagement statistics.
+- Missing evidence is unknown, not zero activity. Independent audits and hidden tournament labels remain necessary for official precision/score claims.
 
-### C. Deterministic Identity Proof Gate (Zero Hallucination)
-- An identity claim is marked `available` only when:
-  1. The exact 9-digit organisation number (verified by mod-11 check digit) appears on the page, or
-  2. Legal name tokens overlap and are corroborated by registered municipality or postal code.
-- Workplace sports clubs (`B.I.L.` / `Bedriftsidrettslag`), parked domains, and franchise networks are quarantined to prevent wrong-company attribution.
-- Unproven sites are held as `ambiguous` or `not_available`, strictly maintaining zero material wrong-company publications.
+## Search configuration and local data
 
-### D. Multi-Silo External Evidence & Activity
-- **Public Employment (NAV Arbeidsplassen):** Official Norwegian labour market API for live job postings and employer verification.
-- **Customer Ratings (Google Places / Serper):** Gated ratings and review metrics corroborated with postal code / municipality.
-- **Company YouTube Channels:** Verified corporate channels with upload cadence and subscriber engagement.
-- **Grounded News Sentiment:** Powered by Gemini `gemini-3.7-flash` (with `gemini-3.1-flash-lite` and deterministic keyword fallback chains) classifying news sentiment strictly from cited source facts.
+Provider keys come from environment variables (`SERPER_API_KEY`, optional `_2` / `_3`, or `SERPER_API_KEYS`) or an optional private `.local/provider-credentials.json`. No key or recoverable credential payload is included in the public source. Set `SIGNALPOST_USE_LOCAL_DEFAULTS=0` for environment-only credentials. Without keys, the pipeline uses public-source fallback. `.env.example` contains placeholders; never commit a private `.env`.
 
----
+Public discovery seed maps are included under `data/local-cache`. Large SQLite indexes, raw captures, provider lead caches, NAV state and benchmark output remain local and are ignored by Git. Seeds are candidates: current source retrieval and identity checks decide publication. Optional index refresh commands are documented in [cache inventory](data/local-cache/README.md). The original root `data` maps and original `src/signalpost` remain preserved.
 
-## 3. Evaluator Contract Compliance
+## Research workspace
 
-- **Budget & Resource Cap:** Consumes $0.00 declared spend. Requests strictly budget-governed with a tier-based reserve model (~1,100 requests per 100 companies, well below the 2,000 cap).
-- **Output Contract:** Generates flat envelopes strictly compliant with `OUTPUT_CONTRACT.md` using the required vocabulary (`available`, `not_available`, `blocked`, `not_applicable`, `ambiguous`, `failed`).
-- **Refresh & Idempotency:** Implements field-level hash comparisons across snapshots, guaranteeing `0` false changes on repeat runs.
-- **Licence & Source Policy:** Operates under the Norwegian Licence for Open Government Data (NLOD 2.0) and respects `robots.txt` policies.
+```powershell
+python scripts/build_prototype.py --input <output-directory>/profiles.jsonl --output <output-directory>/viewer.html
+python scripts/ask_agent.py --help
+```
 
+The workspace provides company search, evidence filters, source-linked research answers, dated news sorted by publication time, financial/role/location evidence, explicit unknown states, and saved local views/exports. UI summaries derive from accepted observations. Company-published and independent news are visibly distinguished. Browser audit findings and limitations are in [UX review](docs/ux-review-20261105.md).
+
+## Verification
+
+```powershell
+python -m unittest discover -s tests -p "test_*.py"
+```
+
+The current suite passes 209 tests, including the preserved original suite, ownership/source provenance, publication quality, paid-credit caps, free fallback, NAV snapshots, contract output and argument forwarding. A zero-paid live integration check exercises the actual evaluator entry point.
+
+Read [search policy](docs/search-budget.md), [migration record](docs/migration-20261105.md), [pipeline details](docs/research-pipeline-guide.md) for measurement boundaries. Historical architecture and performance claims are preserved separately in [legacy guide](docs/legacy-agent-guide.md); they do not describe the new default paid-search path. The legacy entry remains `python scripts/run_batch.py ...`.

@@ -41,3 +41,13 @@ data/*.gz
 data/companies*.js
 data/companies*.ts
 data/serper_cache/
+
+# Research pipeline local acquisition state
+out/
+.local/
+data/local-cache/*.sqlite*
+data/source-captures/
+data/search-leads/
+data/web-fetch-cache/
+data/nav-feed-snapshot/
+data/nav-feed-snapshot.json
